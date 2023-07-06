@@ -12,8 +12,8 @@ type Relocatable struct {
 // Int in the Cairo VM represents a value in memory that
 // is not an address.
 type Int struct {
-	// Here we should use Lambdaworks felt, just mocking this
-	// for now.
+	// FIXME: Here we should use Lambdaworks felt, just mocking
+	// this for now.
 	felt uint
 }
 
