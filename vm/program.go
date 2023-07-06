@@ -1,5 +1,6 @@
 package vm
 
 type Program struct {
-	data uint
+	// FIXME: Should be a list of felts or MaybeRelocatables.
+	data []uint
 }
