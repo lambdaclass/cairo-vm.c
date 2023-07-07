@@ -9,6 +9,10 @@ type Relocatable struct {
 	offset        uint
 }
 
+func NewRelocatable(segment_idx int, offset uint) Relocatable {
+	return Relocatable{segment_idx, offset}
+}
+
 func (r *Relocatable) into_indexes() (uint, uint) {
 	if r.segment_index < 0 {
 		corrected_segment_idx := uint(-(r.segment_index + 1))
@@ -26,10 +30,18 @@ type Int struct {
 	felt uint
 }
 
-// MaybeRelocatable is the type of memory cells in the Cairo
-// VM. For now, inner will hold any type but it should be
-// instantiated only with Relocatable or Int types.
+// MaybeRelocatable is the type of the memory cells in the Cairo
+// VM. For now, `inner` will hold any type but it should be
+// instantiated only with `Relocatable`, `Int` or `nil` types.
 // We should analyze better alternatives to this.
 type MaybeRelocatable struct {
 	inner any
+}
+
+func NewMaybeRelocatableInt(felt uint) MaybeRelocatable {
+	return MaybeRelocatable{felt}
+}
+
+func (m *MaybeRelocatable) is_nil() bool {
+	return m.inner == nil
 }
