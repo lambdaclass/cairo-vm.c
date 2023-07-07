@@ -1,6 +1,6 @@
 package vm
 
-import "github.com/lambdaclass/cairo-vm.go/vm/memory"
+import "github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
 
 // VirtualMachine represents the Cairo VM.
 // Runs Cairo assembly and produces an execution trace.
