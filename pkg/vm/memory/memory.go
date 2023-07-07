@@ -14,7 +14,7 @@ func NewMemory(data [][]MaybeRelocatable) *Memory {
 }
 
 // Inserts a value in some memory address, given by a Relocatable value.
-func (m *Memory) Insert(addr Relocatable, val MaybeRelocatable) error {
+func (m *Memory) Insert(addr *Relocatable, val *MaybeRelocatable) error {
 	addr_idx, addr_offset := addr.into_indexes()
 
 	// FIXME: There should be a special handling if the key
@@ -47,7 +47,7 @@ func (m *Memory) Insert(addr Relocatable, val MaybeRelocatable) error {
 		// If there wasn't `nil`, then we are trying to overwrite in that
 		// address. If the value we are trying to insert is not the same as
 		// the one that was already in that location, raise an error.
-	} else if segment[addr_offset] != val {
+	} else if segment[addr_offset] != *val {
 		return errors.New("Memory is write-once, cannot overwrite memory value")
 	}
 
@@ -55,7 +55,7 @@ func (m *Memory) Insert(addr Relocatable, val MaybeRelocatable) error {
 }
 
 // Gets some value stored in the memory address `addr`.
-func (m *Memory) Get(addr Relocatable) (*MaybeRelocatable, error) {
+func (m *Memory) Get(addr *Relocatable) (*MaybeRelocatable, error) {
 	addr_idx, addr_offset := addr.into_indexes()
 
 	// FIXME: There should be a special handling if the key

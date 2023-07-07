@@ -21,7 +21,7 @@ func TestMemoryInsert(t *testing.T) {
 
 	res_val, err := mem.Get(key)
 
-	if *res_val != val {
+	if res_val != val {
 		t.Errorf("Inserted value and original value are not the same")
 	}
 }

@@ -9,8 +9,8 @@ type Relocatable struct {
 	offset        uint
 }
 
-func NewRelocatable(segment_idx int, offset uint) Relocatable {
-	return Relocatable{segment_idx, offset}
+func NewRelocatable(segment_idx int, offset uint) *Relocatable {
+	return &Relocatable{segment_idx, offset}
 }
 
 func (r *Relocatable) into_indexes() (uint, uint) {
@@ -38,8 +38,8 @@ type MaybeRelocatable struct {
 	inner any
 }
 
-func NewMaybeRelocatableInt(felt uint) MaybeRelocatable {
-	return MaybeRelocatable{felt}
+func NewMaybeRelocatableInt(felt uint) *MaybeRelocatable {
+	return &MaybeRelocatable{felt}
 }
 
 func (m *MaybeRelocatable) is_nil() bool {
