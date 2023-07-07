@@ -9,6 +9,15 @@ type Relocatable struct {
 	offset        uint
 }
 
+func (r *Relocatable) into_indexes() (uint, uint) {
+	if r.segment_index < 0 {
+		corrected_segment_idx := uint(-(r.segment_index + 1))
+		return corrected_segment_idx, r.offset
+	}
+
+	return uint(r.segment_index), r.offset
+}
+
 // Int in the Cairo VM represents a value in memory that
 // is not an address.
 type Int struct {

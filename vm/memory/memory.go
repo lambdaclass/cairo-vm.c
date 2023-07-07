@@ -1,6 +1,12 @@
 package memory
 
+import "github.com/lambdaclass/cairo-vm.go/vm/memory"
+
 // Memory represents the Cairo VM's memory.
 type Memory[M MaybeRelocatable] struct {
-	data map[Relocatable]M
+	data [][]M
+}
+
+func (m *Memory[M]) insert(key memory.Relocatable, val M) M {
+
 }
