@@ -1,18 +1,40 @@
 package vm
 
+//  Structure of the 63-bit that form the first word of each instruction.
+//  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
+// ┌─────────────────────────────────────────────────────────────────────────┐
+// │                     off_dst (biased representation)                     │
+// ├─────────────────────────────────────────────────────────────────────────┤
+// │                     off_op0 (biased representation)                     │
+// ├─────────────────────────────────────────────────────────────────────────┤
+// │                     off_op1 (biased representation)                     │
+// ├─────┬─────┬───────┬───────┬───────────┬────────┬───────────────────┬────┤
+// │ dst │ op0 │  op1  │  res  │    pc     │   ap   │      opcode       │ 0  │
+// │ reg │ reg │  src  │ logic │  update   │ update │                   │    │
+// ├─────┼─────┼───┬───┼───┬───┼───┬───┬───┼───┬────┼────┬────┬────┬────┼────┤
+// │  0  │  1  │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 10 │ 11 │ 12 │ 13 │ 14 │ 15 │
+// └─────┴─────┴───┴───┴───┴───┴───┴───┴───┴───┴────┴────┴────┴────┴────┴────┘
+
+// Instruction is the representation of the first word of each Cairo instruction.
+// Some instructions spread over two words when they use an immediate value, so
+// representing the first one with this struct is enougth.
 type Instruction struct {
-	off0      int
-	off1      int
-	off2      int
+	off_dst   int
+	off_op0   int
+	off2_op1  int
 	dst_reg   Register
 	op0_reg   Register
-	op1_addr  Op1Addr
-	res       Res
+	op1_addr  Op1Src
+	res_logic ResLogic
 	pc_update PcUpdate
 	ap_update ApUpdate
 	fp_update FpUpdate
 	opcode    Opcode
 }
+
+// x-----------------------------x
+// x----- Instruction flags -----x
+// x-----------------------------x
 
 type Register uint
 
@@ -21,22 +43,22 @@ const (
 	FP Register = 1
 )
 
-type Op1Addr uint
+type Op1Src uint
 
 const (
-	Op1AddrImm Op1Addr = 0
-	Op1AddrAP  Op1Addr = 1
-	Op1AddrFP  Op1Addr = 2
-	Op1AddrOp0 Op1Addr = 3
+	Op1SrcImm Op1Src = 0
+	Op1SrcAP  Op1Src = 1
+	Op1SrcFP  Op1Src = 2
+	Op1SrcOp0 Op1Src = 4
 )
 
-type Res uint
+type ResLogic uint
 
 const (
-	ResOp1           Res = 0
-	ResAdd           Res = 1
-	ResMul           Res = 2
-	ResUnconstrained Res = 3
+	ResOp1           ResLogic = 0
+	ResAdd           ResLogic = 1
+	ResMul           ResLogic = 2
+	ResUnconstrained ResLogic = 3
 )
 
 type PcUpdate uint
@@ -71,5 +93,5 @@ const (
 	NOp      Opcode = 0
 	AssertEq Opcode = 1
 	Call     Opcode = 2
-	Ret      Opcode = 3
+	Ret      Opcode = 4
 )
