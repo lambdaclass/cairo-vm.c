@@ -8,5 +8,5 @@ type Memory[M MaybeRelocatable] struct {
 }
 
 func (m *Memory[M]) insert(key memory.Relocatable, val M) M {
-
+	key_idx, key_offset := key.into_indexes()
 }
