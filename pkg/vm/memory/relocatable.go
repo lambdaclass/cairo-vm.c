@@ -26,7 +26,12 @@ type Int struct {
 	felt uint
 }
 
-type MaybeRelocatable interface {
-	// Later on we will define common methods Relocatable
-	// and Int must satisfy
+// type MaybeRelocatable interface {
+// 	// Later on we will define common methods Relocatable
+// 	// and Int must satisfy
+// 	Relocatable | Int
+// }
+
+type MaybeRelocatable struct {
+	inner any
 }
