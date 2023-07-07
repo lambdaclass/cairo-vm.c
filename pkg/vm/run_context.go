@@ -1,6 +1,6 @@
 package vm
 
-import "github.com/lambdaclass/cairo-vm.go/vm/memory"
+import "github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
 
 // RunContext containts the register states of the
 // Cairo VM.

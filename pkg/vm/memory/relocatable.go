@@ -18,5 +18,6 @@ type Int struct {
 }
 
 type MaybeRelocatable interface {
-	Relocatable | Int
+	// Later on we will define common methods Relocatable
+	// and Int must satisfy
 }
