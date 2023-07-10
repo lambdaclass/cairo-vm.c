@@ -56,12 +56,14 @@ type CompiledJson struct {
 	REFERENCE_IDS    map[string][]string   `json:"reference_manager"`
 }
 
-func Parse() {
-	jsonFile, err := os.Open("pkg/parser/test_compiled.json")
+func Parse(jsonPath string) CompiledJson {
+	jsonFile, err := os.Open(jsonPath)
 
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer jsonFile.Close()
+
 	var cJson CompiledJson
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
@@ -71,7 +73,6 @@ func Parse() {
 		fmt.Println(err)
 	}
 
-	fmt.Printf("%+v\n", cJson.DATA)
+	return cJson
 
-	defer jsonFile.Close()
 }
