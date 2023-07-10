@@ -8,7 +8,8 @@ import (
 
 func TestHello(t *testing.T) {
 	got := salutes.Hello()
-	if got != "Hello, world!" {
-		t.Errorf("We should have Hello, World! as the salute, got %s", got)
+	expected := "Hello, world! Here's your number: 42"
+	if got != expected {
+		t.Errorf("We should have '%s' as the salute, got '%s'", expected, got)
 	}
 }
