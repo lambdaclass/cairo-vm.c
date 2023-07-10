@@ -8,5 +8,10 @@ package lambdaworks
 import "C"
 
 func Number() int {
+
+
+
+
+	
 	return int(C.number())
 }
