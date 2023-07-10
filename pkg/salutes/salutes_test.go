@@ -12,4 +12,7 @@ func TestHello(t *testing.T) {
 	if got != expected {
 		t.Errorf("We should have '%s' as the salute, got '%s'", expected, got)
 	}
+	if true {
+		t.Errorf("Test failed")
+	}
 }
