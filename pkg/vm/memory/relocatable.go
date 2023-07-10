@@ -9,10 +9,14 @@ type Relocatable struct {
 	offset        uint
 }
 
+// Creates a new Relocatable struct with the specified segment index
+// and offset.
 func NewRelocatable(segment_idx int, offset uint) *Relocatable {
 	return &Relocatable{segment_idx, offset}
 }
 
+// Get the the indexes of the Relocatable struct.
+// Returns a tuple with both values (segment_index, offset)
 func (r *Relocatable) into_indexes() (uint, uint) {
 	if r.segment_index < 0 {
 		corrected_segment_idx := uint(-(r.segment_index + 1))
@@ -38,14 +42,17 @@ type MaybeRelocatable struct {
 	inner any
 }
 
+// Creates a new MaybeRelocatable with an Int inner value
 func NewMaybeRelocatableInt(felt uint) *MaybeRelocatable {
 	return &MaybeRelocatable{inner: Int{felt}}
 }
 
+// Creates a new MaybeRelocatable with a `nil` inner value
 func NewMaybeRelocatableNil() *MaybeRelocatable {
 	return &MaybeRelocatable{inner: nil}
 }
 
+// Checks if inner value of MaybeRelocatable is `nil`
 func (m *MaybeRelocatable) is_nil() bool {
 	return m.inner == nil
 }

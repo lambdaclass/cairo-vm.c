@@ -77,6 +77,7 @@ func TestMemoryInsertWithHoles(t *testing.T) {
 		t.Errorf("Get error in test: %s", err)
 	}
 
+	// Check that we got the holes from memory
 	expected_hole := memory.NewMaybeRelocatableNil()
 	if !reflect.DeepEqual(hole1, expected_hole) || !reflect.DeepEqual(hole2, expected_hole) {
 		t.Errorf("Expected nil value but got another")
