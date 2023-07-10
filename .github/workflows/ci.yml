@@ -20,8 +20,8 @@ jobs:
 
     - name: Setup Rust
       uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      with:
+        toolchain: stable
 
     - name: build
       run: make build
