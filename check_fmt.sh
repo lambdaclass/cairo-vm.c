@@ -2,7 +2,7 @@
 
 files=$(gofmt -l pkg)
 if [[ $files ]]; then
-    echo "Some files are not correctly formatted:\n${files}"
+    echo -e "Some files are not correctly formatted:\n${files}"
     exit 1
 else 
     exit 0
