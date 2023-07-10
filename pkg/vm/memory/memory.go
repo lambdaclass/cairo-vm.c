@@ -69,7 +69,7 @@ func (m *Memory) Get(addr *Relocatable) (*MaybeRelocatable, error) {
 	// `relocate_value()` in the future. This function should
 	// check if the value is a `Relocatable` with a negative
 	// segment index. Again, these are edge cases so not important
-	// for now. See cairo-vm code for details.
+	// right now. See cairo-vm code for details.
 	value := m.data[addr_idx][addr_offset]
 
 	return &value, nil
