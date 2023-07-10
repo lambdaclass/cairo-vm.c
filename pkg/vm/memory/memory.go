@@ -34,7 +34,7 @@ func (m *Memory) Insert(addr *Relocatable, val *MaybeRelocatable) error {
 	// with `nil`, and index 4 will have the desired value.
 	if segment_len <= int(addr_offset) {
 		new_segment_len := addr_offset + 1
-		for i := segment_len; i <= int(new_segment_len); i++ {
+		for i := segment_len; i < int(new_segment_len); i++ {
 			*segment = append(*segment, MaybeRelocatable{nil})
 		}
 	}
@@ -43,9 +43,7 @@ func (m *Memory) Insert(addr *Relocatable, val *MaybeRelocatable) error {
 	// Check that the value at that offset is `nil` and if it is, then
 	// swap that `nil` with the desired value.
 	if (*segment)[addr_offset].is_nil() {
-		// fmt.Println("VALUE TO INSERT: ", MaybeRelocatable{val})
 		(*segment)[addr_offset] = *val
-		// fmt.Println("INSERTED VALUE: ", (*segment)[addr_offset])
 		// If there wasn't `nil`, then we are trying to overwrite in that
 		// address. If the value we are trying to insert is not the same as
 		// the one that was already in that location, raise an error.

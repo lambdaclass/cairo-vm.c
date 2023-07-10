@@ -42,6 +42,10 @@ func NewMaybeRelocatableInt(felt uint) *MaybeRelocatable {
 	return &MaybeRelocatable{inner: Int{felt}}
 }
 
+func NewMaybeRelocatableNil() *MaybeRelocatable {
+	return &MaybeRelocatable{inner: nil}
+}
+
 func (m *MaybeRelocatable) is_nil() bool {
 	return m.inner == nil
 }
