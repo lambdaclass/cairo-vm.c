@@ -1,6 +1,7 @@
 package memory_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
@@ -14,14 +15,16 @@ func TestMemoryInsert(t *testing.T) {
 	val := memory.NewMaybeRelocatableInt(5)
 
 	err := mem.Insert(key, val)
-
 	if err != nil {
 		t.Errorf("Insert error in test: %s", err)
 	}
 
 	res_val, err := mem.Get(key)
+	if err != nil {
+		t.Errorf("Get error in test: %s", err)
+	}
 
-	if res_val != val {
+	if !reflect.DeepEqual(res_val, val) {
 		t.Errorf("Inserted value and original value are not the same")
 	}
 }

@@ -39,7 +39,7 @@ type MaybeRelocatable struct {
 }
 
 func NewMaybeRelocatableInt(felt uint) *MaybeRelocatable {
-	return &MaybeRelocatable{felt}
+	return &MaybeRelocatable{inner: Int{felt}}
 }
 
 func (m *MaybeRelocatable) is_nil() bool {
