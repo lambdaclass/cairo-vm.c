@@ -3,6 +3,7 @@
 ## Other docs
 
 - [Project layout](docs/layout.md)
+- [Rust/lambdaworks integration](docs/rust-integration.md)
 
 ## Installation
 
