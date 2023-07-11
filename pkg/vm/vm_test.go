@@ -13,7 +13,7 @@ func TestFibonacci(t *testing.T) {
 	// compiledProgram := parser.Parse("../../cairo_programs/fibonacci.json")
 
 	// TODO: Uncomment test when we have the bare minimum `CairoRun`
-	// err := vm.CairoRun(compiledProgram.DATA)
+	// err := vm.CairoRun(compiledProgram.Data)
 	// if err != nil {
 	// 	t.Errorf("Program execution failed with error: %s", err)
 	// }
