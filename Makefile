@@ -4,7 +4,7 @@ run:
 	@go run cmd/cli/main.go
 
 test:
-	@go test ./...
+	@go test -v ./...
 
 build:
 	@cd pkg/lambdaworks/lib/lambdaworks && cargo build --release
