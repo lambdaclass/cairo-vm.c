@@ -23,17 +23,17 @@ import (
 // Some instructions spread over two words when they use an immediate value, so
 // representing the first one with this struct is enougth.
 type Instruction struct {
-	offDst   int
-	offOp0   int
-	offOp1   int
-	dstReg   Register
-	op0Reg   Register
-	op1Addr  Op1Src
-	resLogic ResLogic
-	pcUpdate PcUpdate
-	apUpdate ApUpdate
-	fpUpdate FpUpdate
-	opcode   Opcode
+	OffDst   int
+	OffOp0   int
+	OffOp1   int
+	DstReg   Register
+	Op0Reg   Register
+	Op1Addr  Op1Src
+	ResLogic ResLogic
+	PcUpdate PcUpdate
+	ApUpdate ApUpdate
+	FpUpdate FpUpdate
+	Opcode   Opcode
 }
 
 // x-----------------------------x
@@ -107,7 +107,7 @@ var InvalidResError = errors.New("Instruction had an invalid res")
 var InvalidOpcodeError = errors.New("Instruction had an invalid opcode")
 var InvalidApUpdateError = errors.New("Instruction had an invalid Ap Update")
 
-func decodeInstruction(encodedInstruction uint64) (Instruction, error) {
+func DecodeInstruction(encodedInstruction uint64) (Instruction, error) {
 	const HighBit uint64 = 1 << 63
 	const DstRegMask uint64 = 0x0001
 	const DstRegOff uint64 = 0
@@ -128,9 +128,9 @@ func decodeInstruction(encodedInstruction uint64) (Instruction, error) {
 		return Instruction{}, NonZeroHighBitError
 	}
 
-	var offset0 = fromBiasedRepresentation(uint16((encodedInstruction)))
-	var offset1 = fromBiasedRepresentation(uint16((encodedInstruction) >> 16))
-	var offset2 = fromBiasedRepresentation(uint16((encodedInstruction) >> 32))
+	var offset0 = fromBiasedRepresentation((encodedInstruction) & 0xFFFF)
+	var offset1 = fromBiasedRepresentation((encodedInstruction >> 16) & 0xFFFF)
+	var offset2 = fromBiasedRepresentation((encodedInstruction >> 32) & 0xFFFF)
 
 	var flags = encodedInstruction >> 48
 
@@ -170,7 +170,7 @@ func decodeInstruction(encodedInstruction uint64) (Instruction, error) {
 		op1Src = Op1SrcImm
 	case 2:
 		op1Src = Op1SrcFP
-	case 3:
+	case 4:
 		op1Src = Op1SrcAP
 	default:
 		return Instruction{}, InvalidOp1RegError
@@ -183,7 +183,7 @@ func decodeInstruction(encodedInstruction uint64) (Instruction, error) {
 		pcUpdate = PcUpdateJump
 	case 2:
 		pcUpdate = PcUpdateJumpRel
-	case 3:
+	case 4:
 		pcUpdate = PcUpdateJnz
 	default:
 		return Instruction{}, InvalidPcUpdateError
@@ -242,21 +242,21 @@ func decodeInstruction(encodedInstruction uint64) (Instruction, error) {
 	}
 
 	return Instruction{
-		offDst:   offset0,
-		offOp0:   offset1,
-		offOp1:   offset2,
-		dstReg:   dstRegister,
-		op0Reg:   op0Register,
-		op1Addr:  op1Src,
-		resLogic: res,
-		pcUpdate: pcUpdate,
-		apUpdate: apUpdate,
-		fpUpdate: fpUpdate,
-		opcode:   opcode,
+		OffOp0:   offset0,
+		OffOp1:   offset1,
+		OffDst:   offset2,
+		DstReg:   dstRegister,
+		Op0Reg:   op0Register,
+		Op1Addr:  op1Src,
+		ResLogic: res,
+		PcUpdate: pcUpdate,
+		ApUpdate: apUpdate,
+		FpUpdate: fpUpdate,
+		Opcode:   opcode,
 	}, nil
 }
 
-func fromBiasedRepresentation(offset uint16) int {
+func fromBiasedRepresentation(offset uint64) int {
 	var bias uint16 = 1 << 15
-	return int(offset - bias)
+	return int(int16(uint16(offset) - bias))
 }
