@@ -33,27 +33,42 @@ type DebugInfo struct {
 }
 
 type Identifier struct {
-	FullName   string            `json:"full_name"`
-	Members    map[string]string `json:"members"`
-	Size       int               `json:"size"`
-	Decorators []string          `json:"decorators"`
-	PC         int               `json:"pc"`
-	Type       string            `json:"type"`
-	CairoType  string            `json:"cairo_type"`
-	Value      int               `json:"value"`
+	FullName   string         `json:"full_name"`
+	Members    map[string]any `json:"members"`
+	Size       int            `json:"size"`
+	Decorators []string       `json:"decorators"`
+	PC         int            `json:"pc"`
+	Type       string         `json:"type"`
+	CairoType  string         `json:"cairo_type"`
+	Value      int            `json:"value"`
+}
+
+type ApTrackingData struct {
+	Group  int `json:"group"`
+	Offset int `json:"offset"`
+}
+
+type Reference struct {
+	ApTrackingData ApTrackingData `json:"ap_tracking_data"`
+	Pc             int            `json:"pc"`
+	Value          string         `json:"value"`
+}
+
+type ReferenceManager struct {
+	References []Reference `json:"references"`
 }
 
 type CompiledJson struct {
-	Attributes      []string              `json:"attributes"`
-	Builtins        []string              `json:"builtins"`
-	CompilerVersion string                `json:"compiler_version"`
-	Data            []string              `json:"data"`
-	DebugInfo       DebugInfo             `json:"debug_info"`
-	Hints           map[string]string     `json:"hints"`
-	Identifiers     map[string]Identifier `json:"identifiers"`
-	MainScope       string                `json:"main_scope"`
-	Prime           string                `json:"prime"`
-	ReferenceIDS    map[string][]string   `json:"reference_manager"`
+	Attributes       []string              `json:"attributes"`
+	Builtins         []string              `json:"builtins"`
+	CompilerVersion  string                `json:"compiler_version"`
+	Data             []string              `json:"data"`
+	DebugInfo        DebugInfo             `json:"debug_info"`
+	Hints            map[string]string     `json:"hints"`
+	Identifiers      map[string]Identifier `json:"identifiers"`
+	MainScope        string                `json:"main_scope"`
+	Prime            string                `json:"prime"`
+	ReferenceManager ReferenceManager      `json:"reference_manager"`
 }
 
 func Parse(jsonPath string) CompiledJson {
