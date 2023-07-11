@@ -5,7 +5,7 @@ import "github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
 // VirtualMachine represents the Cairo VM.
 // Runs Cairo assembly and produces an execution trace.
 type VirtualMachine struct {
-	run_context  RunContext
-	current_step uint
-	segments     memory.MemorySegmentManager
+	runContext  RunContext
+	currentStep uint
+	segments    memory.MemorySegmentManager
 }
