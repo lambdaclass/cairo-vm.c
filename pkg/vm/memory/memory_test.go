@@ -111,3 +111,29 @@ func TestAddSegment(t *testing.T) {
 		t.Errorf("The number of memory segments should be 4")
 	}
 }
+
+func TestLoadData(t *testing.T) {
+		// Instantiate memory with 3 empty segments
+		segment1 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(1), *memory.NewMaybeRelocatableInt(3)}
+		segment2 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(7), *memory.NewMaybeRelocatableInt(5)}
+		memData := [][]memory.MaybeRelocatable{segment1, segment2}
+		mem := memory.NewMemory(memData)
+	
+		// Instantiate MemorySegmentManager
+		segmentManager := memory.MemorySegmentManager{}
+		segmentManager.Memory = *mem
+
+		data := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(8), *memory.NewMaybeRelocatableInt(13)}
+
+		startPtr := *memory.NewRelocatable(1, 2)
+
+		endPtr, err := segmentManager.LoadData(startPtr, data)
+		if err != nil {
+			t.Errorf("LoadData error: %s", err)
+		}
+
+		expectedEndPtr := *memory.NewRelocatable(1, 3)
+		if !reflect.DeepEqual(endPtr, expectedEndPtr) {
+			t.Errorf("LoadData end pointer and expected pointer are not equal")
+		}
+}

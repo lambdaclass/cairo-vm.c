@@ -1,5 +1,7 @@
 package memory
 
+import "errors"
+
 // MemorySegmentManager manages the list of memory segments.
 // Also holds metadata useful for the relocation process of
 // the memory at the end of the VM run.
@@ -22,4 +24,18 @@ func (ms *MemorySegmentManager) Add() *Relocatable {
 	addedSegmentIdx := len(extendedData) - 1
 
 	return NewRelocatable(addedSegmentIdx, 0)
+}
+
+func (ms *MemorySegmentManager) LoadData(ptr Relocatable, data []MaybeRelocatable) (*Relocatable, error) {
+	dataLen := len(data)
+
+	for i := dataLen; i >= 0; i-- {
+		insertAddr := NewRelocatable(ptr.SegmentIndex, ptr.Offset + uint(i))
+		err := ms.Memory.Insert(insertAddr, &data[i])
+		if err != nil {
+			return nil, errors.New("Insertion error")
+		}
+	}
+
+	return NewRelocatable(ptr.SegmentIndex, ptr.Offset + uint(len(data))), nil
 }
