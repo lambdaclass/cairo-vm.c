@@ -22,10 +22,27 @@ func NewCairoRunner(program Program) *CairoRunner {
 	return &runner
 }
 
-// func (cr *CairoRunner) InitializeFunctionEntrypoint(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable, return_fp memory.MaybeRelocatable) (memory.Relocatable, error) {
-// 	finalPc := 
+func (cr *CairoRunner) InitializeFunctionEntrypoint(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable, returnFp memory.MaybeRelocatable) (*memory.Relocatable, error) {
+	finalPc := *vm.segments.Add()
+	stackExtension := []memory.MaybeRelocatable{returnFp, *memory.NewMaybeRelocatableAddr(finalPc)}
 
-// }
+	stack = append(stack, stackExtension...)
+
+	var relocatableNil memory.Relocatable
+	if cr.executionBase == relocatableNil {
+		return nil, errors.New("No execution base")
+	}
+
+	cr.initialFp = cr.executionBase.Offset + uint(len(stack))
+	cr.finalPc = finalPc
+
+	// err := cr.InitializeState(vm, entrypoint, stack)
+	// if err != nil {
+	// 	return nil, errors.New("Error initializing VM state: %s", err)
+	// }
+
+	return &finalPc, nil
+}
 
 func (cr *CairoRunner) InitializeMainEntrypoint(vm *VirtualMachine) (*memory.Relocatable, error) {
 	if &cr.entrypoint == nil {
