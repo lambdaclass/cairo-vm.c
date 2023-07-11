@@ -20,7 +20,7 @@ func (m *Memory) Insert(addr *Relocatable, val *MaybeRelocatable) error {
 	// FIXME: There should be a special handling if the key
 	// segment index is negative. This is an edge
 	// case, so for now let's raise an error.
-	if addr.segment_index < 0 {
+	if addr.segmentIndex < 0 {
 		return errors.New("Segment index of key is negative - unimplemented")
 	}
 
@@ -61,7 +61,7 @@ func (m *Memory) Get(addr *Relocatable) (*MaybeRelocatable, error) {
 	// FIXME: There should be a special handling if the key
 	// segment index is negative. This is an edge
 	// case, so for now let's raise an error.
-	if addr.segment_index < 0 {
+	if addr.segmentIndex < 0 {
 		return nil, errors.New("Segment index of key is negative - unimplemented")
 	}
 
