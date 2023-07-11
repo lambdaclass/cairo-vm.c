@@ -5,8 +5,8 @@ package memory
 // these values are replaced by real memory addresses,
 // represented by a field element.
 type Relocatable struct {
-	segment_index int
-	offset        uint
+	segmentIndex int
+	offset       uint
 }
 
 // Creates a new Relocatable struct with the specified segment index
@@ -18,12 +18,12 @@ func NewRelocatable(segment_idx int, offset uint) *Relocatable {
 // Get the the indexes of the Relocatable struct.
 // Returns a tuple with both values (segment_index, offset)
 func (r *Relocatable) into_indexes() (uint, uint) {
-	if r.segment_index < 0 {
-		corrected_segment_idx := uint(-(r.segment_index + 1))
+	if r.segmentIndex < 0 {
+		corrected_segment_idx := uint(-(r.segmentIndex + 1))
 		return corrected_segment_idx, r.offset
 	}
 
-	return uint(r.segment_index), r.offset
+	return uint(r.segmentIndex), r.offset
 }
 
 // Int in the Cairo VM represents a value in memory that
