@@ -45,3 +45,5 @@ make test
 
 ## Project Organization
 
+
+All code is compiled with [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) turned on.

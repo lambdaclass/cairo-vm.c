@@ -1,11 +1,11 @@
 .PHONY: clean fmt check_fmt
 
 TARGET=cairo_vm
-TEST_TARGET=test
+TEST_TARGET=cairo_vm_test
 
 CC=cc
-CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0
-CFLAGS_TEST=-I./src
+CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0 -fsanitize=address -fno-omit-frame-pointer
+CFLAGS_TEST=-I./src -fsanitize=address -fno-omit-frame-pointer
 LN_FLAGS=
 
 BUILD_DIR=./build
