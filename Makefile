@@ -66,5 +66,5 @@ fmt:
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
-valgrind: test
+valgrind: clean test
 	valgrind --leak-check=yes --error-exitcode=1 ./build/cairo_vm_test
