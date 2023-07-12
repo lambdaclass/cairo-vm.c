@@ -42,7 +42,8 @@ type MaybeRelocatable struct {
 	inner any
 }
 
-// Creates a new MaybeRelocatable with an Int inner value
+// Creates a new MaybeRelocatable with an Int inner value from
+// a felt.
 func NewMaybeRelocatableInt(felt uint) *MaybeRelocatable {
 	return &MaybeRelocatable{inner: Int{felt}}
 }
@@ -59,4 +60,19 @@ func NewMaybeRelocatableNil() *MaybeRelocatable {
 // Checks if inner value of MaybeRelocatable is `nil`
 func (m *MaybeRelocatable) is_nil() bool {
 	return m.inner == nil
+}
+
+func UintToMaybeRelocatable(num uint) MaybeRelocatable {
+	// When Lambdaworks felt is available, here me should handle
+	// the conversion from uint to felt.
+	return MaybeRelocatable{inner: num}
+}
+
+func SliceUintToMaybeRelocatable(numSlice []uint) []MaybeRelocatable {
+	maybeRelocatableSlice := make([]MaybeRelocatable, len(numSlice))
+	for _, num := range numSlice {
+		maybeRelocatableSlice = append(maybeRelocatableSlice, UintToMaybeRelocatable(num))
+	}
+
+	return maybeRelocatableSlice
 }

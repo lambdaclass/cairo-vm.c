@@ -2,6 +2,8 @@ package vm
 
 import (
 	"errors"
+	"fmt"
+
 	"github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
 )
 
@@ -22,6 +24,40 @@ func NewCairoRunner(program Program) *CairoRunner {
 	return &runner
 }
 
+func (cr *CairoRunner) InitializeState(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable) error {
+	if cr.programBase == (memory.Relocatable{}) {
+		return errors.New("state initialization error - Could not set program base")
+
+	}
+
+	if cr.executionBase == (memory.Relocatable{}) {
+		return errors.New("state initialization error - Could not set execution base")
+
+	}
+
+	programBaseSegmentIndex := cr.programBase.SegmentIndex
+	initialPcOffset := cr.programBase.Offset + entrypoint
+
+	initialPc := memory.NewRelocatable(programBaseSegmentIndex, initialPcOffset)
+	cr.initialPc = *initialPc
+
+	data := memory.SliceUintToMaybeRelocatable(cr.program.Data)
+
+	_, err := vm.segments.LoadData(cr.programBase, &data)
+	if err != nil {
+		return errors.New("state initialization error - Could not load program data")
+	}
+
+	// TODO: Mark program segment addresses as accessed.
+
+	_, err = vm.segments.LoadData(cr.executionBase, &stack)
+	if err != nil {
+		return errors.New("state initialization error - Could not load initial stack")
+	}
+
+	return nil
+}
+
 func (cr *CairoRunner) InitializeFunctionEntrypoint(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable, returnFp memory.MaybeRelocatable) (*memory.Relocatable, error) {
 	finalPc := *vm.segments.Add()
 	stackExtension := []memory.MaybeRelocatable{returnFp, *memory.NewMaybeRelocatableAddr(finalPc)}
@@ -30,27 +66,34 @@ func (cr *CairoRunner) InitializeFunctionEntrypoint(vm *VirtualMachine, entrypoi
 
 	var relocatableNil memory.Relocatable
 	if cr.executionBase == relocatableNil {
-		return nil, errors.New("No execution base")
+		return nil, errors.New("no execution base")
 	}
 
 	cr.initialFp = cr.executionBase.Offset + uint(len(stack))
 	cr.finalPc = finalPc
 
-	// err := cr.InitializeState(vm, entrypoint, stack)
-	// if err != nil {
-	// 	return nil, errors.New("Error initializing VM state: %s", err)
-	// }
+	err := cr.InitializeState(vm, entrypoint, stack)
+	if err != nil {
+		return nil, fmt.Errorf("error initializing VM state: %s", err)
+	}
 
 	return &finalPc, nil
 }
 
 func (cr *CairoRunner) InitializeMainEntrypoint(vm *VirtualMachine) (*memory.Relocatable, error) {
-	if &cr.entrypoint == nil {
-		return nil, errors.New("Missing main() entrypoint")
+	// Here we really want to check that `entrypoint` is not set to nil
+	// Maybe we could ommit this check, because in principle 0 could be a valid value.
+	if cr.entrypoint == 0 {
+		return nil, errors.New("missing main() entrypoint")
 	}
-	// stack := []memory.MaybeRelocatable{}
+	stack := []memory.MaybeRelocatable{}
+	returnFp := memory.NewMaybeRelocatableAddr(*vm.segments.Add())
+	pc, err := cr.InitializeFunctionEntrypoint(vm, cr.entrypoint, stack, *returnFp)
+	if err != nil {
+		return nil, fmt.Errorf("could not initialize function entrypoint, got error: %s", err)
+	}
 
-	return nil, nil
+	return pc, nil
 }
 
 func (cr *CairoRunner) InitializeVM(vm *VirtualMachine) error {
@@ -66,7 +109,7 @@ func (cr *CairoRunner) InitializeVM(vm *VirtualMachine) error {
 	vm.runContext.fp = cr.initialFp
 
 	// TODO: Add builtins validation rules and validate memory
-	// See `initialize_vm` method in cairo-vm.
+	// See `initialize_vm` method in Rust cairo-vm.
 
 	return nil
 }

@@ -26,16 +26,16 @@ func (ms *MemorySegmentManager) Add() *Relocatable {
 	return NewRelocatable(addedSegmentIdx, 0)
 }
 
-func (ms *MemorySegmentManager) LoadData(ptr Relocatable, data []MaybeRelocatable) (*Relocatable, error) {
-	dataLen := len(data)
+func (ms *MemorySegmentManager) LoadData(ptr Relocatable, data *[]MaybeRelocatable) (*Relocatable, error) {
+	dataLen := len(*data)
 
-	for i := dataLen; i >= 0; i-- {
-		insertAddr := NewRelocatable(ptr.SegmentIndex, ptr.Offset + uint(i))
-		err := ms.Memory.Insert(insertAddr, &data[i])
+	for i := dataLen; i >= 1; i-- {
+		insertAddr := NewRelocatable(ptr.SegmentIndex, ptr.Offset+uint(i))
+		err := ms.Memory.Insert(insertAddr, &(*data)[i-1])
 		if err != nil {
-			return nil, errors.New("Insertion error")
+			return nil, errors.New("insertion error")
 		}
 	}
 
-	return NewRelocatable(ptr.SegmentIndex, ptr.Offset + uint(len(data))), nil
+	return NewRelocatable(ptr.SegmentIndex, ptr.Offset+uint(len(*data))), nil
 }

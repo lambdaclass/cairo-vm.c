@@ -113,27 +113,70 @@ func TestAddSegment(t *testing.T) {
 }
 
 func TestLoadData(t *testing.T) {
-		// Instantiate memory with 3 empty segments
-		segment1 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(1), *memory.NewMaybeRelocatableInt(3)}
-		segment2 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(7), *memory.NewMaybeRelocatableInt(5)}
-		memData := [][]memory.MaybeRelocatable{segment1, segment2}
-		mem := memory.NewMemory(memData)
-	
-		// Instantiate MemorySegmentManager
-		segmentManager := memory.MemorySegmentManager{}
-		segmentManager.Memory = *mem
+	// Instantiate memory with 3 empty segments
+	segment0 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(1), *memory.NewMaybeRelocatableInt(3)}
+	segment1 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(7), *memory.NewMaybeRelocatableInt(5)}
+	memData := [][]memory.MaybeRelocatable{segment0, segment1}
+	mem := memory.NewMemory(memData)
 
-		data := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(8), *memory.NewMaybeRelocatableInt(13)}
+	// Instantiate MemorySegmentManager
+	segmentManager := memory.MemorySegmentManager{}
+	segmentManager.Memory = *mem
 
-		startPtr := *memory.NewRelocatable(1, 2)
+	data := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(8), *memory.NewMaybeRelocatableInt(13)}
 
-		endPtr, err := segmentManager.LoadData(startPtr, data)
-		if err != nil {
-			t.Errorf("LoadData error: %s", err)
-		}
+	startPtr := *memory.NewRelocatable(1, 2)
 
-		expectedEndPtr := *memory.NewRelocatable(1, 3)
-		if !reflect.DeepEqual(endPtr, expectedEndPtr) {
-			t.Errorf("LoadData end pointer and expected pointer are not equal")
-		}
+	endPtr, err := segmentManager.LoadData(startPtr, &data)
+	if err != nil {
+		t.Errorf("LoadData error: %s", err)
+	}
+
+	expectedEndPtr := memory.NewRelocatable(1, 4)
+	if !reflect.DeepEqual(*endPtr, *expectedEndPtr) {
+		t.Errorf("LoadData end pointer and expected pointer are not equal")
+	}
+}
+
+func TestLoadDataWithHoles(t *testing.T) {
+	// Instantiate memory with 3 empty segments
+	segment0 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(1), *memory.NewMaybeRelocatableInt(3)}
+	segment1 := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(7), *memory.NewMaybeRelocatableInt(5)}
+	memData := [][]memory.MaybeRelocatable{segment0, segment1}
+	mem := memory.NewMemory(memData)
+
+	// Instantiate MemorySegmentManager
+	segmentManager := memory.MemorySegmentManager{}
+	segmentManager.Memory = *mem
+
+	data := []memory.MaybeRelocatable{*memory.NewMaybeRelocatableInt(8), *memory.NewMaybeRelocatableInt(13)}
+
+	startPtr := *memory.NewRelocatable(1, 4)
+
+	endPtr, err := segmentManager.LoadData(startPtr, &data)
+	if err != nil {
+		t.Errorf("LoadData error: %s", err)
+	}
+
+	expectedEndPtr := memory.NewRelocatable(1, 6)
+	if !reflect.DeepEqual(*endPtr, *expectedEndPtr) {
+		t.Errorf("LoadData end pointer and expected pointer are not equal")
+	}
+
+	// There should be memory holes in (1, 2) and (1, 3)
+	hole1Addr := memory.NewRelocatable(1, 2)
+	hole2Addr := memory.NewRelocatable(1, 3)
+	hole1, err := mem.Get(hole1Addr)
+	if err != nil {
+		t.Errorf("Get error in test: %s", err)
+	}
+	hole2, err := mem.Get(hole2Addr)
+	if err != nil {
+		t.Errorf("Get error in test: %s", err)
+	}
+
+	expected_hole := memory.NewMaybeRelocatableNil()
+	if !reflect.DeepEqual(hole1, expected_hole) || !reflect.DeepEqual(hole2, expected_hole) {
+		t.Errorf("Expected nil value but got another")
+	}
 }
