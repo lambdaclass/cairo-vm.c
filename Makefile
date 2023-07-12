@@ -1,11 +1,12 @@
-.PHONY: clean fmt check_fmt
+.PHONY: clean fmt check_fmt valgrind
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
 
 CC=cc
-CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0 -fsanitize=address -fno-omit-frame-pointer
-CFLAGS_TEST=-I./src -fsanitize=address -fno-omit-frame-pointer
+SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
+CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0
+CFLAGS_TEST=-I./src
 LN_FLAGS=
 
 BUILD_DIR=./build
@@ -29,12 +30,12 @@ default: $(TARGET)
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(LN_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
 $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) $^ -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $^ -o $@
 
 -include $(DEP)
 
@@ -44,11 +45,11 @@ $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
 # the same name as the .o file.
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
 run: $(TARGET)
 	$(BUILD_DIR)/$(TARGET)
@@ -64,3 +65,6 @@ fmt:
 
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
+
+valgrind: test
+	valgrind --leak-check=yes --error-exitcode=1 ./build/cairo_vm_test
