@@ -43,7 +43,12 @@ Tests are located in the `test` directory. To run them:
 make test
 ```
 
-## Project Organization
+## Project Guidelines
 
+Because `C` as a language leaves everything to the programmer, a lot of things can go wrong; discipline is required. This repo has strict rules to address this. They are:
 
-All code is compiled with [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) turned on.
+- PRs addressing performance are forbidden. We are currently concerned with making it work without bugs and nothing more.
+- All PRs must contain tests. Code coverage has to be above 98%.
+- To check for security and other types of bugs, the code will be fuzzed extensively.
+- To catch memory errors, all code is compiled by default with [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer). The CI pipeline runs [Valgrind](https://valgrind.org/docs/manual/quick-start.html) as well.
+- PRs must be accompanied by its corresponding documentation. A book will be written documenting the entire inner workings of it, so anyone can dive in to a Cairo VM codebase and follow it along.
