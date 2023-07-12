@@ -67,4 +67,4 @@ check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
 valgrind: clean test
-	valgrind --leak-check=yes --error-exitcode=1 ./build/cairo_vm_test
+	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
