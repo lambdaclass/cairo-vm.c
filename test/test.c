@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-	assert(1);
+	assert(0);
 	printf("Tests passed!\n");
 
 	return 0;
