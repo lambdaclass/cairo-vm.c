@@ -24,6 +24,31 @@ func NewCairoRunner(program Program) *CairoRunner {
 	return &runner
 }
 
+func (cr *CairoRunner) Initialize(vm *VirtualMachine) (*memory.Relocatable, error) {
+	// TODO: Initialize builtins
+	// err = cr.initialize_builtins(vm)
+	cr.InitializeSegments(vm, nil)
+	endPc, err := cr.InitializeMainEntrypoint(vm)
+	if err != nil {
+		fmt.Errorf("could not initialize Cairo runner, got error: %s", err)
+	}
+	err = cr.InitializeVM(vm)
+	if err != nil {
+		fmt.Errorf("could not initialize Cairo runner, got error: %s", err)
+	}
+
+	return endPc, nil
+}
+
+func (cr *CairoRunner) InitializeSegments(vm *VirtualMachine, programBase *memory.Relocatable) {
+	if *programBase == (memory.Relocatable{}) {
+		cr.programBase = *vm.segments.Add()
+	}
+
+	cr.executionBase = *vm.segments.Add()
+	// TODO: Initialize builtins segments.
+}
+
 func (cr *CairoRunner) InitializeState(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable) error {
 	if cr.programBase == (memory.Relocatable{}) {
 		return errors.New("state initialization error - Could not set program base")
