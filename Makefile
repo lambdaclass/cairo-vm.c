@@ -4,8 +4,10 @@ TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
 
 CC=cc
+CXX=g++
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0
+CXX_FLAGS=-std=c++11 -Wall -Wextra -pedantic -g -O0
 CFLAGS_TEST=-I./src
 LN_FLAGS=
 
@@ -14,12 +16,15 @@ SRC_DIR=./src
 TEST_DIR=./test
 
 SOURCE = $(wildcard $(SRC_DIR)/*.c)
+SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp)
+
 TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c) $(wildcard $(SRC_DIR)/*.c)
 TEST_SOURCE := $(filter-out %main.c, $(TEST_SOURCE))
 
 HEADERS = $(wildcard $(SRC_DIR)/*.h)
 TEST_HEADERS = $(wildcard $(TEST_DIR)/*.h)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCE))
+OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 
 # Gcc/Clang will create these .d files containing dependencies.
@@ -29,8 +34,8 @@ default: $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
-$(BUILD_DIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+$(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP)
+	$(CXX) $(CFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
@@ -46,6 +51,10 @@ $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
