@@ -2,6 +2,7 @@ package vm
 
 import (
 	"errors"
+
 	"github.com/lambdaclass/cairo-vm.go/pkg/vm/memory"
 )
 
@@ -17,9 +18,9 @@ type CairoRunner struct {
 }
 
 // Creates a new instance of a CairoRunner.
-func NewCairoRunner(program Program) *CairoRunner {
+func NewCairoRunner(program Program) (*CairoRunner, error) {
 	runner := CairoRunner{program: program}
-	return &runner
+	return &runner, nil
 }
 
 func (cr *CairoRunner) InitializeFunctionEntrypoint(vm *VirtualMachine, entrypoint uint, stack []memory.MaybeRelocatable, returnFp memory.MaybeRelocatable) (*memory.Relocatable, error) {
