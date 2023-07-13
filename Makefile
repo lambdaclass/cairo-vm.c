@@ -16,7 +16,7 @@ SRC_DIR=./src
 TEST_DIR=./test
 
 SOURCE = $(wildcard $(SRC_DIR)/*.c)
-SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp)
+SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
 
 TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c) $(wildcard $(SRC_DIR)/*.c)
 TEST_SOURCE := $(filter-out %main.c, $(TEST_SOURCE))
