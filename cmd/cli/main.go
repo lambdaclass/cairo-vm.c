@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/lambdaclass/cairo-vm.go/pkg/salutes"
+	"github.com/lambdaclass/cairo-vm.go/pkg/lambdaworks"
 )
 
 func main() {
-	fmt.Println(salutes.Hello())
+	fmt.Println(lambdaworks.From(100))
 }
