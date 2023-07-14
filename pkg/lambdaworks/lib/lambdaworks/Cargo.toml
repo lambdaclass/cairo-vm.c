@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 libc = "0.2"
 lambdaworks-math = { git = "https://github.com/lambdaclass/lambdaworks.git" }
-lambdaworks-crypto = { git = "https://github.com/lambdaclass/lambdaworks.git" }
 
 [lib]
 crate-type = ["cdylib", "staticlib", "lib"]

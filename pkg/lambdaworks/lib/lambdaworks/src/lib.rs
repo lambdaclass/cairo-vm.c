@@ -4,9 +4,17 @@ use lambdaworks_math::{
     unsigned_integer::element::UnsignedInteger,
 };
 
+// A 256 bit prime field represented as a Montgomery, 4-limb UnsignedInteger.
 type Felt = FieldElement<Stark252PrimeField>;
+
+// C representation of a limbs array: a raw pointer to a mutable unsigned 64 bits integer.
 type Limbs = *mut u64;
 
+// Receives a Felt and writes its C representation in the limbs variable, as we can't
+// return arrays in C.
+//
+// Felt uses the montgomery representation internally, so to be able to reconstruct a felt
+// in a different call, the representative limbs are the ones written as a result of this call.
 fn felt_to_limbs(felt: Felt, limbs: Limbs) {
     let representative = felt.representative().limbs;
     for i in 0..4 {
@@ -17,6 +25,8 @@ fn felt_to_limbs(felt: Felt, limbs: Limbs) {
     }
 }
 
+// Receives a C representation of a limbs array and returns a felt representing
+// the same number.
 fn limbs_to_felt(limbs: Limbs) -> Felt {
     unsafe {
         let slice: &mut [u64] = std::slice::from_raw_parts_mut(limbs, 4);
