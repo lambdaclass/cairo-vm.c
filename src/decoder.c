@@ -1,6 +1,8 @@
 #include "decoder.h"
 
-ResultInstruction decode_instruction(uint64_t encoded_ins)
+int64_t decode_offset(uint64_t offset) { return 1; }
+
+ResultInstruction decode_instruction(uint64_t encoded_instr)
 {
 	const uint64_t HIGH_BIT = 1ULL << 63;
 	const uint64_t DST_REG_MASK = 0x0001;
@@ -25,9 +27,13 @@ ResultInstruction decode_instruction(uint64_t encoded_ins)
 	const uint64_t OFF2_OFF = 32;
 	const uint64_t OFFX_MASK = 0xFFFF;
 
-	if ((encoded_ins & HIGH_BIT) != 0)
+	if ((encoded_instr & HIGH_BIT) != 0)
 	{
-		ResultInstruction ret = {.is_error = true, .value = InstructionNonZeroHighBit};
-		return ret;
+		ResultInstruction error = {.is_error = true, .value = InstructionNonZeroHighBit};
+		return error;
 	}
+
+	uint64_t off0 = decode_offset(encoded_instr >> OFF0_OFF & OFFX_MASK);
+	uint64_t off1 = decode_offset(encoded_instr >> OFF1_OFF & OFFX_MASK);
+	uint64_t off2 = decode_offset(encoded_instr >> OFF2_OFF & OFFX_MASK);
 }
