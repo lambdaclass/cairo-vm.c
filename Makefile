@@ -51,6 +51,9 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
+deps-macos:
+	brew install clang-format
+
 run: $(TARGET)
 	$(BUILD_DIR)/$(TARGET)
 
