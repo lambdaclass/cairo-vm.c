@@ -1,5 +1,6 @@
 #ifndef INS_H
 #define INS_H
+#include <stdbool.h>
 
 //  Structure of the 63-bit that form the first word of each instruction.
 //  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
@@ -73,7 +74,9 @@ enum Opcode
 	Ret,
 };
 
-// Typedef definitions
+// ---------------------
+//  Typedef definitions
+// ---------------------
 
 typedef enum Res Res;
 typedef enum Opcode Opcode;
@@ -98,6 +101,25 @@ struct Instruction
 	FpUpdate fp_update;
 	Opcode opcode;
 };
+
+// error handling
+
+typedef enum VirtualMachineError
+{
+	InstructionNonZeroHighBit,
+} VirtualMachineError;
+
+typedef union ResultInstructionValue
+{
+	VirtualMachineError error;
+	Instruction instruction;
+} ResultInstructionValue;
+
+typedef struct ResultInstruction
+{
+	bool is_error;
+	ResultInstructionValue value;
+} ResultInstruction;
 
 unsigned int size(Instruction ins);
 
