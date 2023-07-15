@@ -1,5 +1,4 @@
 name: Test/Fmt
-
 on:
   push:
     branches: [main]
@@ -7,26 +6,11 @@ on:
     branches: [main]
 
 jobs:
-  test_and_format:
+  tests_and_format:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.19
-
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-
-    - name: build
-      run: make build
-
-    - name: test
-      run: make test
-
-    - name: format
-      run: make check_fmt
+      - uses: actions/checkout@v3
+      - run: make check_fmt
+      - run: make test
+      - run: sudo apt install valgrind -y
+      - run: make SANITIZER_FLAGS= valgrind
