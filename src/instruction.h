@@ -22,22 +22,6 @@
 // representing the first one with this struct is enougth.
 
 // ---------------------
-//  Typedef definitions
-// ---------------------
-
-typedef enum Res Res;
-typedef enum Opcode Opcode;
-typedef enum Op1Addr Op1Addr;
-typedef enum Register Register;
-typedef enum PcUpdate PcUpdate;
-typedef enum ApUpdate ApUpdate;
-typedef enum FpUpdate FpUpdate;
-typedef struct Instruction Instruction;
-typedef struct ResultInstruction ResultInstruction;
-typedef enum VirtualMachineError VirtualMachineError;
-typedef union ResultInstructionValue ResultInstructionValue;
-
-// ---------------------
 //     structures
 // ---------------------
 
@@ -67,7 +51,7 @@ enum ApUpdate {
 };
 
 enum FpUpdate {
-	Regular,
+	FP_Regular,
 	APPlus2,
 	Dst,
 };
@@ -83,14 +67,14 @@ struct Instruction {
 	int off0;
 	int off1;
 	int off2;
-	Register dst_reint;
-	Register op0_register;
-	Op1Addr op1_addr;
-	Res res;
-	PcUpdate pc_update;
-	ApUpdate ap_update;
-	FpUpdate fp_update;
-	Opcode opcode;
+	enum Register dst_register;
+	enum Register op0_register;
+	enum Op1Addr op1_addr;
+	enum Res res;
+	enum PcUpdate pc_update;
+	enum ApUpdate ap_update;
+	enum FpUpdate fp_update;
+	enum Opcode opcode;
 };
 // -----------------
 // 	Error handling
@@ -98,17 +82,38 @@ struct Instruction {
 
 enum VirtualMachineError {
 	InstructionNonZeroHighBit,
+	InvalidOp1Reg,
+	InvalidPcUpdate,
+	InvalidRes,
+	InvalidOpcode,
+	InvalidApUpdate,
 };
 
 union ResultInstructionValue {
-	VirtualMachineError error;
-	Instruction instruction;
+	enum VirtualMachineError error;
+	struct Instruction instruction;
 };
 
 struct ResultInstruction {
 	bool is_error;
-	ResultInstructionValue value;
+	union ResultInstructionValue value;
 };
+
+// ---------------------
+//  Typedef definitions
+// ---------------------
+
+typedef enum Res Res;
+typedef enum Opcode Opcode;
+typedef enum Op1Addr Op1Addr;
+typedef enum Register Register;
+typedef enum PcUpdate PcUpdate;
+typedef enum ApUpdate ApUpdate;
+typedef enum FpUpdate FpUpdate;
+typedef struct Instruction Instruction;
+typedef struct ResultInstruction ResultInstruction;
+typedef enum VirtualMachineError VirtualMachineError;
+typedef union ResultInstructionValue ResultInstructionValue;
 
 // ------------------
 // 	  Functions
