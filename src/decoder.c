@@ -1,7 +1,7 @@
 #include "decoder.h"
 
 int64_t decode_offset(uint64_t offset) {
-	uint8_t *buffer_bytes[8];
+	uint8_t buffer_bytes[8];
 	uint8_t *vectorized_offset = u64_to_le_bytes(offset, buffer_bytes);
 	uint8_t offset_bytes[2] = {vectorized_offset[0], vectorized_offset[1]};
 	uint16_t offset_16b_encoded = u16_from_le_bytes(offset_bytes);
