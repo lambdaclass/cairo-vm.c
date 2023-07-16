@@ -3,8 +3,9 @@
 #include "instruction.h"
 #include "stdint.h"
 #include "stdio.h"
+#include "utils.h"
 
+uint64_t decode_offset(uint64_t offset);
 ResultInstruction decode_instruction(uint64_t encoded_instr);
-int64_t decode_offset(uint64_t offset);
 
 #endif
