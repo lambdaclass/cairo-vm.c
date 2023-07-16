@@ -21,6 +21,26 @@
 // Some instructions spread over two words when they use an immediate value, so
 // representing the first one with this struct is enougth.
 
+// ---------------------
+//  Typedef definitions
+// ---------------------
+
+typedef enum Res Res;
+typedef enum Opcode Opcode;
+typedef enum Op1Addr Op1Addr;
+typedef enum Register Register;
+typedef enum PcUpdate PcUpdate;
+typedef enum ApUpdate ApUpdate;
+typedef enum FpUpdate FpUpdate;
+typedef struct Instruction Instruction;
+typedef struct ResultInstruction ResultInstruction;
+typedef enum VirtualMachineError VirtualMachineError;
+typedef union ResultInstructionValue ResultInstructionValue;
+
+// ---------------------
+//     structures
+// ---------------------
+
 enum Register { REG_AP, REG_FP };
 
 enum Op1Addr { Imm, OP_AP, OP_FP, Op0 };
@@ -72,8 +92,9 @@ struct Instruction {
 	FpUpdate fp_update;
 	Opcode opcode;
 };
-
-// error handling
+// -----------------
+// 	Error handling
+// -----------------
 
 enum VirtualMachineError {
 	InstructionNonZeroHighBit,
@@ -89,23 +110,8 @@ struct ResultInstruction {
 	ResultInstructionValue value;
 };
 
-// ---------------------
-//  Typedef definitions
-// ---------------------
-
-typedef enum Res Res;
-typedef enum Opcode Opcode;
-typedef enum Op1Addr Op1Addr;
-typedef enum Register Register;
-typedef enum PcUpdate PcUpdate;
-typedef enum ApUpdate ApUpdate;
-typedef enum FpUpdate FpUpdate;
-typedef struct Instruction Instruction;
-typedef struct ResultInstruction ResultInstruction;
-typedef enum VirtualMachineError VirtualMachineError typedef union ResultInstructionValue ResultInstructionValue;
-
 // ------------------
-// 	  functions
+// 	  Functions
 // ------------------
 
 unsigned int instruction_size(Instruction ins);
