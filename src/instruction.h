@@ -21,74 +21,45 @@
 // Some instructions spread over two words when they use an immediate value, so
 // representing the first one with this struct is enougth.
 
-enum Register
-{
-	REG_AP,
-	REG_FP
-};
+enum Register { REG_AP, REG_FP };
 
-enum Op1Addr
-{
-	Imm,
-	OP_AP,
-	OP_FP,
-	Op0
-};
+enum Op1Addr { Imm, OP_AP, OP_FP, Op0 };
 
-enum Res
-{
+enum Res {
 	Op1,
 	Res_Add,
 	Mul,
 	Unconstrained,
 };
 
-enum PcUpdate
-{
+enum PcUpdate {
 	PC_Regular,
 	Jump,
 	JumpRel,
 	Jnz,
 };
 
-enum ApUpdate
-{
+enum ApUpdate {
 	AP_Regular,
 	Add,
 	Add1,
 	Add2,
 };
 
-enum FpUpdate
-{
+enum FpUpdate {
 	Regular,
 	APPlus2,
 	Dst,
 };
 
-enum Opcode
-{
+enum Opcode {
 	NOp,
 	AssertEq,
 	Call,
 	Ret,
 };
 
-// ---------------------
-//  Typedef definitions
-// ---------------------
-
-typedef enum Res Res;
-typedef enum Opcode Opcode;
-typedef enum Op1Addr Op1Addr;
-typedef enum Register Register;
-typedef enum PcUpdate PcUpdate;
-typedef enum ApUpdate ApUpdate;
-typedef enum FpUpdate FpUpdate;
-typedef struct Instruction Instruction;
-
-struct Instruction
-{
+struct Instruction {
 	int off0;
 	int off1;
 	int off2;
@@ -104,23 +75,39 @@ struct Instruction
 
 // error handling
 
-typedef enum VirtualMachineError
-{
+enum VirtualMachineError {
 	InstructionNonZeroHighBit,
-} VirtualMachineError;
+};
 
-typedef union ResultInstructionValue
-{
+union ResultInstructionValue {
 	VirtualMachineError error;
 	Instruction instruction;
-} ResultInstructionValue;
+};
 
-typedef struct ResultInstruction
-{
+struct ResultInstruction {
 	bool is_error;
 	ResultInstructionValue value;
-} ResultInstruction;
+};
 
-unsigned int size(Instruction ins);
+// ---------------------
+//  Typedef definitions
+// ---------------------
+
+typedef enum Res Res;
+typedef enum Opcode Opcode;
+typedef enum Op1Addr Op1Addr;
+typedef enum Register Register;
+typedef enum PcUpdate PcUpdate;
+typedef enum ApUpdate ApUpdate;
+typedef enum FpUpdate FpUpdate;
+typedef struct Instruction Instruction;
+typedef struct ResultInstruction ResultInstruction;
+typedef enum VirtualMachineError VirtualMachineError typedef union ResultInstructionValue ResultInstructionValue;
+
+// ------------------
+// 	  functions
+// ------------------
+
+unsigned int instruction_size(Instruction ins);
 
 #endif

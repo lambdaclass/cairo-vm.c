@@ -1,7 +1,6 @@
 #include "instruction.h"
 
-unsigned int size(Instruction ins)
-{
+unsigned int instruction_size(Instruction ins) {
 	if (ins.op1_addr == Imm)
 		return 2;
 	else

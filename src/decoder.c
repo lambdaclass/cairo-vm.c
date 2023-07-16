@@ -1,18 +1,16 @@
 #include "decoder.h"
 
-uint64_t decode_offset(uint64_t offset)
-{
+uint64_t decode_offset(uint64_t offset) {
 	uint8_t *buffer_bytes[8];
 	uint8_t *vectorized_offset = u64_to_le_bytes(offset, buffer_bytes);
-	uint8_t to_encode[2] = {vectorized_offset[0], vectorized_offset[1]};
-	uint16_t offset_16b_encoded = u16_from_le_bytes(to_encode);
+	uint8_t offset_bytes[2] = {vectorized_offset[0], vectorized_offset[1]};
+	uint16_t offset_16b_encoded = u16_from_le_bytes(offset_bytes);
 	uint16_t complement_const = 0x8000;
 
 	return 1;
 }
 
-ResultInstruction decode_instruction(uint64_t encoded_instr)
-{
+ResultInstruction decode_instruction(uint64_t encoded_instr) {
 	const uint64_t HIGH_BIT = 1ULL << 63;
 	const uint64_t DST_REG_MASK = 0x0001;
 	const uint64_t DST_REG_OFF = 0;
@@ -36,8 +34,7 @@ ResultInstruction decode_instruction(uint64_t encoded_instr)
 	const uint64_t OFF2_OFF = 32;
 	const uint64_t OFFX_MASK = 0xFFFF;
 
-	if ((encoded_instr & HIGH_BIT) != 0)
-	{
+	if ((encoded_instr & HIGH_BIT) != 0) {
 		ResultInstruction error = {.is_error = true, .value = InstructionNonZeroHighBit};
 		return error;
 	}
