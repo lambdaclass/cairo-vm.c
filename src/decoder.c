@@ -2,7 +2,8 @@
 
 uint64_t decode_offset(uint64_t offset)
 {
-	uint8_t *vectorized_offset = u64_to_le_bytes(offset);
+	uint8_t *buffer_bytes[8];
+	uint8_t *vectorized_offset = u64_to_le_bytes(offset, buffer_bytes);
 	uint8_t to_encode[2] = {vectorized_offset[0], vectorized_offset[1]};
 	uint16_t offset_16b_encoded = u16_from_le_bytes(to_encode);
 	uint16_t complement_const = 0x8000;

@@ -3,24 +3,22 @@
 //   u64 bits
 // ------------
 
-uint8_t *u64_to_le_bytes(uint64_t value)
+uint8_t *u64_to_le_bytes(uint64_t value, uint8_t *buffer_bytes)
 {
-	uint8_t bytes[8];
 	for (int i = 0; i < 8; i++)
 	{
-		bytes[i] = value >> (8 * i) & 0xFF;
+		buffer_bytes[i] = value >> (8 * i) & 0xFF;
 	}
-	return bytes;
+	return buffer_bytes;
 }
 
-uint8_t *u64_to_be_bytes(uint64_t value)
+uint8_t *u64_to_be_bytes(uint64_t value, uint8_t *buffer_bytes)
 {
-	uint8_t bytes[8];
 	for (int i = 7; i >= 0; i--)
 	{
-		bytes[i] = value >> (8 * i) & 0xFF;
+		buffer_bytes[i] = value >> (8 * i) & 0xFF;
 	}
-	return bytes;
+	return buffer_bytes;
 }
 
 uint64_t u64_from_le_bytes(uint8_t *bytes)
@@ -50,14 +48,13 @@ uint64_t u64_from_be_bytes(uint8_t *bytes)
 //   u16 bits
 // ------------
 
-uint8_t *u16_to_le_bytes(uint16_t value)
+uint8_t *u16_to_le_bytes(uint16_t value, uint8_t *buffer_bytes)
 {
-	uint8_t bytes[2];
 	for (int i = 0; i < 2; i++)
 	{
-		bytes[i] = value >> (8 * i) & 0xFF;
+		buffer_bytes[i] = value >> (8 * i) & 0xFF;
 	}
-	return bytes;
+	return buffer_bytes;
 }
 
 uint16_t u16_from_le_bytes(uint8_t *bytes)
@@ -75,14 +72,13 @@ uint16_t u16_from_le_bytes(uint8_t *bytes)
 //   u32 bits
 // ------------
 
-uint8_t *u32_to_le_bytes(uint32_t value)
+uint8_t *u32_to_le_bytes(uint32_t value, uint8_t *buffer_bytes)
 {
-	uint8_t bytes[4];
 	for (int i = 0; i < 4; i++)
 	{
-		bytes[i] = value >> (8 * i) & 0xFF;
+		buffer_bytes[i] = value >> (8 * i) & 0xFF;
 	}
-	return bytes;
+	return buffer_bytes;
 }
 
 uint32_t u32_from_le_bytes(uint8_t *bytes)

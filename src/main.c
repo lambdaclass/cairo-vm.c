@@ -11,18 +11,10 @@ int main(int argc, char **argv)
 	//   {
 	//   	printf("ERROR\n");
 	//   }
-	uint16_t val = 132;
-	uint8_t *res = u32_to_le_bytes(val);
-
-	printf("[ ");
-	for (int j = 0; j < 4; j++)
-	{
-		printf("%hhu, ", res[j]);
-	}
-	printf(" ]\n");
-
-	uint16_t encoded = u32_from_le_bytes(res);
-	printf("encoded value: %hu", encoded);
+	uint64_t val = 1;
+	uint8_t buffer_bytes[8];
+	uint8_t *res = u64_to_be_bytes(val, buffer_bytes);
+	uint64_t encoded = u64_from_be_bytes(res);
 
 	return 0;
 }
