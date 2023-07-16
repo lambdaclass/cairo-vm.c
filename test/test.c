@@ -2,10 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-int main(int argc, char **argv) {
-
-	// tests of decoding
-
+void decoding_tests() {
 	//  0|  opcode|ap_update|pc_update|res_logic|op1_src|op0_reg|dst_reg
 	// 15|14 13 12|    11 10|  9  8  7|     6  5|4  3  2|      1|      0
 	//   |    CALL|      ADD|     JUMP|      ADD|    IMM|     FP|     FP
@@ -71,7 +68,11 @@ int main(int argc, char **argv) {
 	if (instr2.fp_update == Dst) {
 		assert(1);
 	}
-	printf("Tests passed!\n");
+}
 
+int main(int argc, char **argv) {
+	decoding_tests();
+
+	printf("Tests passed!\n");
 	return 0;
 }
