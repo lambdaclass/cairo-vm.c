@@ -3,12 +3,85 @@
 #include <stdio.h>
 
 void decoding_tests(void) {
+
+	printf("--------------------------------- \n");
+	printf("Test: non_zero_high_bit \n");
+
+	ResultInstruction err = decode_instruction(0x94A7800080008000);
+	VirtualMachineError vm_error = err.value.error;
+	if (err.is_error)
+		assert(1);
+	if (vm_error == InstructionNonZeroHighBit)
+		assert(1);
+
+	printf("OK! \n");
+
+	printf("--------------------------------- \n");
+	printf("Test: invalid_op1_reg \n");
+
+	ResultInstruction err1 = decode_instruction(0x294F800080008000);
+	VirtualMachineError vm_error1 = err1.value.error;
+	if (err1.is_error)
+		assert(1);
+	if (vm_error1 == InvalidOp1Reg)
+		assert(1);
+
+	printf("OK! \n");
+
+	printf("--------------------------------- \n");
+	printf("Test: invalid_pc_update \n");
+
+	ResultInstruction err2 = decode_instruction(0x294F800080008000);
+	VirtualMachineError vm_error2 = err2.value.error;
+	if (err2.is_error)
+		assert(1);
+	if (vm_error2 == InvalidPcUpdate)
+		assert(1);
+
+	printf("OK! \n");
+
+	printf("--------------------------------- \n");
+	printf("Test: invalid_res_logic \n");
+
+	ResultInstruction err3 = decode_instruction(0x2968800080008000);
+	VirtualMachineError vm_error3 = err3.value.error;
+	if (err3.is_error)
+		assert(1);
+	if (vm_error3 == InvalidRes)
+		assert(1);
+
+	printf("OK! \n");
+
+	printf("--------------------------------- \n");
+	printf("Test: invalid_res_logic \n");
+
+	ResultInstruction err4 = decode_instruction(0x3948800080008000);
+	VirtualMachineError vm_error4 = err4.value.error;
+	if (err4.is_error)
+		assert(1);
+	if (vm_error4 == InvalidOpcode)
+		assert(1);
+
+	printf("OK! \n");
+
+	printf("--------------------------------- \n");
+	printf("Test: invalid_res_logic \n");
+
+	ResultInstruction err5 = decode_instruction(0x2D48800080008000);
+	VirtualMachineError vm_error5 = err5.value.error;
+	if (err5.is_error)
+		assert(1);
+	if (vm_error5 == InvalidApUpdate)
+		assert(1);
+
+	printf("OK! \n");
+
 	//  0|  opcode|ap_update|pc_update|res_logic|op1_src|op0_reg|dst_reg
 	// 15|14 13 12|    11 10|  9  8  7|     6  5|4  3  2|      1|      0
 	//   |    CALL|      ADD|     JUMP|      ADD|    IMM|     FP|     FP
 	//  0  0  0  1      0  1   0  0  1      0  1 0  0  1       1       1
 	//  0001 0100 1010 0111 = 0x14A7; offx = 0
-
+	printf("--------------------------------- \n");
 	printf("Test: decode_flags_call_add_jmp_add_imm_fp_fp\n");
 	ResultInstruction res = decode_instruction(0x14A7800080008000);
 	Instruction instr = res.value.instruction;
@@ -37,7 +110,7 @@ void decoding_tests(void) {
 	//   |     RET|     ADD1| JUMP_REL|      MUL|     FP|     AP|     AP
 	//  0  0  1  0      1  0   0  1  0      1  0 0  1  0       0       0
 	//  0010 1001 0100 1000 = 0x2948; offx = 0
-
+	printf("--------------------------------- \n");
 	printf("Test: decode_flags_ret_add1_jmp_rel_mul_fp_ap_ap\n");
 	ResultInstruction res2 = decode_instruction(0x2948800080008000);
 	Instruction instr2 = res2.value.instruction;
@@ -66,7 +139,7 @@ void decoding_tests(void) {
 	//   |ASSRT_EQ|      ADD|      JNZ|      MUL|     AP|     AP|     AP
 	//  0  1  0  0      1  0   1  0  0      1  0 1  0  0       0       0
 	//  0100 1010 0101 0000 = 0x4A50; offx = 0
-
+	printf("--------------------------------- \n");
 	printf("Test: decode_flags_assrt_add_jnz_mul_ap_ap_ap\n");
 	ResultInstruction res3 = decode_instruction(0x4A50800080008000);
 	Instruction instr3 = res3.value.instruction;
@@ -95,6 +168,7 @@ void decoding_tests(void) {
 	//   |ASSRT_EQ|     ADD2|      JNZ|UNCONSTRD|    OP0|     AP|     AP
 	//  0  1  0  0      0  0   1  0  0      0  0 0  0  0       0       0
 	//  0100 0010 0000 0000 = 0x4200; offx = 0
+	printf("--------------------------------- \n");
 	printf("Test: decode_flags_assrt_add2_jnz_uncon_op0_ap_ap\n");
 	ResultInstruction res4 = decode_instruction(0x4200800080008000);
 	Instruction instr4 = res4.value.instruction;
@@ -123,6 +197,7 @@ void decoding_tests(void) {
 	//   |     NOP|  REGULAR|  REGULAR|      OP1|    OP0|     AP|     AP
 	//  0  0  0  0      0  0   0  0  0      0  0 0  0  0       0       0
 	//  0000 0000 0000 0000 = 0x0000; offx = 0
+	printf("--------------------------------- \n");
 	printf("Test: decode_flags_nop_regu_regu_op1_op0_ap_ap\n");
 	ResultInstruction res5 = decode_instruction(0x0000800080008000);
 	Instruction instr5 = res5.value.instruction;
@@ -142,6 +217,24 @@ void decoding_tests(void) {
 	if (instr5.opcode == NOp)
 		assert(1);
 	if (instr5.fp_update == FP_Regular)
+		assert(1);
+
+	printf("OK! \n");
+
+	//  0|  opcode|ap_update|pc_update|res_logic|op1_src|op0_reg|dst_reg
+	// 15|14 13 12|    11 10|  9  8  7|     6  5|4  3  2|      1|      0
+	//   |     NOP|  REGULAR|  REGULAR|      OP1|    OP0|     AP|     AP
+	//  0  0  0  0      0  0   0  0  0      0  0 0  0  0       0       0
+	//  0000 0000 0000 0000 = 0x0000; offx = 0
+	printf("--------------------------------- \n");
+	printf("Test: decode_offset_negative \n");
+	ResultInstruction res6 = decode_instruction(0x0000800180007FFF);
+	Instruction instr6 = res6.value.instruction;
+	if (instr6.off0 == -1)
+		assert(1);
+	if (instr6.off1 == 0)
+		assert(1);
+	if (instr6.off2 == 1)
 		assert(1);
 
 	printf("OK! \n");
