@@ -12,4 +12,8 @@ uint64_t u64_from_be_bytes(uint8_t *bytes);
 uint8_t *u16_to_le_bytes(uint16_t value);
 uint16_t u16_from_le_bytes(uint8_t *bytes);
 
+uint8_t *u32_to_le_bytes(uint32_t value);
+uint32_t u32_from_le_bytes(uint8_t* bytes);
+
+
 #endif

@@ -70,3 +70,28 @@ uint16_t u16_from_le_bytes(uint8_t *bytes)
 	}
 	return value;
 }
+
+// ------------
+//   u32 bits
+// ------------
+
+uint8_t *u32_to_le_bytes(uint32_t value)
+{
+	uint8_t bytes[4];
+	for (int i = 0; i < 4; i++)
+	{
+		bytes[i] = value >> (8 * i) & 0xFF;
+	}
+	return bytes;
+}
+
+uint32_t u32_from_le_bytes(uint8_t *bytes)
+{
+	uint16_t value = 0;
+	for (int i = 3; i >= 0; i--)
+	{
+		value |= bytes[i];
+		value = value << (8 * i);
+	}
+	return value;
+}
