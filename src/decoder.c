@@ -7,7 +7,7 @@ int64_t decode_offset(uint64_t offset) {
 	uint16_t offset_16b_encoded = u16_from_le_bytes(offset_bytes);
 	uint16_t complement_const = 0x8000;
 
-	// overflow wrapp around is standard behaviour of C uints
+	// overflow wrap around is standard behaviour of C uints
 	uint16_t offset_16b = offset_16b_encoded - complement_const;
 
 	return (int64_t)offset_16b;
