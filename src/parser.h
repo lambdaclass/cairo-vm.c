@@ -3,7 +3,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -62,7 +61,7 @@ extern "C" {
     char* prime;
   } Program;
 
-  Program parseJson(const char* filname, Program *program);
+  int parseJson(const char* filname, Program *program);
 
   
 

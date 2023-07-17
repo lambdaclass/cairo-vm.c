@@ -11,8 +11,8 @@ int main(int argc, char **argv)
 	struct stat st;
   stat(filename, &st);
   size_t size = st.st_size;
-	Program *program = malloc(size);
-	
+	Program *program = malloc(size * sizeof(int));
 	parseJson(filename, program);
+	free(program);
     return 0;
 }
