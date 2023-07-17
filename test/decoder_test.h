@@ -3,6 +3,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-void decoding_tests();
+void decoding_tests(void);
 
 #endif
