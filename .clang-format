@@ -1,6 +1,5 @@
 UseTab: ForIndentation
 IndentWidth: 8
-BreakBeforeBraces: Allman
 AllowShortIfStatementsOnASingleLine: false
 IndentCaseLabels: false
 ColumnLimit: 120
