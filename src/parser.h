@@ -61,11 +61,7 @@ extern "C" {
     char* prime;
   } Program;
 
-  
-  Program *parseFibJson();
-
-  
-
+  Program *parseFibJson(void);
 #ifdef __cplusplus
 } // extern "C"
 #endif

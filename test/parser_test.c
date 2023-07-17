@@ -6,7 +6,7 @@ void parsing_tests() {
   printf("---------------------- \n");
   printf("Test: decoding_data_array \n");
 
-  const char *expected_data[] = {
+  char *expected_data[] = {
 			"0x40780017fff7fff",
 			"0x0",
 			"0x1104800180018000",

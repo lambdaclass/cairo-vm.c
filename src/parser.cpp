@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "../lib/simdjson.h"
 #include "parser.h"
+#include <string_view>
 #include <sys/stat.h>
 
 
@@ -16,27 +17,30 @@ using namespace std;
 
 extern "C" {  
 
-  void allocate(const char *filename, Program *program) {
+  Program* allocate(const char *filename) {
     // Allocate custom Program in memory
     struct stat st;
     stat(filename, &st);
     size_t size = st.st_size;
-    program = (Program *)malloc(size * sizeof(int));
+    return (Program *)malloc(size * sizeof(int));
   }
 
-  void parseData(const simdjson::dom::element root, Program *program) {
-    simdjson::simdjson_result<simdjson::dom::array> data= root["data"].get_array();
-    int elements = data.size();
+  void parseArray(const simdjson::dom::array elemArray, char **structArray) {
+    int elements = elemArray.size();
     int max_chars = 100;
-    program->data = (char **)malloc(elements * max_chars * sizeof(char));
-
-
+    structArray = (char **)malloc(elements * max_chars * sizeof(char));
     for(int i = 0; i < elements; ++i) {
-      simdjson::dom::element elem = data.at(i).value();
-      program->data[i] = (char *)malloc((max_chars + 1) * sizeof(char));
-      strcpy(program->data[i], elem.get_c_str());
+      simdjson::dom::element elem = elemArray.at(i).value();
+      structArray[i] = (char *)malloc((max_chars + 1) * sizeof(char));
+      strcpy(structArray[i], elem.get_c_str());
     }
-    program->data[elements] = NULL;
+  }
+
+  void parseString(const char *jsonString, char *structString) {
+    int max_chars = 100;
+    structString = (char *)malloc((max_chars + 1) * sizeof(char));
+    strcpy(structString, jsonString);
+
   }
 
   int parseJson(const char *filename, Program *program) {
@@ -46,16 +50,20 @@ extern "C" {
     simdjson::dom::parser parser;
     simdjson::dom::element root = parser.parse(json);
 
-    // Populate the Program->Data struct
-    parseData(root, program);
+    // Populate the Program struct
+    parseArray(root["attributes"].get_array(), program->attributes);
+    parseArray(root["builtins"].get_array(), program->builtins);
+    parseString(root["compiler_version"].get_c_str(), program->compiler_version);
+    parseArray(root["data"].get_array(), program->data);
+
+
     return 0;
   }
 
-  Program *parseFibJson()
-  {
+  Program *parseFibJson(void) {
     Program *program;
-    char *filename = "cairo_programs/fibonacci.json";
-    allocate(filename, program);
+    const char filename[30] = "cairo_programs/fibonacci.json";
+    program = allocate(filename);
     parseJson(filename, program);
     return program;
   }
