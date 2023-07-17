@@ -10,14 +10,12 @@
 #include "../lib/simdjson.h"
 #include "parser.h"
 
+
 using namespace std;
 
-
-
-
-
-
 extern "C" {
+
+  
 
   int parseJson(const char *filename, Program *program) {
     

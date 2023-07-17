@@ -61,7 +61,7 @@ extern "C" {
     char* prime;
   } Program;
 
-  int parseJson(const char* filname, Program *program);
+  int parseJson(const char* filename, Program *program);
 
   
 
