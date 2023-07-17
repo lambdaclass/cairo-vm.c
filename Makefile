@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile-rust
+.PHONY: clean fmt check_fmt valgrind compile-rust deps-macos
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -25,7 +25,7 @@ TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
 
-default: $(TARGET)
+default: compile-rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
@@ -54,10 +54,10 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 deps-macos:
 	brew install clang-format
 
-run: $(TARGET)
+run: default
 	$(BUILD_DIR)/$(TARGET) 
 
-test: $(TEST_TARGET)
+test: compile-rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
@@ -70,7 +70,7 @@ fmt:
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
-valgrind: clean compile-rust test
+valgrind: clean test
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
 
 compile-rust: 
