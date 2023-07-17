@@ -6,9 +6,10 @@ TEST_TARGET=cairo_vm_test
 CC=cc
 CXX=g++
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
-CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0
-CXX_FLAGS=-std=c++11 -Wall -Wextra -pedantic -g -O0
+CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
+CXX_FLAGS=-std=c++11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
+
 LN_FLAGS=
 
 BUILD_DIR=./build

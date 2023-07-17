@@ -51,12 +51,12 @@ extern "C" {
     return 0;
   }
 
-  Program parseFibJson()
+  Program *parseFibJson()
   {
     Program *program;
     char *filename = "cairo_programs/fibonacci.json";
     allocate(filename, program);
     parseJson(filename, program);
-    return *program;
+    return program;
   }
 }
