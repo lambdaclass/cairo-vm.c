@@ -71,6 +71,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_flags_call_add_jmp_add_imm_fp_fp\n");
 	ResultInstruction res = decode_instruction(0x14A7800080008000);
+	assert(!res.is_error);
 	Instruction instr = res.value.instruction;
 
 	assert(instr.dst_register == REG_FP);
@@ -92,6 +93,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_flags_ret_add1_jmp_rel_mul_fp_ap_ap\n");
 	ResultInstruction res2 = decode_instruction(0x2948800080008000);
+	assert(!res2.is_error);
 	Instruction instr2 = res2.value.instruction;
 
 	assert(instr2.dst_register == REG_AP);
@@ -113,6 +115,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_flags_assrt_add_jnz_mul_ap_ap_ap\n");
 	ResultInstruction res3 = decode_instruction(0x4A50800080008000);
+	assert(!res3.is_error);
 	Instruction instr3 = res3.value.instruction;
 
 	assert(instr3.dst_register == REG_AP);
@@ -134,6 +137,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_flags_assrt_add2_jnz_uncon_op0_ap_ap\n");
 	ResultInstruction res4 = decode_instruction(0x4200800080008000);
+	assert(!res4.is_error);
 	Instruction instr4 = res4.value.instruction;
 
 	assert(instr4.dst_register == REG_AP);
@@ -154,6 +158,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_flags_nop_regu_regu_op1_op0_ap_ap\n");
 	ResultInstruction res5 = decode_instruction(0x0000800080008000);
+	assert(!res5.is_error);
 	Instruction instr5 = res5.value.instruction;
 
 	assert(instr5.dst_register == REG_AP);
@@ -175,6 +180,7 @@ void decoding_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: decode_offset_negative \n");
 	ResultInstruction res6 = decode_instruction(0x0000800180007FFF);
+	assert(!res6.is_error);
 	Instruction instr6 = res6.value.instruction;
 
 	assert(instr6.off0 == -1);
