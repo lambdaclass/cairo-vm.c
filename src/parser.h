@@ -62,7 +62,9 @@ extern "C" {
     char* prime;
   } Program;
 
-  Program parseJson(const char* dataBuffer);
+  Program parseJson(const char* filname, Program *program);
+
+  
 
 #ifdef __cplusplus
 } // extern "C"
