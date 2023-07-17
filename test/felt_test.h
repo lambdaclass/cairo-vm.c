@@ -1,8 +1,8 @@
 #ifndef FELT_H
 #define FELT_H
-
-#include <stdio.h>
 #include "../lambdaworks/lib/lambdaworks.h"
+#include <assert.h>
+#include <stdio.h>
 
 void felt_tests(void);
 
