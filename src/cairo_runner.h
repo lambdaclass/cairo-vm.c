@@ -17,4 +17,6 @@ typedef struct cairo_runner
 
 } cairo_runner;
 
+relocatable runner_initialize(cairo_runner *runner, virtual_machine *vm);
+
 #endif

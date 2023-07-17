@@ -1,9 +1,11 @@
 #include "memory.h"
+#include <stdio.h>
 
 relocatable memory_add_segment(memory *memory)
 {
 	relocatable rel = {memory->num_segments, 0};
 	struct CList *segment = CList_init(sizeof(CList *));
+	printf("%i, %i\n", memory->data, segment);
 	memory->data->add(memory->data, segment);
 	memory->num_segments += 1;
 	return rel;
