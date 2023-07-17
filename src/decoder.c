@@ -1,5 +1,11 @@
 #include "decoder.h"
 
+int64_t overflow_sub(uint16_t offset_16b_encoded, uint16_t complement_const) {
+	int64_t offset = (int64_t)offset_16b_encoded;
+	int64_t complement = (int64_t)complement_const;
+	return (offset - complement);
+}
+
 int64_t decode_offset(uint64_t offset) {
 	uint8_t buffer_bytes[8];
 	uint8_t *vectorized_offset = u64_to_le_bytes(offset, buffer_bytes);
@@ -8,9 +14,9 @@ int64_t decode_offset(uint64_t offset) {
 	uint16_t complement_const = 0x8000;
 
 	// overflow wrap around is standard behaviour of C uints
-	uint16_t offset_16b = offset_16b_encoded - complement_const;
+	int64_t offset_16b = overflow_sub(offset_16b_encoded, complement_const);
 
-	return (int64_t)offset_16b;
+	return offset_16b;
 }
 
 ResultInstruction decode_instruction(uint64_t encoded_instr) {

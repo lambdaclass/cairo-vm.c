@@ -1,6 +1,7 @@
 #ifndef INS_H
 #define INS_H
 #include <stdbool.h>
+#include <stdint.h>
 
 //  Structure of the 63-bit that form the first word of each instruction.
 //  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
@@ -64,9 +65,9 @@ enum Opcode {
 };
 
 struct Instruction {
-	int off0;
-	int off1;
-	int off2;
+	int64_t off0;
+	int64_t off1;
+	int64_t off2;
 	enum Register dst_register;
 	enum Register op0_register;
 	enum Op1Addr op1_addr;
