@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind
+.PHONY: clean fmt check_fmt valgrind compile-rust
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -55,13 +55,14 @@ deps-macos:
 	brew install clang-format
 
 run: $(TARGET)
-	$(BUILD_DIR)/$(TARGET)
+	$(BUILD_DIR)/$(TARGET) 
 
 test: $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) && \
+	cd lambdaworks/lib/lambdaworks && cargo clean
 
 fmt:
 	clang-format --style=file -i $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
@@ -71,3 +72,6 @@ check_fmt:
 
 valgrind: clean test
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
+
+compile-rust: 
+	cd lambdaworks/lib/lambdaworks && cargo build --release
