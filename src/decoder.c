@@ -188,7 +188,7 @@ ResultInstruction decode_instruction(uint64_t encoded_instr) {
 			ap_update = Add2;
 		else
 			ap_update = AP_Regular;
-	}
+	} break;
 	case 1:
 		ap_update = Add;
 		break;
