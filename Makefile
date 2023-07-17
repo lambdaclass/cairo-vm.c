@@ -7,7 +7,7 @@ CC=cc
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -l:lambdaworks
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -l:liblambdaworks.a
 
 BUILD_DIR=./build
 SRC_DIR=./src
