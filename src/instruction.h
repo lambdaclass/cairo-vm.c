@@ -115,10 +115,4 @@ typedef struct ResultInstruction ResultInstruction;
 typedef enum VirtualMachineError VirtualMachineError;
 typedef union ResultInstructionValue ResultInstructionValue;
 
-// ------------------
-// 	  Functions
-// ------------------
-
-unsigned int instruction_size(Instruction ins);
-
 #endif
