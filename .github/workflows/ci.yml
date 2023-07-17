@@ -9,7 +9,6 @@ jobs:
   tests_and_format:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Rust
       - uses: dtolnay/rust-toolchain@1.70.0
       - uses: actions/checkout@v3
       - run: make check_fmt
