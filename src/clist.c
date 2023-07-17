@@ -350,7 +350,7 @@ void CList_print_(CList *l, size_t shift, int n, const char *type)
 			switch (tp)
 			{
 			case 0:
-				printf("%p  ", data);
+				printf("%s  ", data);
 				break;
 			case 1:
 				printf("%c ", *(char *)data);

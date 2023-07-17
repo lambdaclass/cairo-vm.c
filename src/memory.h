@@ -10,6 +10,8 @@ typedef struct memory
 	CList *data;
 } memory;
 
+memory memory_new(void);
+
 relocatable memory_add_segment(memory *memory);
 
 relocatable memory_load_data(memory *memory, relocatable ptr, CList *data);

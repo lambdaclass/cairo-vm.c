@@ -9,6 +9,7 @@
 typedef struct cairo_runner
 {
 	struct program program;
+	virtual_machine vm;
 	relocatable program_base;
 	relocatable execution_base;
 	relocatable initial_pc;
@@ -17,6 +18,8 @@ typedef struct cairo_runner
 
 } cairo_runner;
 
-relocatable runner_initialize(cairo_runner *runner, virtual_machine *vm);
+cairo_runner runner_new(struct program program);
+
+relocatable runner_initialize(cairo_runner *runner);
 
 #endif
