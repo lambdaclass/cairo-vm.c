@@ -134,7 +134,7 @@ ResultInstruction decode_instruction(uint64_t encoded_instr) {
 			res = Unconstrained;
 		else
 			res = Op1;
-	}
+	} break;
 	case 1:
 		res = Res_Add;
 		break;
