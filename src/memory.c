@@ -1,8 +1,9 @@
 #include "memory.h"
+#include "relocatable.h"
 
 memory memory_new(void)
 {
-	struct CList *mem_data = CList_init(10 * sizeof(struct CList *));
+	struct CList *mem_data = CList_init(sizeof(struct CList *));
 	memory mem = {0, mem_data};
 	return mem;
 }
@@ -10,7 +11,7 @@ memory memory_new(void)
 relocatable memory_add_segment(memory *memory)
 {
 	relocatable rel = {memory->num_segments, 0};
-	struct CList *segment = CList_init(sizeof(CList *));
+	struct CList *segment = CList_init(sizeof(maybe_relocatable));
 	memory->data->add(memory->data, segment);
 	memory->num_segments += 1;
 	return rel;

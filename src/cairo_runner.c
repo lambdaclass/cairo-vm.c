@@ -33,7 +33,7 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	relocatable end = memory_add_segment(&runner->vm.memory);
 	stack->add(stack, &return_fp);
 	stack->add(stack, &end);
-	runner->initial_fp.segment_index = runner->execution_base.offset;
+	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = stack->count(stack);
 	runner_initialize_state(runner, entrypoint);
 	runner->final_pc = end;
