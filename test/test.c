@@ -1,7 +1,6 @@
 #include "decoder_test.h"
 
-int main(int argc, char **argv) {
+int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) {
 	decoding_tests();
-	printf("Tests passed!\n");
 	return 0;
 }
