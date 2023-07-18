@@ -2,7 +2,6 @@
 #include "felt_test.h"
 #include "parser_test.h"
 
-
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) {
 
 	felt_tests();
