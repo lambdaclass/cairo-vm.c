@@ -23,6 +23,28 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 	return ok;
 }
 
+ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
+	if (ptr.segment_index > mem->data->count(mem->data)) {
+		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+		return error;
+	}
+	CList *segment = mem->data->at(mem->data, ptr.segment_index);
+	ResultMemory get_result = memory_get(mem, ptr);
+	// Check for possible ovewrites
+	if (!get_result.is_error) {
+		if (maybe_relocatable_equal(get_result.value.memory_value, value)) {
+			ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+			return ok;
+		} else {
+			ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+			return error;
+		}
+	}
+	segment->insert(segment, &value, ptr.offset);
+	ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+	return ok;
+}
+
 relocatable memory_add_segment(memory *memory) {
 	relocatable rel = {memory->num_segments, 0};
 	struct CList *segment = CList_init(sizeof(maybe_relocatable));
