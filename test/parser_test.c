@@ -1,6 +1,7 @@
 #include "parser_test.h"
 #include "../src/parser.h"
-
+#include <stdlib.h>
+#include <string.h>
 void parsing_tests() {
 
   printf("---------------------- \n");
@@ -37,11 +38,17 @@ void parsing_tests() {
 			"0x1104800180018000",
 			"0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffff7",
 			"0x208b7fff7fff7ffe",
-			NULL // Add NULL as the last element to indicate the end of the array
 	}; 
-  Program *program = parseFibJson();
-  assert(program->data == expected_data);
 
+  Program *program = parseFibJson();
+	for (int i = 0; i < program->data.num_elements; ++i) {
+		const char *val = program->data.data[i];
+		const char *expected_val = expected_data[i];
+		assert(strcmp(val, expected_val) == 0);
+		free(program->data.data[i]);
+	}
+	free(program->data.data);
+	free(program);
   printf("OK! \n");
 
 

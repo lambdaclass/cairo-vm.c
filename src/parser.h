@@ -50,10 +50,15 @@ extern "C" {
   } DebugInfo;
 
   typedef struct {
+    int num_elements;
+    char ** data;
+  } Data;
+
+  typedef struct {
     char **attributes;
     char **builtins;
     char *compiler_version;
-    char **data;
+    Data data;
     DebugInfo debug_info;
     char** hints;
     Identifiers* identifiers;
@@ -61,7 +66,7 @@ extern "C" {
     char* prime;
   } Program;
 
-  Program *parseFibJson(void);
+  Program *parseFibJson();
 #ifdef __cplusplus
 } // extern "C"
 #endif

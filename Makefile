@@ -21,12 +21,16 @@ SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
 
 TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c) $(wildcard $(SRC_DIR)/*.c)
 TEST_SOURCE := $(filter-out %main.c, $(TEST_SOURCE))
+TEST_SOURCE_CPP = $(wildcard $(TEST_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
+
+
 
 HEADERS = $(wildcard $(SRC_DIR)/*.h)
 TEST_HEADERS = $(wildcard $(TEST_DIR)/*.h)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCE))
 OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
+TEST_OBJECTS_CPP = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE_CPP))
 
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
@@ -40,8 +44,8 @@ $(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP)
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
-$(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $^ -o $@
+$(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS) $(TEST_OBJECTS_CPP)
+	$(CXX) $(CXXFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 -include $(DEP)
 
