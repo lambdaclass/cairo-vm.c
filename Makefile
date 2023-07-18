@@ -28,7 +28,7 @@ TEST_HEADERS = $(wildcard $(TEST_DIR)/*.h)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCE))
 OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
-TEST_OBJECTS_CPP = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE_CPP))
+TEST_OBJECTS_CPP = $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(TEST_SOURCE_CPP))
 
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
@@ -38,12 +38,12 @@ default: $(TARGET)
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP)
-	$(CXX) $(CXXFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
 $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS) $(TEST_OBJECTS_CPP)
-	$(CXX) $(CXXFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 -include $(DEP)
 
@@ -67,7 +67,7 @@ deps-macos:
 	brew install clang-format
 
 run: default
-	$(BUILD_DIR)/$(TARGET) 
+	$(BUILD_DIR)/$(TARGET)
 
 test: compile-rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
