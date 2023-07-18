@@ -8,6 +8,8 @@ memory memory_new(void)
 	return mem;
 }
 
+maybe_relocatable memory_get()
+
 relocatable memory_add_segment(memory *memory)
 {
 	relocatable rel = {memory->num_segments, 0};

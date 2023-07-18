@@ -5,7 +5,7 @@ TEST_TARGET=cairo_vm_test
 
 CC=cc
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
-CFLAGS=-std=c11 -Wall -Wextra -pedantic -g -O0
+CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
 LN_FLAGS=
 
@@ -50,6 +50,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
+
+deps-macos:
+	brew install clang-format
 
 run: $(TARGET)
 	$(BUILD_DIR)/$(TARGET)

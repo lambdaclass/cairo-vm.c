@@ -3,12 +3,10 @@
 #include "memory.h"
 #include <assert.h>
 #include <stdio.h>
+#include "decoder_test.h"
 
-int main(int argc, char **argv)
-{
-	//runner_tests();
+int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) {
+	decoding_tests();
 	memory_tests();
-	printf("Tests passed!\n");
-
 	return 0;
 }
