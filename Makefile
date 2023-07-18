@@ -5,7 +5,7 @@ TEST_TARGET=cairo_vm_test
 
 CC=cc
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
-CFLAGS=-std=c11 -Wall -Wextra -Werror -pedantic -g -O0
+CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
 LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
 
