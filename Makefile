@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind
+.PHONY: clean fmt check_fmt valgrind compile-rust deps-macos
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -22,8 +22,6 @@ SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
 TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c) $(wildcard $(SRC_DIR)/*.c)
 TEST_SOURCE := $(filter-out %main.c, $(TEST_SOURCE))
 TEST_SOURCE_CPP = $(wildcard $(TEST_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
-
-
 
 HEADERS = $(wildcard $(SRC_DIR)/*.h)
 TEST_HEADERS = $(wildcard $(TEST_DIR)/*.h)
@@ -65,14 +63,18 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
-run: $(TARGET)
-	$(BUILD_DIR)/$(TARGET)
+deps-macos:
+	brew install clang-format
 
-test: $(TEST_TARGET)
+run: default
+	$(BUILD_DIR)/$(TARGET) 
+
+test: compile-rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) && \
+	cd lambdaworks/lib/lambdaworks && cargo clean
 
 fmt:
 	clang-format --style=file -i $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
@@ -82,3 +84,6 @@ check_fmt:
 
 valgrind: clean test
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
+
+compile-rust: 
+	cd lambdaworks/lib/lambdaworks && cargo build --release

@@ -8,6 +8,8 @@ This is a work in progress implementation of the [Cairo VM](https://github.com/l
 ## Requirements
 
 - A working C compiler with `C11` support.
+- `clang-format` installed in the system.
+- [Rust](https://www.rust-lang.org/tools/install)
 
 ## Local development
 
