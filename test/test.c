@@ -1,9 +1,6 @@
-#include <assert.h>
-#include <stdio.h>
+#include "decoder_test.h"
 
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) {
-	assert(1);
-	printf("Tests passed!\n");
-
+	decoding_tests();
 	return 0;
 }
