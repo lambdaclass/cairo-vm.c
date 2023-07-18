@@ -3,8 +3,7 @@
 
 #include "relocatable.h"
 
-typedef struct run_context
-{
+typedef struct run_context {
 	relocatable pc;
 	relocatable ap;
 	relocatable fp;

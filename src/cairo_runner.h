@@ -6,8 +6,7 @@
 #include "relocatable.h"
 #include "vm.h"
 
-typedef struct cairo_runner
-{
+typedef struct cairo_runner {
 	struct program program;
 	virtual_machine vm;
 	relocatable program_base;

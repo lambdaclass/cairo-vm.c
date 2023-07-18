@@ -13,8 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct
-{
+typedef struct {
 	int count;         /* Number of items in the list. */
 	int alloc_size;    /* Allocated size in quantity of items */
 	int lastSearchPos; /* Position of last search - firstMatch or LastMatch */
@@ -22,11 +21,9 @@ typedef struct
 	void *items;       /* Pointer to the list */
 } CList_priv_;
 
-int CList_Realloc_(CList *l, int n)
-{
+int CList_Realloc_(CList *l, int n) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
-	if (n < p->count)
-	{
+	if (n < p->count) {
 		fprintf(stderr, "CList: ERROR! Can not realloc to '%i' size - count is '%i'\n", n, p->count);
 		assert(n >= p->count);
 		return 0;
@@ -36,8 +33,7 @@ int CList_Realloc_(CList *l, int n)
 		n = 2;
 
 	void *ptr = realloc(p->items, p->item_size * n);
-	if (ptr == NULL)
-	{
+	if (ptr == NULL) {
 		fprintf(stderr, "CList: ERROR! Can not reallocate memory!\n");
 		return 0;
 	}
@@ -46,8 +42,7 @@ int CList_Realloc_(CList *l, int n)
 	return 1;
 }
 
-void *CList_Add_(CList *l, void *o)
-{
+void *CList_Add_(CList *l, void *o) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	if (p->count == p->alloc_size && CList_Realloc_(l, p->alloc_size * 2) == 0)
 		return NULL;
@@ -59,11 +54,9 @@ void *CList_Add_(CList *l, void *o)
 	return data;
 }
 
-void *CList_Insert_(CList *l, void *o, int n)
-{
+void *CList_Insert_(CList *l, void *o, int n) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
-	if (n < 0 || n > p->count)
-	{
+	if (n < 0 || n > p->count) {
 		fprintf(stderr, "CList: ERROR! Insert position outside range - %d; n - %d.\n", p->count, n);
 		assert(n >= 0 && n <= p->count);
 		return NULL;
@@ -80,11 +73,9 @@ void *CList_Insert_(CList *l, void *o, int n)
 	return data;
 }
 
-void *CList_Replace_(CList *l, void *o, int n)
-{
+void *CList_Replace_(CList *l, void *o, int n) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
-	if (n < 0 || n >= p->count)
-	{
+	if (n < 0 || n >= p->count) {
 		fprintf(stderr, "CList: ERROR! Replace position outside range - %d; n - %d.\n", p->count, n);
 		assert(n >= 0 && n < p->count);
 		return NULL;
@@ -96,11 +87,9 @@ void *CList_Replace_(CList *l, void *o, int n)
 	return data;
 }
 
-void CList_Remove_(CList *l, int n)
-{
+void CList_Remove_(CList *l, int n) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
-	if (n < 0 || n >= p->count)
-	{
+	if (n < 0 || n >= p->count) {
 		fprintf(stderr, "CList: ERROR! Remove position outside range - %d; n - %d.\n", p->count, n);
 		assert(n >= 0 && n < p->count);
 		return;
@@ -115,11 +104,9 @@ void CList_Remove_(CList *l, int n)
 		CList_Realloc_(l, p->alloc_size / 2);
 }
 
-void *CList_At_(CList *l, int n)
-{
+void *CList_At_(CList *l, int n) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
-	if (n < 0 || n >= p->count)
-	{
+	if (n < 0 || n >= p->count) {
 		fprintf(stderr, "CList: ERROR! Get position outside range - %d; n - %d.\n", p->count, n);
 		assert(n >= 0 && n < p->count);
 		return NULL;
@@ -130,15 +117,13 @@ void *CList_At_(CList *l, int n)
 	return data;
 }
 
-void *CList_firstMatch_(CList *l, const void *o, size_t shift, size_t size, int string)
-{
+void *CList_firstMatch_(CList *l, const void *o, size_t shift, size_t size, int string) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	char *data = (char *)p->items;
 	size_t step = p->item_size;
 	p->lastSearchPos = -1;
 
-	if (shift + size > p->item_size)
-	{
+	if (shift + size > p->item_size) {
 		fprintf(stderr,
 		        "CList: ERROR! Wrong ranges for firstMatch - "
 		        "shift '%zu', size '%zu', item_size '%zu'\n",
@@ -154,23 +139,16 @@ void *CList_firstMatch_(CList *l, const void *o, size_t shift, size_t size, int 
 	size_t end = p->count * step;
 	int index = 0;
 
-	if (string)
-	{
-		for (; i < end; i += step, index++)
-		{
-			if (strncmp(data + i, o, size) == 0)
-			{
+	if (string) {
+		for (; i < end; i += step, index++) {
+			if (strncmp(data + i, o, size) == 0) {
 				p->lastSearchPos = index;
 				return (data + i - shift);
 			}
 		}
-	}
-	else
-	{
-		for (; i < end; i += step, index++)
-		{
-			if (memcmp(data + i, o, size) == 0)
-			{
+	} else {
+		for (; i < end; i += step, index++) {
+			if (memcmp(data + i, o, size) == 0) {
 				p->lastSearchPos = index;
 				return (data + i - shift);
 			}
@@ -180,15 +158,13 @@ void *CList_firstMatch_(CList *l, const void *o, size_t shift, size_t size, int 
 	return NULL;
 }
 
-void *CList_lastMatch_(struct CList *l, const void *o, size_t shift, size_t size, int string)
-{
+void *CList_lastMatch_(struct CList *l, const void *o, size_t shift, size_t size, int string) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	char *data = (char *)p->items;
 	size_t step = p->item_size;
 	p->lastSearchPos = -1;
 
-	if (shift + size > p->item_size)
-	{
+	if (shift + size > p->item_size) {
 		fprintf(stderr,
 		        "CList: ERROR! Wrong ranges for lastMatch - "
 		        "shift '%zu', size '%zu', item_size '%zu'\n",
@@ -202,23 +178,16 @@ void *CList_lastMatch_(struct CList *l, const void *o, size_t shift, size_t size
 
 	int index = p->count - 1;
 	long i = index * step + shift;
-	if (string)
-	{
-		for (; i >= 0; i -= step, index--)
-		{
-			if (strncmp(data + i, o, size) == 0)
-			{
+	if (string) {
+		for (; i >= 0; i -= step, index--) {
+			if (strncmp(data + i, o, size) == 0) {
 				p->lastSearchPos = index;
 				return (data + i - shift);
 			}
 		}
-	}
-	else
-	{
-		for (; i >= 0; i -= step, index--)
-		{
-			if (memcmp(data + i, o, size) == 0)
-			{
+	} else {
+		for (; i >= 0; i -= step, index--) {
+			if (memcmp(data + i, o, size) == 0) {
 				p->lastSearchPos = index;
 				return (data + i - shift);
 			}
@@ -228,18 +197,15 @@ void *CList_lastMatch_(struct CList *l, const void *o, size_t shift, size_t size
 	return NULL;
 }
 
-int CList_index_(CList *l)
-{
+int CList_index_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	return p->lastSearchPos;
 }
 
-int CList_swap_(CList *l, int a, int b)
-{
+int CList_swap_(CList *l, int a, int b) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 
-	if (a < 0 || a >= p->count || b < 0 || b >= p->count)
-	{
+	if (a < 0 || a >= p->count || b < 0 || b >= p->count) {
 		fprintf(stderr, "CList: ERROR! Swap position outside range - %i, %i; count - %d.\n", a, b, p->count);
 		assert(a >= 0 && a < p->count && b >= 0 && b < p->count);
 		return 0;
@@ -260,26 +226,22 @@ int CList_swap_(CList *l, int a, int b)
 	return 1;
 }
 
-int CList_Count_(CList *l)
-{
+int CList_Count_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	return p->count;
 }
 
-int CList_AllocSize_(CList *l)
-{
+int CList_AllocSize_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	return p->alloc_size;
 }
 
-size_t CList_ItemSize_(CList *l)
-{
+size_t CList_ItemSize_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	return p->item_size;
 }
 
-void CList_Clear_(CList *l)
-{
+void CList_Clear_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	free(p->items);
 	p->items = NULL;
@@ -287,8 +249,7 @@ void CList_Clear_(CList *l)
 	p->count = 0;
 }
 
-void CList_Free_(CList *l)
-{
+void CList_Free_(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	free(p->items);
 	free(p);
@@ -296,12 +257,10 @@ void CList_Free_(CList *l)
 	l = NULL;
 }
 
-void CList_print_(CList *l, size_t shift, int n, const char *type)
-{
+void CList_print_(CList *l, size_t shift, int n, const char *type) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 
-	if (shift >= p->item_size)
-	{
+	if (shift >= p->item_size) {
 		fprintf(stderr,
 		        "CList: ERROR! Wrong shift value for list print - "
 		        "shift '%zu', item_size '%zu'\n",
@@ -313,8 +272,7 @@ void CList_print_(CList *l, size_t shift, int n, const char *type)
 	printf("\nCList:  count = %i  item_size = %zu   alloc_size = %i   type = %s\n", p->count, p->item_size,
 	       p->alloc_size, type);
 
-	if (n > 0)
-	{
+	if (n > 0) {
 		int tp = -1;
 		if (type == NULL)
 			tp = 0; /* Print out pointers */
@@ -335,8 +293,7 @@ void CList_print_(CList *l, size_t shift, int n, const char *type)
 		else if (strcmp(type, "string") == 0)
 			tp = 8;
 
-		if (tp == -1)
-		{
+		if (tp == -1) {
 			fprintf(stderr, "CList: Can not print - not supported type - %s\n\n", type);
 			return;
 		}
@@ -345,10 +302,8 @@ void CList_print_(CList *l, size_t shift, int n, const char *type)
 		char *data = (char *)p->items + shift;
 		size_t step = p->item_size;
 		int i = 0;
-		for (; i < n; i++)
-		{
-			switch (tp)
-			{
+		for (; i < n; i++) {
+			switch (tp) {
 			case 0:
 				printf("%s  ", data);
 				break;
@@ -386,12 +341,10 @@ void CList_print_(CList *l, size_t shift, int n, const char *type)
 	}
 }
 
-CList *CList_init(size_t objSize)
-{
+CList *CList_init(size_t objSize) {
 	CList *lst = malloc(sizeof(CList));
 	CList_priv_ *p = malloc(sizeof(CList_priv_));
-	if (!lst || !p)
-	{
+	if (!lst || !p) {
 		fprintf(stderr, "CList: ERROR! Can not allocate CList!\n");
 		return NULL;
 	}

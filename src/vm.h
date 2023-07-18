@@ -3,8 +3,7 @@
 
 #include "memory.h"
 #include "run_context.h"
-typedef struct virtual_machine
-{
+typedef struct virtual_machine {
 	run_context run_context;
 	memory memory;
 } virtual_machine;
