@@ -3,7 +3,7 @@
 
 memory memory_new(void)
 {
-	struct CList *mem_data = CList_init(sizeof(struct CList *));
+	struct CList *mem_data = CList_init(sizeof(struct CList));
 	memory mem = {0, mem_data};
 	return mem;
 }
