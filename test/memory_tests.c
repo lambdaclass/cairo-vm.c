@@ -1,4 +1,6 @@
 #include "memory_tests.h"
+#include "relocatable.h"
+#include <assert.h>
 #include <stdio.h>
 
 void load_data_one_element(void) {
@@ -14,8 +16,10 @@ void load_data_one_element(void) {
 	memory_load_data(&mem, ptr, data);
 	// Check memory
 	assert(mem.data->count(mem.data) == 1);
-	maybe_relocatable *first_elem = mem.data->at(mem.data, 0);
-	assert(first_elem->felt == 1);
+	ResultMemory result = memory_get(&mem, ptr);
+    assert(!result.is_error);
+    assert(maybe_relocatable_equal(result.value.memory_value, elem));
+    printf("OK!\n");
 }
 
 void load_data_empty(void) {

@@ -10,12 +10,6 @@ typedef struct memory {
 	CList *data;
 } memory;
 
-memory memory_new(void);
-
-relocatable memory_add_segment(memory *memory);
-
-relocatable memory_load_data(memory *memory, relocatable ptr, CList *data);
-
 // Error handling
 
 enum MemoryError {
@@ -35,5 +29,15 @@ typedef struct ResultMemory {
 	bool is_error;
 	union ResultMemoryValue value;
 } ResultMemory;
+
+memory memory_new(void);
+
+ResultMemory memory_get(memory *mem, relocatable ptr);
+
+ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value);
+
+relocatable memory_add_segment(memory *memory);
+
+relocatable memory_load_data(memory *memory, relocatable ptr, CList *data);
 
 #endif
