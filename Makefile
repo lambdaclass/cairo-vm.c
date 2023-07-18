@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind
+.PHONY: clean fmt check_fmt valgrind compile-rust deps-macos
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -7,7 +7,7 @@ CC=cc
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
 
 BUILD_DIR=./build
 SRC_DIR=./src
@@ -25,7 +25,7 @@ TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
 
-default: $(TARGET)
+default: compile-rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
@@ -35,7 +35,7 @@ $(BUILD_DIR)/$(TARGET): $(OBJECTS)
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
 $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 -include $(DEP)
 
@@ -54,14 +54,15 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 deps-macos:
 	brew install clang-format
 
-run: $(TARGET)
-	$(BUILD_DIR)/$(TARGET)
+run: default
+	$(BUILD_DIR)/$(TARGET) 
 
-test: $(TEST_TARGET)
+test: compile-rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) && \
+	cd lambdaworks/lib/lambdaworks && cargo clean
 
 fmt:
 	clang-format --style=file -i $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
@@ -71,3 +72,6 @@ check_fmt:
 
 valgrind: clean test
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
+
+compile-rust: 
+	cd lambdaworks/lib/lambdaworks && cargo build --release
