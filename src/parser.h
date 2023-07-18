@@ -8,6 +8,11 @@ extern "C" {
 #endif
 
   typedef struct {
+    int length;
+    char *data;
+  } StringArray;
+
+  typedef struct {
     char* filename;
   } InputFile;
 
@@ -55,18 +60,18 @@ extern "C" {
   } Data;
 
   typedef struct {
-    char **attributes;
-    char **builtins;
+    StringArray attributes;
+    StringArray builtins;
     char *compiler_version;
     Data data;
     DebugInfo debug_info;
-    char** hints;
+    StringArray hints;
     Identifiers* identifiers;
-    char* main_scope;
+    StringArray main_scope;
     char* prime;
   } Program;
 
-  Program *parseFibJson();
+  Program *parseJson(const char *filename);
 #ifdef __cplusplus
 } // extern "C"
 #endif

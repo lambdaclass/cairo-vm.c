@@ -2,11 +2,9 @@
 #include "../src/parser.h"
 #include <stdlib.h>
 #include <string.h>
-void parsing_tests() {
 
-  printf("---------------------- \n");
-  printf("Test: decoding_data_array \n");
-
+void parsing_data_test(Program *program) {
+	printf("Test: decoding_data_array \n");
   char *expected_data[] = {
 			"0x40780017fff7fff",
 			"0x0",
@@ -39,8 +37,6 @@ void parsing_tests() {
 			"0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffff7",
 			"0x208b7fff7fff7ffe",
 	}; 
-
-  Program *program = parseFibJson();
 	for (int i = 0; i < program->data.num_elements; ++i) {
 		const char *val = program->data.data[i];
 		const char *expected_val = expected_data[i];
@@ -49,7 +45,15 @@ void parsing_tests() {
 	}
 	free(program->data.data);
 	free(program);
-  printf("OK! \n");
+	printf("OK! \n");
+}
 
-
+void parsing_tests() {
+	
+	const char* filename = "cairo_programs/fibonacci.json";
+  Program *program = parseJson(filename);
+  
+	printf("------- START PARSING TESTS -------------- \n");
+	parsing_data_test(program);
+  printf("------- END PARSING TESTS ---------------- \n");
 }

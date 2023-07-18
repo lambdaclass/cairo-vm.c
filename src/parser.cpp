@@ -18,45 +18,10 @@ using namespace std;
 
 extern "C" {  
 
-  Program* allocate_program(const char *filename) {
-    // Allocate custom Program in memory
-    struct stat st;
-    stat(filename, &st);
-    size_t size = st.st_size;
-    return (Program *)malloc(size * sizeof(int));
-  }
-
-  // void parseArray(const simdjson::dom::array elemArray, char **structArray) {
-  //   int elements = elemArray.size();
-  //   structArray = (char **)malloc(elements * sizeof(char *));
-  //   for(int i = 0; i < elements; ++i) {
-  //     simdjson::dom::element elem = elemArray.at(i).value();
-  //     structArray[i] = (char *)malloc(elem.get_string().value() * sizeof(char *));
-  //     strcpy(structArray[i], elem.get_c_str());
-  //   }
-  // }
-
-  // void parseString(const char *jsonString, char *structString) {
-  //   int max_chars = 100;
-  //   structString = (char *)malloc((max_chars + 1) * sizeof(char));
-  //   strcpy(structString, jsonString);
-
-  // }
-
-  int parseJson(const char* filename, Program* program) {
-    // Read the Json data
-    simdjson::padded_string json = simdjson::padded_string::load(filename);
-    // Parse the JSON data
-    simdjson::dom::parser parser;
-    simdjson::dom::element root = parser.parse(json);
-
-    // Populate the Program struct
-    simdjson::dom::array dataArray = root["data"].get_array();
+  void parseData(simdjson::dom::array dataArray, Program *program) {
     int elements = dataArray.size();
-
     program->data.num_elements = elements;
     program->data.data = (char**)malloc(elements * sizeof(char*));
-
     for (int i = 0; i < elements; ++i) {
         simdjson::dom::element elem = dataArray.at(i).value();
         size_t str_length = elem.get_string_length();
@@ -64,21 +29,26 @@ extern "C" {
         memcpy(program->data.data[i], elem.get_c_str(), str_length);
         program->data.data[i][str_length] = '\0'; // Null-terminate the string
     }
+  }
 
-    return 0;
-}
-
-
-  Program *parseFibJson() {
-    
+  Program *parseJson(const char* filename) {
     Program *program = (Program *)malloc(sizeof(Program));
     if (program == NULL) {
       printf("Memory allocation failed. \n");
+      free(program);
       exit(EXIT_FAILURE);
     }
+    // Read the Json data
+    simdjson::padded_string json = simdjson::padded_string::load(filename);
+    // Parse the JSON data
+    simdjson::dom::parser parser;
+    simdjson::dom::element root = parser.parse(json);
 
-    const char filename[30] = "cairo_programs/fibonacci.json";
-    parseJson(filename, program);
+    // Populate the Program struct
+
+    simdjson::dom::array dataArray = root["data"].get_array();
+    parseData(dataArray, program);
     return program;
   }
+
 }
