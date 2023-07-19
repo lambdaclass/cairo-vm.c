@@ -1,5 +1,6 @@
 #ifndef PARSER_H
 #define PARSER_H
+#include "../lambdaworks/lib/lambdaworks.h"
 #include "stddef.h"
 #include "stdint.h"
 
@@ -55,15 +56,10 @@ typedef struct {
 } DebugInfo;
 
 typedef struct {
-	int num_elements;
-	char **data;
-} Data;
-
-typedef struct {
 	StringArray attributes;
 	StringArray builtins;
 	char *compiler_version;
-	Data data;
+	felt_t *data;
 	DebugInfo debug_info;
 	StringArray hints;
 	Identifiers *identifiers;
@@ -71,7 +67,8 @@ typedef struct {
 	char *prime;
 } Program;
 
-Program *parseJson(const char *filename);
+uint64_t hex_string_to_uint64(const char *hex);
+Program *parse_json(const char *filename);
 #ifdef __cplusplus
 } // extern "C"
 #endif

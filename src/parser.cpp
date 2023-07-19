@@ -1,39 +1,66 @@
 #include "parser.h"
 #include "../lib/simdjson.h"
-using namespace std;
 
-extern "C" {
+uint64_t hex_string_to_uint64(const char *hex) {
+	uint64_t num;
+	sscanf(hex, "%" SCNx64, &num);
+	return num;
+}
 
-void parseData(simdjson::dom::array dataArray, Program *program) {
-	int elements = dataArray.size();
-	program->data.num_elements = elements;
-	program->data.data = (char **)malloc(elements * sizeof(char *));
+// Helper function to parse the data array within the Program struct
+void parse_data(simdjson::dom::array data_array, Program *program) {
+
+	int elements = data_array.size();
+	program->data = (felt_t *)malloc(elements * sizeof(felt_t));
+
+	// Loop through the elements in the data array
 	for (int i = 0; i < elements; ++i) {
-		simdjson::dom::element elem = dataArray.at(i).value();
-		size_t str_length = elem.get_string_length();
-		program->data.data[i] = (char *)malloc((str_length + 1) * sizeof(char));
-		memcpy(program->data.data[i], elem.get_c_str(), str_length);
-		program->data.data[i][str_length] = '\0'; // Null-terminate the string
+		// Get the element at the current index
+		simdjson::dom::element elem = data_array.at(i).value();
+
+		// Get the hexadecimal string representation of the element
+		const char *hex = elem.get_c_str().value();
+
+		// Convert the hexadecimal string to a 64-bit unsigned integer
+		uint64_t num = hex_string_to_uint64(hex);
+
+		// Convert the unsigned integer to the felt_t array
+		felt_t felt;
+		from(felt, num);
+
+		// Copy the elements from felt to the program's data array
+		for (int j = 0; j < 4; ++j) {
+			program->data[i][j] = felt[j];
+		}
 	}
 }
 
-Program *parseJson(const char *filename) {
+// Function to parse the JSON file and populate the Program struct
+Program *parse_json(const char *filename) {
+	// Add using namespace inside the parse_json function
+	using namespace simdjson;
+
 	Program *program = (Program *)malloc(sizeof(Program));
+
+	// Check if memory allocation was successful
 	if (program == NULL) {
 		printf("Memory allocation failed. \n");
 		free(program);
 		exit(EXIT_FAILURE);
 	}
-	// Read the Json data
-	simdjson::padded_string json = simdjson::padded_string::load(filename);
+
+	// Read the Json data from the file
+	padded_string json = padded_string::load(filename);
+
 	// Parse the JSON data
-	simdjson::dom::parser parser;
-	simdjson::dom::element root = parser.parse(json);
+	dom::parser parser;
+	dom::element root = parser.parse(json);
 
-	// Populate the Program struct
+	// Get the "data" array from the JSON
+	dom::array data_array = root["data"].get_array();
 
-	simdjson::dom::array dataArray = root["data"].get_array();
-	parseData(dataArray, program);
+	// Call the helper function to parse the data array
+	parse_data(data_array, program);
+
 	return program;
-}
 }
