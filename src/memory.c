@@ -11,12 +11,12 @@ memory memory_new(void) {
 ResultMemory memory_get(memory *mem, relocatable ptr) {
 	int index = ptr.segment_index;
 	int offset = ptr.offset;
-	if (index > mem->data->count(mem->data)) {
+	if (index >= mem->data->count(mem->data)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Get}};
 		return error;
 	}
 	CList *segment = mem->data->at(mem->data, ptr.segment_index);
-	if (offset > segment->count(segment)) {
+	if (offset >= segment->count(segment)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Get}};
 		return error;
 	}

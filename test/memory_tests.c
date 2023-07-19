@@ -9,7 +9,9 @@ void load_data_one_element(void) {
 	memory_add_segment(&mem);
 	// Initialize data to load
 	struct CList *data = CList_init(sizeof(maybe_relocatable));
-	union maybe_relocatable elem = {.felt = 1};
+	felt_t f;
+	one(f);
+	maybe_relocatable elem = {.felt = &f};
 	data->add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
