@@ -33,7 +33,7 @@ TEST_OBJECTS_CPP = $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(TEST_SOURCE
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
 
-default: $(TARGET)
+default: compile-rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
