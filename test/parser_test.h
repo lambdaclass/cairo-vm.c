@@ -1,6 +1,6 @@
 #ifndef PARSETEST_H
 #define PARSETEST_H
-#include "../src/parser.h"
+#include "../lambdaworks/lib/lambdaworks.h"
 #include <assert.h>
 #include <stdio.h>
 
