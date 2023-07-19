@@ -17,9 +17,9 @@ void load_data_one_element(void) {
 	// Check memory
 	assert(mem.data->count(mem.data) == 1);
 	ResultMemory result = memory_get(&mem, ptr);
-    assert(!result.is_error);
-    assert(maybe_relocatable_equal(result.value.memory_value, elem));
-    printf("OK!\n");
+	assert(!result.is_error);
+	assert(maybe_relocatable_equal(result.value.memory_value, elem));
+	printf("OK!\n");
 }
 
 void load_data_empty(void) {
