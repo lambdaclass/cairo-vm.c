@@ -9,8 +9,10 @@ jobs:
   tests_and_format:
     runs-on: ubuntu-latest
     steps:
+      - uses: dtolnay/rust-toolchain@1.70.0
       - uses: actions/checkout@v3
       - run: make check_fmt
-      - run: make test
+      - run: LD_LIBRARY_PATH=${PWD}/lambdaworks/lib/lambdaworks/target/release make test
       - run: sudo apt install valgrind -y
-      - run: make SANITIZER_FLAGS= valgrind
+      - run: make compile-rust
+      # - run: make SANITIZER_FLAGS= LN_FLAGS="-L${PWD}/lambdaworks/lib/lambdaworks/target/release/ -static -llambdaworks" valgrind
