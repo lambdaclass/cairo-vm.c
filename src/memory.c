@@ -16,7 +16,7 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 		return error;
 	}
 	CList *segment = mem->data->at(mem->data, ptr.segment_index);
-	if (offset > segment->count(segment)) {
+	if (offset >= segment->count(segment)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Get}};
 		return error;
 	}
