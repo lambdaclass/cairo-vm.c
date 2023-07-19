@@ -7,7 +7,7 @@ CC=cc
 CXX=g++
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
-CXX_FLAGS=-std=c++11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
+CXX_FLAGS=-std=c++2a -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
 
 LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
