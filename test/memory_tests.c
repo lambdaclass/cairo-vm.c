@@ -12,6 +12,16 @@ void memory_get_err(void) {
 	assert(result.value.error == Get);
 }
 
+void memory_insert_err_unallocated_segement(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	relocatable ptr = {0, 0};
+	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	ResultMemory result = memory_insert(&mem, ptr, elem);
+	assert(result.is_error);
+	assert(result.value.error == Insert);
+}
+
 void memory_load_data_one_element(void) {
 	// Initialize memory
 	memory mem = memory_new();
@@ -51,6 +61,9 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_get_err \n");
 	memory_get_err();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_err_unallocated_segement \n");
+	memory_insert_err_unallocated_segement();
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_empty \n");
 	memory_load_data_empty();

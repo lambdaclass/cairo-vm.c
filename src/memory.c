@@ -27,7 +27,7 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
 	int index = ptr.segment_index;
-	if (index > mem->data->count(mem->data)) {
+	if (index >= mem->data->count(mem->data)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
