@@ -37,7 +37,7 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 }
 
 relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
-	CList *stack = CList_init(sizeof(union maybe_relocatable));
+	CList *stack = CList_init(sizeof(maybe_relocatable));
 	// Handle builtin initial stack
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);

@@ -3,7 +3,16 @@
 #include <assert.h>
 #include <stdio.h>
 
-void load_data_one_element(void) {
+void memory_get_err(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	relocatable ptr = {0, 0};
+	ResultMemory result = memory_get(&mem, ptr);
+	assert(result.is_error);
+	assert(result.value.error == Get);
+}
+
+void memory_load_data_one_element(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	memory_add_segment(&mem);
@@ -16,14 +25,13 @@ void load_data_one_element(void) {
 	relocatable end_ptr = memory_load_data(&mem, ptr, data);
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
 	// Check memory
-	assert(mem.data->count(mem.data) == 1);
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(result.value.memory_value, elem));
 	printf("OK!\n");
 }
 
-void load_data_empty(void) {
+void memory_load_data_empty(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	memory_add_segment(&mem);
@@ -32,17 +40,21 @@ void load_data_empty(void) {
 	relocatable ptr = {0, 0};
 	// Load data
 	relocatable end_ptr = memory_load_data(&mem, ptr, data);
-	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
+	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
 	// Check memory
-	assert(mem.data->count(mem.data) == 0);
+	ResultMemory result = memory_get(&mem, ptr);
+	assert(result.is_error);
 	printf("OK!\n");
 }
 
 void memory_tests(void) {
 	printf("--------------------------------- \n");
-	printf("Test: load_data_empty \n");
-	load_data_one_element();
+	printf("Test: memory_get_err \n");
+	memory_get_err();
 	printf("--------------------------------- \n");
-	printf("Test: load_data_one_element \n");
-	load_data_one_element();
+	printf("Test: memory_load_data_empty \n");
+	memory_load_data_empty();
+	printf("--------------------------------- \n");
+	printf("Test: memory_load_data_one_element \n");
+	memory_load_data_one_element();
 }
