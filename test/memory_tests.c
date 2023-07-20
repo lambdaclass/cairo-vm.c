@@ -10,6 +10,7 @@ void memory_get_err(void) {
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	assert(result.value.error == Get);
+	printf("OK!\n");
 }
 
 void memory_insert_err_unallocated_segement(void) {
@@ -20,6 +21,36 @@ void memory_insert_err_unallocated_segement(void) {
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(result.is_error);
 	assert(result.value.error == Insert);
+	printf("OK!\n");
+}
+
+void memory_insert_err_ovewrite_attempt(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	memory_add_segment(&mem);
+	relocatable ptr = {0, 0};
+	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	ResultMemory result = memory_insert(&mem, ptr, elem);
+	assert(!result.is_error);
+	maybe_relocatable elem_b = {.is_felt = true, .value = {.felt = 2}};
+	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
+	assert(result_b.is_error);
+	assert(result_b.value.error == Insert);
+	printf("OK!\n");
+}
+
+void memory_insert_ok_ovewrite_same_value(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	memory_add_segment(&mem);
+	relocatable ptr = {0, 0};
+	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	ResultMemory result = memory_insert(&mem, ptr, elem);
+	assert(!result.is_error);
+	maybe_relocatable elem_b = {.is_felt = true, .value = {.felt = 1}};
+	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
+	assert(!result_b.is_error);
+	printf("OK!\n");
 }
 
 void memory_load_data_one_element(void) {
@@ -64,6 +95,12 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_insert_err_unallocated_segement \n");
 	memory_insert_err_unallocated_segement();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_err_ovewrite_attempt \n");
+	memory_insert_err_ovewrite_attempt();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_ok_ovewrite_same_value \n");
+	memory_insert_ok_ovewrite_same_value();
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_empty \n");
 	memory_load_data_empty();
