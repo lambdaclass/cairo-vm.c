@@ -9,8 +9,8 @@ extern "C" {
 #endif
 
 typedef struct {
-	int length;
-	char *data;
+	size_t length;
+	char **data;
 } StringArray;
 
 typedef struct {
@@ -66,9 +66,10 @@ typedef struct {
 	StringArray main_scope;
 	char *prime;
 } Program;
-
+void free_program(Program *program);
 uint64_t hex_string_to_uint64(const char *hex);
-Program *parse_json(const char *filename);
+Program *parse_json_filename(const char *filename);
+Program *parse_json_data(const char *parse_json_data);
 #ifdef __cplusplus
 } // extern "C"
 #endif

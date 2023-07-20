@@ -1,10 +1,35 @@
 #include "parser_test.h"
 #include "../src/parser.h"
+#include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+void parsing_attributes_test(Program *program) {
+	printf("Test: parsing__empty_attributes_array\n");
+
+	char *expected[] = {"attr1", "attr2"};
+	size_t num_values = sizeof(expected) / sizeof(expected[0]);
+	assert(num_values == program->attributes.length);
+	if (num_values == 0) {
+		assert(program->attributes.data == NULL);
+	}
+	for (size_t i = 0; i < num_values; ++i) {
+		assert(strcmp(expected[i], program->attributes.data[i]) == 0);
+	}
+	printf("OK! \n");
+}
+
+void parsing_empty_attributes_test(Program *program) {
+	printf("Test: parsing__empty_attributes_array\n");
+	size_t num_values = 0;
+	assert(num_values == program->attributes.length);
+	printf("OK! \n");
+}
 
 void parsing_data_test(Program *program) {
-	printf("Test: decoding_data_array \n");
+	printf("Test: parsing_data_array\n");
 
 	char *hex_values[] = {
 	    "0x40780017fff7fff",
@@ -49,18 +74,17 @@ void parsing_data_test(Program *program) {
 			assert(expected[j] == program->data[i][j]);
 		}
 	}
-
-	free(program->data);
-	free(program);
 	printf("OK! \n");
 }
 
 void parsing_tests() {
 
 	const char *filename = "cairo_programs/fibonacci.json";
-	Program *program = parse_json(filename);
-
-	printf("------- START PARSING TESTS -------------- \n");
+	Program *program = parse_json_filename(filename);
+	printf("---------------------------------\n");
+	parsing_empty_attributes_test(program);
+	printf("---------------------------------\n");
 	parsing_data_test(program);
-	printf("------- END PARSING TESTS ---------------- \n");
+	printf("---------------------------------\n");
+	free_program(program);
 }
