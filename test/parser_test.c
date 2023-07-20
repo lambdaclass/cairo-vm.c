@@ -28,6 +28,13 @@ void parsing_empty_attributes_test(Program *program) {
 	printf("OK! \n");
 }
 
+void parsing_compiler_version(Program *program) {
+	printf("Test: parsing_compiler_version\n");
+	char *expected = "0.10.3";
+	assert(strcmp(expected, program->compiler_version) == 0);
+	printf("OK! \n");
+}
+
 void parsing_data_test(Program *program) {
 	printf("Test: parsing_data_array\n");
 
@@ -83,6 +90,8 @@ void parsing_tests() {
 	Program *program = parse_json_filename(filename);
 	printf("---------------------------------\n");
 	parsing_empty_attributes_test(program);
+	printf("---------------------------------\n");
+	parsing_compiler_version(program);
 	printf("---------------------------------\n");
 	parsing_data_test(program);
 	printf("---------------------------------\n");

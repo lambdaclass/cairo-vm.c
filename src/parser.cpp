@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 
 uint64_t hex_string_to_uint64(const char *hex) {
@@ -75,6 +76,7 @@ void free_program(Program *program) {
 			}
 			free(program->attributes.data);
 		}
+		free(program->compiler_version);
 		free(program->data);
 		free(program);
 	}
@@ -101,14 +103,17 @@ Program *parse_json_filename(const char *filename) {
 	dom::parser parser;
 	dom::element root = parser.parse(json);
 
-	// Get the "attributes" array from the JSON
+	// Parse attributes array
 	dom::array attributes_array = root["attributes"].get_array();
 	parse_attributes(attributes_array, program);
 
-	// Get the "data" array from the JSON
-	dom::array data_array = root["data"].get_array();
+	// Parse compiler version
+	const char *compiler_version = root["compiler_version"].get_c_str().value();
+	program->compiler_version = (char *)malloc(strlen(compiler_version) * sizeof(char *));
+	strcpy(program->compiler_version, compiler_version);
 
-	// Call the helper function to parse the data array
+	// Parse data array
+	dom::array data_array = root["data"].get_array();
 	parse_data(data_array, program);
 
 	return program;
