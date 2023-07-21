@@ -10,6 +10,18 @@ typedef struct memory {
 	CList *data;
 } memory;
 
+// Inner value
+
+union memory_value {
+	maybe_relocatable value;
+	unsigned int none;
+};
+
+typedef struct memory_cell {
+	union memory_value memory_value;
+	bool is_some;
+} memory_cell;
+
 // Error handling
 
 enum MemoryError {

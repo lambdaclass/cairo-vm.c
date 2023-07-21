@@ -68,6 +68,21 @@ void memory_insert_ok(void) {
 	printf("OK!\n");
 }
 
+void memory_insert_with_gap(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	memory_add_segment(&mem);
+	relocatable ptr = {0, 1};
+	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
+	assert(!result_insert.is_error);
+	assert(result_insert.value.none == 0);
+	ResultMemory result_get = memory_get(&mem, ptr);
+	assert(!result_get.is_error);
+	assert(result_get.value.memory_value.value.felt == 1);
+	printf("OK!\n");
+}
+
 void memory_load_data_one_element(void) {
 	// Initialize memory
 	memory mem = memory_new();
@@ -118,7 +133,10 @@ void memory_tests(void) {
 	memory_insert_ok_ovewrite_same_value();
 	printf("--------------------------------- \n");
 	printf("Test: memory_insert_ok \n");
-	memory_get_err();
+	memory_insert_ok();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_with_gap \n");
+	memory_insert_with_gap();
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_empty \n");
 	memory_load_data_empty();

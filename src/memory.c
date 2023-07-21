@@ -20,18 +20,28 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 		ResultMemory error = {.is_error = true, .value = {.error = Get}};
 		return error;
 	}
-	maybe_relocatable *value = segment->at(segment, ptr.offset);
-	ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
-	return ok;
+	memory_cell *cell = segment->at(segment, ptr.offset);
+	if (cell->is_some) {
+		ResultMemory ok = {.is_error = false, .value = {.memory_value = cell->memory_value.value}};
+		return ok;
+	}
+	ResultMemory error = {.is_error = true, .value = {.error = Get}};
+	return error;
 }
 
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
 	int index = ptr.segment_index;
+	int offset = ptr.segment_index;
 	if (index >= mem->data->count(mem->data)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
 	CList *segment = mem->data->at(mem->data, ptr.segment_index);
+	// Handle gaps
+	while (segment->count(segment) <= offset) {
+		memory_cell none = {.is_some = false, .memory_value = {.none = 0}};
+		segment->add(segment, &none);
+	}
 	ResultMemory get_result = memory_get(mem, ptr);
 	// Check for possible ovewrites
 	if (!get_result.is_error) {
@@ -43,14 +53,15 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 			return error;
 		}
 	}
-	segment->insert(segment, &value, ptr.offset);
+	memory_cell new_cell = {.is_some = true, .memory_value = {.value = value}};
+	segment->insert(segment, &new_cell, ptr.offset);
 	ResultMemory ok = {.is_error = false, .value = {.none = 0}};
 	return ok;
 }
 
 relocatable memory_add_segment(memory *memory) {
 	relocatable rel = {memory->num_segments, 0};
-	struct CList *segment = CList_init(sizeof(maybe_relocatable));
+	struct CList *segment = CList_init(sizeof(memory_cell));
 	memory->data->add(memory->data, segment);
 	memory->num_segments += 1;
 	return rel;
@@ -60,7 +71,9 @@ relocatable memory_load_data(memory *memory, relocatable ptr, CList *data) {
 	int size = data->count(data);
 	CList *segment = memory->data->at(memory->data, ptr.segment_index);
 	for (int i = 0; i < size; i++) {
-		segment->insert(segment, data->at(data, i), ptr.offset + i);
+		maybe_relocatable *value = data->at(data, i);
+		memory_cell new_cell = {.is_some = true, .memory_value = {.value = *value}};
+		segment->insert(segment, &new_cell, ptr.offset + i);
 	}
 	ptr.offset += size;
 	return ptr;
