@@ -94,7 +94,7 @@ uint16_t u16_from_le_bytes(uint8_t *bytes) {
 }
 
 uint16_t u16_from_be_bytes(uint8_t *bytes) {
-	uint64_t value = 0;
+	uint16_t value = 0;
 	for (int i = 0; i < 2; i++) {
 		value |= bytes[i] << (8 * i);
 	}

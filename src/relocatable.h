@@ -10,9 +10,14 @@ typedef struct relocatable {
 	unsigned int offset;
 } relocatable;
 
-typedef union maybe_relocatable {
+union maybe_relocatable_value {
 	struct relocatable relocatable;
 	felt_t *felt;
+};
+
+typedef struct maybe_relocatable {
+	union maybe_relocatable_value value;
+	bool is_felt;
 } maybe_relocatable;
 
 bool felt_equal(felt_t *a, felt_t *b);
