@@ -123,8 +123,8 @@ void memory_add_segment_ok(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	assert(mem.data->count(mem.data) == 1);
-    assert(mem.num_segments == 1);
-    printf("OK!\n");
+	assert(mem.num_segments == 1);
+	printf("OK!\n");
 }
 
 void memory_tests(void) {
@@ -152,7 +152,7 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_one_element \n");
 	memory_load_data_one_element();
-    printf("--------------------------------- \n");
+	printf("--------------------------------- \n");
 	printf("Test: memory_add_segment_ok \n");
 	memory_add_segment_ok();
 }
