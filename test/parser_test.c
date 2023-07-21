@@ -12,9 +12,6 @@ void parsing_attributes_test(Program *program) {
 	char *expected[] = {"attr1", "attr2"};
 	size_t num_values = sizeof(expected) / sizeof(expected[0]);
 	assert(num_values == program->attributes.length);
-	if (num_values == 0) {
-		assert(program->attributes.data == NULL);
-	}
 	for (size_t i = 0; i < num_values; ++i) {
 		assert(strcmp(expected[i], program->attributes.data[i]) == 0);
 	}
@@ -25,6 +22,7 @@ void parsing_empty_attributes_test(Program *program) {
 	printf("Test: parsing__empty_attributes_array\n");
 	size_t num_values = 0;
 	assert(num_values == program->attributes.length);
+	assert(program->attributes.data == NULL);
 	printf("OK! \n");
 }
 

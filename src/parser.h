@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 #include "../lambdaworks/lib/lambdaworks.h"
 #include "stddef.h"
 #include "stdint.h"
@@ -72,5 +71,4 @@ Program *parse_json_filename(const char *filename);
 Program *parse_json_data(const char *parse_json_data);
 #ifdef __cplusplus
 } // extern "C"
-#endif
 #endif
