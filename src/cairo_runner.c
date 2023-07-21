@@ -27,8 +27,10 @@ void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint) {
 relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CList *stack,
                                                   relocatable return_fp) {
 	relocatable end = memory_add_segment(&runner->vm.memory);
-	stack->add(stack, &return_fp);
-	stack->add(stack, &end);
+	maybe_relocatable return_fp_mr = {.is_felt = false, .value = {.relocatable = return_fp}};
+	maybe_relocatable end_mr = {.is_felt = false, .value = {.relocatable = end}};
+	stack->add(stack, &return_fp_mr);
+	stack->add(stack, &end_mr);
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = stack->count(stack);
 	runner_initialize_state(runner, entrypoint);

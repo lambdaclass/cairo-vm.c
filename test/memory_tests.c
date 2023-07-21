@@ -123,6 +123,7 @@ void memory_add_segment_ok(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	assert(mem.data->count(mem.data) == 1);
+    assert(mem.num_segments == 1);
     printf("OK!\n");
 }
 

@@ -8,5 +8,6 @@
 int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) {
 	decoding_tests();
 	memory_tests();
+	runner_tests();
 	return 0;
 }
