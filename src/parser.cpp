@@ -68,6 +68,32 @@ void parse_data(simdjson::dom::array data_array, Program *program) {
 	}
 }
 
+void parse_file_contents(simdjson::dom::element file_contents, Program *program) {
+	const char *start = file_contents["<start>"].get_c_str().value();
+	program->debug_info.fileContent.start = (char *)malloc(strlen(start) * sizeof(char *));
+	strcpy(program->debug_info.fileContent.start, start);
+}
+
+void parse_instruction_location(simdjson::dom::element instruction_locations, Program *program) {
+	for (auto [k, v] : instruction_locations.get_object()) {
+		const char *key = k.data();
+		printf("%s, %s\n", key, v.get_c_str().value());
+	}
+
+	program = program;
+}
+
+void parse_debug_info(simdjson::dom::element debug_info, Program *program) {
+	try {
+		simdjson::dom::element file_contents = debug_info["file_contents"];
+		parse_file_contents(file_contents, program);
+		simdjson::dom::element instruction_locations = debug_info["instruction_locations"];
+		parse_instruction_location(instruction_locations, program);
+	} catch (simdjson::simdjson_error *se) {
+		printf("error %s", se->what());
+	}
+}
+
 void free_program(Program *program) {
 	if (program != nullptr) {
 		if (program->attributes.length > 0) {
@@ -78,6 +104,7 @@ void free_program(Program *program) {
 		}
 		free(program->compiler_version);
 		free(program->data);
+		free(program->debug_info.fileContent.start);
 		free(program);
 	}
 }
@@ -115,6 +142,10 @@ Program *parse_json_filename(const char *filename) {
 	// Parse data array
 	dom::array data_array = root["data"].get_array();
 	parse_data(data_array, program);
+
+	// Parse debug info
+	dom::element debug_info = root["debug_info"];
+	parse_debug_info(debug_info, program);
 
 	return program;
 }
