@@ -55,6 +55,7 @@ void memory_insert_ok_ovewrite_same_value(void) {
 	maybe_relocatable elem = {.is_felt = true, .value = {.felt = &f}};
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(!result.is_error);
+
 	maybe_relocatable elem_b = {.is_felt = true, .value = {.felt = &f}};
 	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(!result_b.is_error);
@@ -70,10 +71,12 @@ void memory_insert_ok(void) {
 	one(f);
 	maybe_relocatable elem = {.is_felt = true, .value = {.felt = &f}};
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
+
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
+
 	felt_t expected_value;
 	one(expected_value);
 	assert(felt_equal(result_get.value.memory_value.value.felt, &expected_value));
