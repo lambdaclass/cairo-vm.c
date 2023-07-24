@@ -113,6 +113,7 @@ void memory_load_data_one_element(void) {
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
 	// Check memory
@@ -132,6 +133,7 @@ void memory_load_data_empty(void) {
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
 	// Check memory
@@ -139,6 +141,18 @@ void memory_load_data_empty(void) {
 	assert(result.is_error);
 	memory_free(&mem);
 	printf("OK!\n");
+}
+
+void memory_load_data_err_unallocated_segment(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	// Initialize data to load
+	struct CList *data = CList_init(sizeof(maybe_relocatable));
+	relocatable ptr = {0, 0};
+	// Load data
+	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	assert(load_result.is_error);
+	assert(load_result.value.error == LoadData);
 }
 
 void memory_add_segment_ok(void) {
@@ -176,6 +190,9 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_one_element \n");
 	memory_load_data_one_element();
+	printf("--------------------------------- \n");
+	printf("Test: memory_load_data_err_unallocated_segment \n");
+	memory_load_data_err_unallocated_segment();
 	printf("--------------------------------- \n");
 	printf("Test: memory_add_segment_ok \n");
 	memory_add_segment_ok();
