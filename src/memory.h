@@ -49,17 +49,18 @@ typedef struct ResultMemory {
 // Creates a new empty memory
 memory memory_new(void);
 
-// Fetches a value from memory indicated by ptr
+// Fetches a value from memory indicated by ptr, returns a maybe_relocatable
 ResultMemory memory_get(memory *mem, relocatable ptr);
 
-// Inserts value into memory at address ptr
+// Inserts value into memory at address ptr, returns none
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value);
 
 // Adds a memory segment
 relocatable memory_add_segment(memory *memory);
 
 // Inserts the elements in data sequentially from address ptr and returns the next address after the data
-relocatable memory_load_data(memory *memory, relocatable ptr, CList *data);
+// returns ptr
+ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data);
 
 // Frees resources used by the memory struct
 void memory_free(memory *mem);
