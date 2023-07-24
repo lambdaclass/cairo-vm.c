@@ -16,4 +16,4 @@ jobs:
       - run: sudo apt install valgrind -y
       - run: make compile-rust
       - run: ls ./lambdaworks/lib/lambdaworks/target/release
-      # - run: make SANITIZER_FLAGS= LN_FLAGS="-L${PWD}/lambdaworks/lib/lambdaworks/target/release/ -static -llambdaworks" valgrind
+      - run: make SANITIZER_FLAGS= valgrind
