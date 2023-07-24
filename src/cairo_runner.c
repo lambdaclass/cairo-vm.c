@@ -9,7 +9,10 @@ cairo_runner runner_new(struct program program) {
 	return runner;
 }
 
-void runner_free(cairo_runner *runner) { memory_free(&runner->vm.memory); }
+void runner_free(cairo_runner *runner) {
+	memory_free(&runner->vm.memory);
+	program_free(&runner->program);
+}
 
 // Creates program, execution and builtin segments
 void runner_initialize_segments(cairo_runner *runner) {

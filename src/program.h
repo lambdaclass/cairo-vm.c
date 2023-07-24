@@ -8,4 +8,7 @@ struct program {
 	CList *data;
 };
 
+// Frees resources used by program struct
+void program_free(struct program *program);
+
 #endif
