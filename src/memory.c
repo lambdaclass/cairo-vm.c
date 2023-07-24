@@ -65,7 +65,6 @@ relocatable memory_add_segment(memory *memory) {
 	struct CList *segment = CList_init(sizeof(memory_cell));
 	memory->data->add(memory->data, segment);
 	// Clist implementation uses memcpy, so we need to free this
-	segment->clear(segment);
 	free(segment);
 	memory->num_segments += 1;
 	return rel;
