@@ -21,6 +21,7 @@ cairo_runner runner_new(struct program program);
 
 void runner_free(cairo_runner *runner);
 
+// Performs the intialization step, leaving the runner ready to run a loaded cairo program from a main entrypoint
 relocatable runner_initialize(cairo_runner *runner);
 
 #endif
