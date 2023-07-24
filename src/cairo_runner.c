@@ -3,14 +3,17 @@
 #include "relocatable.h"
 #include "vm.h"
 
+// Creates a new, empty cairo_runner
 cairo_runner runner_new(struct program program) {
 	virtual_machine vm = vm_new();
 	cairo_runner runner = {program, vm, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	return runner;
 }
 
+// Frees resources used by the cairo_runner struct
 void runner_free(cairo_runner *runner) { memory_free(&runner->vm.memory); }
 
+// Creates program, execution and builtin segments
 void runner_initialize_segments(cairo_runner *runner) {
 	// Program Segment
 	runner->program_base = memory_add_segment(&runner->vm.memory);
@@ -19,6 +22,7 @@ void runner_initialize_segments(cairo_runner *runner) {
 	// Initialize builtin segments
 }
 
+// Initializes the program segment & initial pc
 void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint) {
 	runner->initial_pc = runner->program_base;
 	runner->initial_pc.offset += entrypoint;
@@ -26,6 +30,8 @@ void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint) {
 	// Mark data segment as accessed
 }
 
+// Initializes memory, initial register values & returns the end pointer (final pc) to run from a given pc offset
+// (entrypoint)
 relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CList *stack,
                                                   relocatable return_fp) {
 	relocatable end = memory_add_segment(&runner->vm.memory);
@@ -40,6 +46,7 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	return end;
 }
 
+// Initializes memory, initial register values & returns the end pointer (final pc) to run from the main entrypoint
 relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	CList *stack = CList_init(sizeof(maybe_relocatable));
 	// Handle builtin initial stack
@@ -48,6 +55,7 @@ relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	return runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
 }
 
+// Initializes the vm's run_context, adds builtin validation rules & validates memory
 void runner_initialize_vm(cairo_runner *runner) {
 	runner->vm.run_context.ap = runner->initial_fp;
 	runner->vm.run_context.fp = runner->initial_fp;
@@ -56,6 +64,7 @@ void runner_initialize_vm(cairo_runner *runner) {
 	// Apply validation rules to memory
 }
 
+// Performs the intialization step, leaving the runner ready to run a loaded cairo program from a main entrypoint
 relocatable runner_initialize(cairo_runner *runner) {
 	// runner_initialize_builtins
 	runner_initialize_segments(runner);
