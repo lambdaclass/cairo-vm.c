@@ -94,5 +94,5 @@ void memory_free(memory *mem) {
 		segment->free(segment);
 	}
 	free(mem->data);
-	//mem->data->clear(mem->data);
+	// mem->data->clear(mem->data);
 }
