@@ -8,6 +8,6 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) 
 
 	felt_tests();
 	decoding_tests();
-	instruction_size_test();
+	instruction_tests();
 	return 0;
 }

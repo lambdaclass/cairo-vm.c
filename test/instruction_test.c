@@ -36,3 +36,10 @@ void instruction_size_test(void) {
 	uint64_t b = instruction_size(instr_2);
 	assert(b == 1);
 }
+
+void instruction_tests(void) {
+	printf("----------------------\n");
+	printf("Test: instruction_size\n");
+	instruction_size_test();
+	printf("OK!\n");
+}
