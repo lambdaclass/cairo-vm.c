@@ -82,7 +82,7 @@ void parsing_data_test(Program *program) {
 	printf("OK! \n");
 }
 
-void parsing_tests() {
+void parsing_tests(void) {
 
 	const char *filename = "cairo_programs/fibonacci.json";
 	Program *program = parse_json_filename(filename);

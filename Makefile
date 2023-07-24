@@ -7,7 +7,7 @@ CC=cc
 CXX=g++
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
-CXX_FLAGS=-std=c++2a -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
+CXX_FLAGS=-std=c++14 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
 
 LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
@@ -15,20 +15,21 @@ LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
 BUILD_DIR=./build
 SRC_DIR=./src
 TEST_DIR=./test
+LIB_DIR=./lib
 
 SOURCE = $(wildcard $(SRC_DIR)/*.c)
-SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
-
-TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c) $(wildcard $(SRC_DIR)/*.c)
-TEST_SOURCE := $(filter-out %main.c, $(TEST_SOURCE))
-TEST_SOURCE_CPP = $(wildcard $(TEST_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) lib/simdjson.cpp
+SOURCE := $(filter-out %main.c, $(SOURCE))
+SOURCE_CPP = $(wildcard $(SRC_DIR)/*.cpp)
+LIB_SOURCE_CPP = $(wildcard $(LIB_DIR)/*.cpp)
+TEST_SOURCE = $(wildcard $(TEST_DIR)/*.c)
+TEST_SOURCE_CPP = $(wildcard $(TEST_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*.cpp)
 
 HEADERS = $(wildcard $(SRC_DIR)/*.h)
 TEST_HEADERS = $(wildcard $(TEST_DIR)/*.h)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCE))
 OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
-TEST_OBJECTS_CPP = $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(TEST_SOURCE_CPP))
+LIB_OBJECTS_CPP = $(patsubst $(LIB_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCE_CPP))
 
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
@@ -37,12 +38,12 @@ default: compile-rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
-$(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP)
+$(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP) $(LIB_OBJECTS_CPP) $(SRC_DIR)/main.o
 	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
-$(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS) $(TEST_OBJECTS_CPP)
+$(BUILD_DIR)/$(TEST_TARGET): $(OBJECTS) $(OBJECTS_CPP) $(LIB_OBJECTS_CPP) $(TEST_OBJECTS)
 	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 -include $(DEP)
@@ -62,6 +63,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(LIB_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
 deps-macos:
 	brew install clang-format
