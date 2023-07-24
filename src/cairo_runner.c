@@ -3,14 +3,12 @@
 #include "relocatable.h"
 #include "vm.h"
 
-// Creates a new, empty cairo_runner
 cairo_runner runner_new(struct program program) {
 	virtual_machine vm = vm_new();
 	cairo_runner runner = {program, vm, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	return runner;
 }
 
-// Frees resources used by the cairo_runner struct
 void runner_free(cairo_runner *runner) { memory_free(&runner->vm.memory); }
 
 // Creates program, execution and builtin segments
