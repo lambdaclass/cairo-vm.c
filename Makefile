@@ -7,7 +7,7 @@ CC=cc
 SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks
 
 BUILD_DIR=./build
 SRC_DIR=./src
@@ -25,17 +25,17 @@ TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
 
-default: compile-rust $(TARGET)
+default: compile_rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $^ -o $@ $(LN_FLAGS)
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
 $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $^ -o $@ $(LN_FLAGS)
 
 -include $(DEP)
 
@@ -51,13 +51,13 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
-deps-macos:
+deps_macos:
 	brew install clang-format
 
 run: default
 	$(BUILD_DIR)/$(TARGET) 
 
-test: compile-rust $(TEST_TARGET)
+test: compile_rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
@@ -70,8 +70,8 @@ fmt:
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
-valgrind: clean test
+valgrind: clean compile_rust $(TEST_TARGET)
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
 
-compile-rust: 
+compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
