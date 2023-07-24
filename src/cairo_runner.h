@@ -19,6 +19,8 @@ typedef struct cairo_runner {
 
 cairo_runner runner_new(struct program program);
 
+void runner_free(cairo_runner *runner);
+
 relocatable runner_initialize(cairo_runner *runner);
 
 #endif

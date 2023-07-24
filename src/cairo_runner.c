@@ -9,6 +9,8 @@ cairo_runner runner_new(struct program program) {
 	return runner;
 }
 
+void runner_free(cairo_runner *runner) { memory_free(&runner->vm.memory); }
+
 void runner_initialize_segments(cairo_runner *runner) {
 	// Program Segment
 	runner->program_base = memory_add_segment(&runner->vm.memory);

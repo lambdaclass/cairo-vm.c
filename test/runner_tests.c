@@ -35,6 +35,7 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	ResultMemory result = memory_get(&memory, ptr);
 	assert(!result.is_error);
 	assert(felt_equal(result.value.memory_value.value.felt, felt_one));
+	runner_free(&runner);
 	printf("OK!\n");
 }
 
@@ -60,6 +61,7 @@ void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
 	relocatable ptr = {0, 0};
 	ResultMemory result = memory_get(&memory, ptr);
 	assert(result.is_error);
+	runner_free(&runner);
 	printf("OK!\n");
 }
 
