@@ -23,10 +23,11 @@ void runner_initialize_segments(cairo_runner *runner) {
 }
 
 // Initializes the program segment & initial pc
-void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint) {
+void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CList *stack) {
 	runner->initial_pc = runner->program_base;
 	runner->initial_pc.offset += entrypoint;
 	memory_load_data(&runner->vm.memory, runner->program_base, runner->program.data);
+	memory_load_data(&runner->vm.memory, runner->execution_base, stack);
 	// Mark data segment as accessed
 }
 
@@ -41,7 +42,7 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	stack->add(stack, &end_mr);
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = stack->count(stack);
-	runner_initialize_state(runner, entrypoint);
+	runner_initialize_state(runner, entrypoint, stack);
 	runner->final_pc = end;
 	return end;
 }
@@ -52,7 +53,9 @@ relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	// Handle builtin initial stack
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
-	return runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
+	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
+	stack->free(stack);
+	return end;
 }
 
 // Initializes the vm's run_context, adds builtin validation rules & validates memory
