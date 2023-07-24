@@ -38,7 +38,7 @@ default: compile-rust $(TARGET)
 
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
-$(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP) $(LIB_OBJECTS_CPP) $(SRC_DIR)/main.o
+$(BUILD_DIR)/$(TARGET): $(OBJECTS) $(OBJECTS_CPP) $(LIB_OBJECTS_CPP) $(BUILD_DIR)/main.o
 	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
@@ -67,6 +67,10 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.c
 $(BUILD_DIR)/%.o: $(LIB_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXX_FLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%main.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) -MMD -c $< -o $@
 
 deps-macos:
 	brew install clang-format
