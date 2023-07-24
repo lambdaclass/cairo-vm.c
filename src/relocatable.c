@@ -12,7 +12,7 @@ bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b) {
 	}
 }
 
-maybe_relocatable maybe_relocatable_from_felt_unwrapped(unsigned long long *felt) {
+maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt) {
 	maybe_relocatable elem = {.is_felt = true, .value = {.felt = {felt[0], felt[1], felt[2], felt[3]}}};
 	return elem;
 }
