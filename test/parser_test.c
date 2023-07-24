@@ -66,7 +66,7 @@ void parsing_data_test(Program *program) {
 	    "0x800000000000011000000000000000000000000000000000000000000000000",
 	    "0x1104800180018000",
 	    "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffff7",
-	    "0x208b7fff7fff7ffe",
+	    "0x208b7fff7fff7ffe"
 	};
 
 	size_t num_values = sizeof(hex_values) / sizeof(hex_values[0]);
@@ -82,6 +82,19 @@ void parsing_data_test(Program *program) {
 	printf("OK! \n");
 }
 
+void parsing_main_scope_test(Program *program) {
+	printf("Test: parsing_main_scope\n");
+	char *expected = "__main__";
+	assert(strcmp(expected, program->main_scope) == 0);
+	printf("OK! \n");
+}
+
+void parsing_prime_test(Program *program) {
+	printf("Test: parsing_prime\n");
+	char *expected = "0x800000000000011000000000000000000000000000000000000000000000001";
+	assert(strcmp(expected, program->prime) == 0);
+	printf("OK! \n");
+}
 void parsing_tests(void) {
 
 	const char *filename = "cairo_programs/fibonacci.json";
@@ -92,6 +105,10 @@ void parsing_tests(void) {
 	parsing_compiler_version(program);
 	printf("---------------------------------\n");
 	parsing_data_test(program);
+	printf("---------------------------------\n");
+	parsing_main_scope_test(program);
+	printf("---------------------------------\n");
+	parsing_prime_test(program);
 	printf("---------------------------------\n");
 	free_program(program);
 }

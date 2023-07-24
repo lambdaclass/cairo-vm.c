@@ -109,6 +109,8 @@ void free_program(Program *program) {
 	free(program->compiler_version);
 	free(program->data);
 	// free(program->debug_info.fileContent.start);
+	free(program->main_scope);
+	free(program->prime);
 	free(program);
 }
 
@@ -137,6 +139,10 @@ Program *parse_json_filename(const char *filename) {
 	dom::array attributes_array = root["attributes"].get_array();
 	parse_attributes(attributes_array, program);
 
+	// Parse builtins array 
+	// dom::array builtins_array = root["builtins"].get_array();
+	// parse_builtins(builtins_array, program);
+
 	// Parse compiler version
 	const char *compiler_version = root["compiler_version"].get_c_str().value();
 	program->compiler_version = (char *)malloc(strlen(compiler_version) * sizeof(char) + 1);
@@ -153,6 +159,30 @@ Program *parse_json_filename(const char *filename) {
 	// Parse debug info
 	// dom::element debug_info = root["debug_info"];
 	// parse_debug_info(debug_info, program);
+
+	// TODO:  Parse hints 
+
+	// TODO: Parse identifiers 
+
+	// Parse main_scope
+	const char *main_scope = root["main_scope"].get_c_str().value();
+	program->main_scope = (char *)malloc(strlen(main_scope) * sizeof(char) + 1);
+	if (program->main_scope == NULL) {
+		printf("Main scope allocation failed");
+	} else {
+		strcpy(program->main_scope, main_scope);
+	}
+
+	// Parse prime 
+	const char *prime = root["prime"].get_c_str().value();
+	program->prime = (char *)malloc(strlen(prime) * sizeof(char) + 1);
+	if (program->prime == NULL) {
+		printf("Prime allocation failed");
+	} else {
+		strcpy(program->prime, prime);
+	}
+
+	// Parse reference managers
 
 	return program;
 }

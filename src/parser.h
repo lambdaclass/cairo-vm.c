@@ -62,7 +62,7 @@ typedef struct {
 	DebugInfo debug_info;
 	StringArray hints;
 	Identifiers *identifiers;
-	StringArray main_scope;
+	char *main_scope;
 	char *prime;
 } Program;
 void free_program(Program *program);
