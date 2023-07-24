@@ -89,9 +89,10 @@ ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data) {
 
 void memory_free(memory *mem) {
 	int num_segments = mem->num_segments;
-	for (int i = 0; i < num_segments; i++) {
+	for (int i = num_segments - 1; i == 0; i--) {
 		CList *segment = mem->data->at(mem->data, i);
-		segment->clear(segment);
+		segment->free(segment);
 	}
-	mem->data->free(mem->data);
+	free(mem->data);
+	//mem->data->clear(mem->data);
 }
