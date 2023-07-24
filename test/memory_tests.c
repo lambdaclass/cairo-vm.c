@@ -121,6 +121,7 @@ void memory_load_data_one_element(void) {
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(result.value.memory_value, elem));
 	memory_free(&mem);
+	data->free(data);
 	printf("OK!\n");
 }
 
@@ -140,6 +141,7 @@ void memory_load_data_empty(void) {
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	memory_free(&mem);
+	data->free(data);
 	printf("OK!\n");
 }
 
@@ -153,6 +155,8 @@ void memory_load_data_err_unallocated_segment(void) {
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(load_result.is_error);
 	assert(load_result.value.error == LoadData);
+	data->free(data);
+	memory_free(&mem);
 }
 
 void memory_add_segment_ok(void) {
