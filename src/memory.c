@@ -91,8 +91,7 @@ void memory_free(memory *mem) {
 	int num_segments = mem->num_segments;
 	for (int i = num_segments - 1; i == 0; i--) {
 		CList *segment = mem->data->at(mem->data, i);
-		segment->free(segment);
+		segment->clear(segment);
 	}
-	free(mem->data);
-	// mem->data->clear(mem->data);
+	mem->data->free(mem->data);
 }
