@@ -1,7 +1,6 @@
 #include "memory.h"
 #include "clist.h"
 #include "relocatable.h"
-#include <stdlib.h>
 
 memory memory_new(void) {
 	struct CList *mem_data = CList_init(sizeof(struct CList));
@@ -86,14 +85,9 @@ ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data) {
 }
 
 void memory_free(memory *mem) {
-	for (int i = mem->num_segments - 1; i > 0; i--) {
+	int num_segments = mem->num_segments;
+	for (int i = 0; i < num_segments; i++) {
 		CList *segment = mem->data->at(mem->data, i);
-		for (int j = segment->count(segment) - 1; j > 0; j--) {
-			memory_cell *cell = segment->at(segment, j);
-			if (cell->is_some && cell->memory_value.value.is_felt) {
-				free(cell->memory_value.value.value.felt);
-			}
-		}
 		segment->clear(segment);
 	}
 	mem->data->free(mem->data);
