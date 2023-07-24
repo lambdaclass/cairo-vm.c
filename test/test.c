@@ -1,7 +1,7 @@
 #include "decoder_test.h"
+#include "felt_test.h"
 #include "memory_tests.h"
 #include "runner_tests.h"
-#include "felt_test.h"
 #include <assert.h>
 #include <stdio.h>
 

@@ -1,4 +1,5 @@
 #include "felt_test.h"
+#include <stdio.h>
 
 void felt_sub(void) {
 	felt_t f_one;

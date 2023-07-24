@@ -1,6 +1,6 @@
 #ifndef RELOCATABLE_H
 #define RELOCATABLE_H
-
+#include "../lambdaworks/lib/lambdaworks.h"
 #include <stdbool.h>
 
 typedef struct relocatable {
@@ -10,7 +10,7 @@ typedef struct relocatable {
 
 union maybe_relocatable_value {
 	struct relocatable relocatable;
-	unsigned int felt; // TODO use a felt type
+	felt_t felt;
 };
 
 typedef struct maybe_relocatable {
@@ -19,5 +19,7 @@ typedef struct maybe_relocatable {
 } maybe_relocatable;
 
 bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
+
+maybe_relocatable maybe_relocatable_from_felt_unwrapped(unsigned long long *felt);
 
 #endif

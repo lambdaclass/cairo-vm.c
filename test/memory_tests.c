@@ -1,5 +1,6 @@
 #include "memory_tests.h"
 #include "relocatable.h"
+#include "utils.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -17,7 +18,7 @@ void memory_insert_err_unallocated_segement(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	relocatable ptr = {0, 0};
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	maybe_relocatable elem = {.is_felt = true, .value = {.felt = {1}}};
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(result.is_error);
 	assert(result.value.error == Insert);
@@ -29,10 +30,14 @@ void memory_insert_err_ovewrite_attempt(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	relocatable ptr = {0, 0};
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(!result.is_error);
-	maybe_relocatable elem_b = {.is_felt = true, .value = {.felt = 2}};
+	felt_t felt_two;
+	from(felt_two, 2);
+	maybe_relocatable elem_b = maybe_relocatable_from_felt_unwrapped(felt_two);
 	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(result_b.is_error);
 	assert(result_b.value.error == Insert);
@@ -44,10 +49,12 @@ void memory_insert_ok_ovewrite_same_value(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	relocatable ptr = {0, 0};
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(!result.is_error);
-	maybe_relocatable elem_b = {.is_felt = true, .value = {.felt = 1}};
+	maybe_relocatable elem_b = maybe_relocatable_from_felt_unwrapped(felt_one);
 	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(!result_b.is_error);
 	printf("OK!\n");
@@ -58,13 +65,15 @@ void memory_insert_ok(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	relocatable ptr = {0, 0};
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
-	assert(result_get.value.memory_value.value.felt == 1);
+	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
 	printf("OK!\n");
 }
 
@@ -73,13 +82,15 @@ void memory_insert_with_gap(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	relocatable ptr = {0, 1};
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
-	assert(result_get.value.memory_value.value.felt == 1);
+	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
 	printf("OK!\n");
 }
 
@@ -89,7 +100,9 @@ void memory_load_data_one_element(void) {
 	memory_add_segment(&mem);
 	// Initialize data to load
 	struct CList *data = CList_init(sizeof(maybe_relocatable));
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	data->add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data

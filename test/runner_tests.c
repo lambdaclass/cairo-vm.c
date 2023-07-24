@@ -3,13 +3,16 @@
 #include "memory.h"
 #include "program.h"
 #include "run_context.h"
+#include "utils.h"
 #include "vm.h"
 #include <assert.h>
 #include <stdio.h>
 
 void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	struct CList *program_data = CList_init(sizeof(maybe_relocatable));
-	maybe_relocatable elem = {.is_felt = true, .value = {.felt = 1}};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_unwrapped(felt_one);
 	program_data->add(program_data, &elem);
 	struct program program = {0, program_data};
 	cairo_runner runner = runner_new(program);
@@ -31,7 +34,7 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	relocatable ptr = {0, 0};
 	ResultMemory result = memory_get(&memory, ptr);
 	assert(!result.is_error);
-	assert(result.value.memory_value.value.felt == 1);
+	assert(felt_equal(result.value.memory_value.value.felt, felt_one));
 	printf("OK!\n");
 }
 
