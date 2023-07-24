@@ -1,4 +1,5 @@
 #include "cairo_runner.h"
+#include "memory.h"
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"
@@ -22,19 +23,31 @@ void runner_initialize_segments(cairo_runner *runner) {
 	// Initialize builtin segments
 }
 
-// Initializes the program segment & initial pc
-void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CList *stack) {
+// Initializes the program segment & initial pc, returns none if ok or memory_error if failure
+ResultRunner runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CList *stack) {
 	runner->initial_pc = runner->program_base;
 	runner->initial_pc.offset += entrypoint;
-	memory_load_data(&runner->vm.memory, runner->program_base, runner->program.data);
-	memory_load_data(&runner->vm.memory, runner->execution_base, stack);
+	ResultMemory load_program_result =
+	    memory_load_data(&runner->vm.memory, runner->program_base, runner->program.data);
+	if (load_program_result.is_error) {
+		ResultRunner error = {.is_error = true, .value = {.memory_error = load_program_result.value.error}};
+		return error;
+	}
+	ResultMemory load_execution_result = memory_load_data(&runner->vm.memory, runner->execution_base, stack);
+	if (load_execution_result.is_error) {
+		ResultRunner error = {.is_error = true, .value = {.memory_error = load_execution_result.value.error}};
+		return error;
+	}
 	// Mark data segment as accessed
+	ResultRunner ok = {.is_error = false, .value = {.none = 0}};
+	return ok;
 }
 
 // Initializes memory, initial register values & returns the end pointer (final pc) to run from a given pc offset
 // (entrypoint)
-relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CList *stack,
-                                                  relocatable return_fp) {
+// Returns ptr if ok, or memory_error if failure
+ResultRunner runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CList *stack,
+                                                   relocatable return_fp) {
 	relocatable end = memory_add_segment(&runner->vm.memory);
 	maybe_relocatable return_fp_mr = {.is_felt = false, .value = {.relocatable = return_fp}};
 	maybe_relocatable end_mr = {.is_felt = false, .value = {.relocatable = end}};
@@ -42,18 +55,24 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	stack->add(stack, &end_mr);
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = stack->count(stack);
-	runner_initialize_state(runner, entrypoint, stack);
 	runner->final_pc = end;
-	return end;
+	ResultRunner result = runner_initialize_state(runner, entrypoint, stack);
+	if (result.is_error) {
+		return result;
+	} else {
+		ResultRunner ok = {.is_error = false, .value = {.ptr = end}};
+		return ok;
+	}
 }
 
 // Initializes memory, initial register values & returns the end pointer (final pc) to run from the main entrypoint
-relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
+// Returns ptr if ok, or memory_error if failure
+ResultRunner runner_initialize_main_entrypoint(cairo_runner *runner) {
 	CList *stack = CList_init(sizeof(maybe_relocatable));
 	// Handle builtin initial stack
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
-	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
+	ResultRunner end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
 	stack->free(stack);
 	return end;
 }
@@ -68,10 +87,11 @@ void runner_initialize_vm(cairo_runner *runner) {
 }
 
 // Performs the intialization step, leaving the runner ready to run a loaded cairo program from a main entrypoint
-relocatable runner_initialize(cairo_runner *runner) {
+// Returns ptr if ok, or memory_error if failure
+ResultRunner runner_initialize(cairo_runner *runner) {
 	// runner_initialize_builtins
 	runner_initialize_segments(runner);
-	relocatable end = runner_initialize_main_entrypoint(runner);
+	ResultRunner end = runner_initialize_main_entrypoint(runner);
 	runner_initialize_vm(runner);
 	return end;
 }
