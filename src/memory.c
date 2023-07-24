@@ -90,5 +90,5 @@ void memory_free(memory *mem) {
 		CList *segment = mem->data->at(mem->data, i);
 		segment->clear(segment);
 	}
-	mem->data->clear(mem->data);
+	mem->data->free(mem->data);
 }
