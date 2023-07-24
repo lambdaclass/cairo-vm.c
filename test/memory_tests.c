@@ -105,7 +105,8 @@ void memory_load_data_one_element(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	// Initialize data to load
-	struct CList *data = CList_init(sizeof(maybe_relocatable));
+	CC_Array *data;
+	cc_array_new(&data);
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
@@ -130,7 +131,7 @@ void memory_load_data_empty(void) {
 	memory mem = memory_new();
 	memory_add_segment(&mem);
 	// Initialize data to load
-	struct CList *data = CList_init(sizeof(maybe_relocatable));
+	CC_Array *data;
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
@@ -149,7 +150,7 @@ void memory_load_data_err_unallocated_segment(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	// Initialize data to load
-	struct CList *data = CList_init(sizeof(maybe_relocatable));
+	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);

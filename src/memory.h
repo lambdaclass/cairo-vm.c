@@ -1,7 +1,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include "clist.h"
+#include "Collections-C/src/include/cc_array.h"
 #include "relocatable.h"
 #include <stdbool.h>
 
@@ -9,7 +9,7 @@
 // Memory is inmutable
 typedef struct memory {
 	unsigned int num_segments;
-	CList *data;
+	CC_Array *data;
 } memory;
 
 // Inner value
@@ -60,7 +60,7 @@ relocatable memory_add_segment(memory *memory);
 
 // Inserts the elements in data sequentially from address ptr and returns the next address after the data
 // returns ptr
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data);
+ResultMemory memory_load_data(memory *memory, relocatable ptr, CC_Array *data);
 
 // Frees resources used by the memory struct
 void memory_free(memory *mem);
