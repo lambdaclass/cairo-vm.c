@@ -14,4 +14,4 @@ jobs:
       - run: make check_fmt
       - run: LD_LIBRARY_PATH=${PWD}/lambdaworks/lib/lambdaworks/target/release make test
       - run: sudo apt install valgrind -y
-      - run: make SANITIZER_FLAGS= LN_FLAGS="-L./lambdaworks/lib/lambdaworks/target/release/ -static -llambdaworks" valgrind
+      - run: LD_LIBRARY_PATH=${PWD}/lambdaworks/lib/lambdaworks/target/release make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind
