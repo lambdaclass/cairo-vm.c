@@ -21,7 +21,8 @@ typedef struct maybe_relocatable {
 } maybe_relocatable;
 
 bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
-
+relocatable sub_relocatable(relocatable a, uint64_t other);
+relocatable add_relocatable(relocatable a, uint64_t other);
 maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt);
 
 #endif

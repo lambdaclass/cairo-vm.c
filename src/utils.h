@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 bool felt_equal(felt_t a, felt_t b);
+int64_t absolute(int64_t a);
 
 uint8_t *u64_to_le_bytes(uint64_t value, uint8_t *buffer_bytes);
 uint8_t *u64_to_be_bytes(uint64_t value, uint8_t *buffer_bytes);

@@ -15,7 +15,42 @@ typedef struct {
 	memory memory;
 } virtual_machine;
 
+// ---------------------
+// execution structures
+// ---------------------
+
+typedef struct {
+	maybe_relocatable dst;
+	memory_cell res;
+	maybe_relocatable op0;
+	maybe_relocatable op1;
+} operands;
+
+typedef struct {
+	relocatable dst_addr;
+	relocatable op0_addr;
+	relocatable op1_addr;
+} operands_address;
+
+typedef struct {
+	operands oprs;
+	operands_address op_addrs;
+	uint8_t deduced_operands;
+} computed_operands;
+
+typedef struct {
+	computed_operands value;
+	VirtualMachineError error;
+	bool is_error;
+} computed_operands_res;
+
+// ---------------------
+//    VM functions
+// ---------------------
+
 // Creates a new, empty virtual_machine
 virtual_machine vm_new(void);
+// executes an instruction in the vm
+vm_result run_instruction(virtual_machine vm, Instruction instr);
 
 #endif

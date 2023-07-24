@@ -5,16 +5,24 @@ virtual_machine vm_new(void) {
 	return vm;
 }
 
-vm_result run_instruction(Instruction instr) {
+computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
+	relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
+	ResultMemory mem_res = memory_get(&vm.memory, dst_addr);
+}
 
-	int64_t e = instr.off0;
+vm_result run_instruction(virtual_machine vm, Instruction instr) {
+
+	computed_operands_res com_op_res = compute_operands(vm, instr);
+	if (com_op_res.is_error) {
+		VirtualMachineError err = com_op_res.error;
+		vm_result res = {.is_ok = false, .error = err};
+		return res;
+	}
 
 	vm_result res = {
 	    .is_ok = true,
 	    .error = None,
 	};
 
-	if (e == 1)
-		return res;
 	return res;
 }
