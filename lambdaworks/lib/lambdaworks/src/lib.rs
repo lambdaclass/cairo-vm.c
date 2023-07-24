@@ -68,6 +68,6 @@ pub extern "C" fn mul(a: Limbs, b: Limbs, result: Limbs) {
 }
 
 #[no_mangle]
-pub extern "C" fn lw_div(a: Limbs, b: Limbs, result: Limbs) {
+pub extern "C" fn div(a: Limbs, b: Limbs, result: Limbs) {
     felt_to_limbs(limbs_to_felt(a) / limbs_to_felt(b), result)
 }

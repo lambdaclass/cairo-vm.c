@@ -89,7 +89,7 @@ void felt_div3(void) {
 	from(expected, 1);
 
 	felt_t result;
-	lw_div(f_three, f_three, result);
+	div(f_three, f_three, result);
 	assert(expected[0] == result[0]);
 	assert(expected[1] == result[1]);
 	assert(expected[2] == result[2]);
@@ -107,7 +107,7 @@ void felt_div4(void) {
 	from(expected, 2);
 
 	felt_t result;
-	lw_div(f_four, f_two, result);
+	div(f_four, f_two, result);
 	assert(expected[0] == result[0]);
 	assert(expected[1] == result[1]);
 	assert(expected[2] == result[2]);
@@ -125,7 +125,7 @@ void felt_div4_err(void) {
 	from(expected, 45);
 
 	felt_t result;
-	lw_div(f_four, f_one, result);
+	div(f_four, f_one, result);
 
 	assert(expected[0] == result[0]);
 	assert(expected[1] == result[1]);
