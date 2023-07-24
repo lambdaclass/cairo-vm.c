@@ -10,4 +10,4 @@ libc = "0.2"
 lambdaworks-math = { git = "https://github.com/lambdaclass/lambdaworks.git" }
 
 [lib]
-crate-type = ["cdylib", "staticlib", "lib"]
+crate-type = ["staticlib"]
