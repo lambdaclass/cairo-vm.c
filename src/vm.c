@@ -7,10 +7,14 @@ virtual_machine vm_new(void) {
 
 vm_result run_instruction(Instruction instr) {
 
+	int64_t e = instr.off0;
+
 	vm_result res = {
 	    .is_ok = true,
 	    .error = None,
 	};
 
+	if (e == 1)
+		return res;
 	return res;
 }

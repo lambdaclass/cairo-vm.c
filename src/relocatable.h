@@ -12,7 +12,7 @@ typedef struct relocatable {
 
 union maybe_relocatable_value {
 	struct relocatable relocatable;
-	felt_t *felt;
+	felt_t felt;
 };
 
 typedef struct maybe_relocatable {
@@ -20,7 +20,8 @@ typedef struct maybe_relocatable {
 	bool is_felt;
 } maybe_relocatable;
 
-bool felt_equal(felt_t *a, felt_t *b);
 bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
+
+maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt);
 
 #endif
