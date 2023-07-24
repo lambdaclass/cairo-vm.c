@@ -14,6 +14,4 @@ jobs:
       - run: make check_fmt
       - run: LD_LIBRARY_PATH=${PWD}/lambdaworks/lib/lambdaworks/target/release make test
       - run: sudo apt install valgrind -y
-      - run: make compile-rust
-      - run: ls ./lambdaworks/lib/lambdaworks/target/release
       - run: make SANITIZER_FLAGS= valgrind
