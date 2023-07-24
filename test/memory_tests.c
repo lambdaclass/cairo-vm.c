@@ -1,5 +1,6 @@
 #include "memory_tests.h"
 #include "relocatable.h"
+
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
@@ -110,7 +111,7 @@ void memory_load_data_one_element(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	data->add(data, &elem);
+	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
@@ -122,7 +123,7 @@ void memory_load_data_one_element(void) {
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(result.value.memory_value, elem));
 	memory_free(&mem);
-	data->free(data);
+	cc_array_remove_all_free(data);
 	printf("OK!\n");
 }
 
@@ -132,6 +133,7 @@ void memory_load_data_empty(void) {
 	memory_add_segment(&mem);
 	// Initialize data to load
 	CC_Array *data;
+	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
@@ -142,7 +144,7 @@ void memory_load_data_empty(void) {
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	memory_free(&mem);
-	data->free(data);
+	cc_array_remove_all_free(data);
 	printf("OK!\n");
 }
 
@@ -150,13 +152,14 @@ void memory_load_data_err_unallocated_segment(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	// Initialize data to load
+	CC_Array* data;
 	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(load_result.is_error);
 	assert(load_result.value.error == LoadData);
-	data->free(data);
+	cc_array_remove_all_free(data);
 	memory_free(&mem);
 }
 
@@ -164,7 +167,7 @@ void memory_add_segment_ok(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	memory_add_segment(&mem);
-	assert(mem.data->count(mem.data) == 1);
+	assert(cc_array_size(mem.data) == 1);
 	assert(mem.num_segments == 1);
 	memory_free(&mem);
 	printf("OK!\n");

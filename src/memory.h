@@ -1,7 +1,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include "Collections-C/src/include/cc_array.h"
+#include <collectc/cc_array.h>
 #include "relocatable.h"
 #include <stdbool.h>
 

@@ -1,7 +1,7 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include "Collections-C/src/include/cc_array.h"
+#include <collectc/cc_array.h>
 // Incomplete struct, should be expanded
 struct program {
 	unsigned int main;
