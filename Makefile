@@ -30,12 +30,12 @@ default: compile-rust $(TARGET)
 $(TARGET): $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(SANITIZER_FLAGS) $^ -o $@ $(LN_FLAGS)
 
 $(TEST_TARGET): $(BUILD_DIR)/$(TEST_TARGET)
 
 $(BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $(LN_FLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) $(SANITIZER_FLAGS) $^ -o $@ $(LN_FLAGS)
 
 -include $(DEP)
 
