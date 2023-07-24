@@ -78,3 +78,12 @@ relocatable memory_load_data(memory *memory, relocatable ptr, CList *data) {
 	ptr.offset += size;
 	return ptr;
 }
+
+void memory_free(memory *mem) {
+	int num_segments = mem->num_segments;
+	for (int i = 0; i < num_segments; i++) {
+		CList *segment = mem->data->at(mem->data, i);
+		segment->free(segment);
+	}
+	mem->data->free(mem->data);
+}
