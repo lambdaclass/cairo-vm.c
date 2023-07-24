@@ -11,7 +11,7 @@ void memory_get_err(void) {
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	assert(result.value.error == Get);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -23,7 +23,7 @@ void memory_insert_err_unallocated_segement(void) {
 	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(result.is_error);
 	assert(result.value.error == Insert);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -43,7 +43,7 @@ void memory_insert_err_ovewrite_attempt(void) {
 	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(result_b.is_error);
 	assert(result_b.value.error == Insert);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -60,7 +60,7 @@ void memory_insert_ok_ovewrite_same_value(void) {
 	maybe_relocatable elem_b = maybe_relocatable_from_felt_limbs(felt_one);
 	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(!result_b.is_error);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -78,7 +78,7 @@ void memory_insert_ok(void) {
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -96,7 +96,7 @@ void memory_insert_with_gap(void) {
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -118,7 +118,7 @@ void memory_load_data_one_element(void) {
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(result.value.memory_value, elem));
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -135,7 +135,7 @@ void memory_load_data_empty(void) {
 	// Check memory
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
@@ -145,7 +145,7 @@ void memory_add_segment_ok(void) {
 	memory_add_segment(&mem);
 	assert(mem.data->count(mem.data) == 1);
 	assert(mem.num_segments == 1);
-    memory_free(&mem);
+	memory_free(&mem);
 	printf("OK!\n");
 }
 
