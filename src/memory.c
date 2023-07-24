@@ -67,11 +67,7 @@ relocatable memory_add_segment(memory *memory) {
 	return rel;
 }
 
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data) {
-	if (ptr.segment_index >= memory->num_segments) {
-		ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
-		return error;
-	}
+relocatable memory_load_data(memory *memory, relocatable ptr, CList *data) {
 	int size = data->count(data);
 	CList *segment = memory->data->at(memory->data, ptr.segment_index);
 	for (int i = 0; i < size; i++) {
@@ -80,8 +76,7 @@ ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data) {
 		segment->insert(segment, &new_cell, ptr.offset + i);
 	}
 	ptr.offset += size;
-	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
-	return ok;
+	return ptr;
 }
 
 void memory_free(memory *mem) {

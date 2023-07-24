@@ -16,9 +16,7 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	program_data->add(program_data, &elem);
 	struct program program = {0, program_data};
 	cairo_runner runner = runner_new(program);
-	ResultRunner runner_result = runner_initialize(&runner);
-	assert(!runner_result.is_error);
-	assert(runner_result.value.ptr.segment_index == 3 && runner_result.value.ptr.offset == 0);
+	runner_initialize(&runner);
 
 	// Check runner data
 	assert(runner.program_base.segment_index == 0 && runner.program_base.offset == 0);
@@ -62,9 +60,7 @@ void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
 	struct CList *program_data = CList_init(sizeof(maybe_relocatable));
 	struct program program = {0, program_data};
 	cairo_runner runner = runner_new(program);
-	ResultRunner runner_result = runner_initialize(&runner);
-	assert(!runner_result.is_error);
-	assert(runner_result.value.ptr.segment_index == 3 && runner_result.value.ptr.offset == 0);
+	runner_initialize(&runner);
 
 	// Check runner data
 	assert(runner.program_base.segment_index == 0 && runner.program_base.offset == 0);

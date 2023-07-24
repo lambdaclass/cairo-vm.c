@@ -59,7 +59,7 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 relocatable memory_add_segment(memory *memory);
 
 // Inserts the elements in data sequentially from address ptr and returns the next address after the data
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data);
+relocatable memory_load_data(memory *memory, relocatable ptr, CList *data);
 
 // Frees resources used by the memory struct
 void memory_free(memory *mem);

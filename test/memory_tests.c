@@ -112,8 +112,7 @@ void memory_load_data_one_element(void) {
 	data->add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, ptr, data);
-	relocatable end_ptr = load_result.value.ptr;
+	relocatable end_ptr = memory_load_data(&mem, ptr, data);
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
 	// Check memory
 	ResultMemory result = memory_get(&mem, ptr);
@@ -131,8 +130,7 @@ void memory_load_data_empty(void) {
 	struct CList *data = CList_init(sizeof(maybe_relocatable));
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, ptr, data);
-	relocatable end_ptr = load_result.value.ptr;
+	relocatable end_ptr = memory_load_data(&mem, ptr, data);
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
 	// Check memory
 	ResultMemory result = memory_get(&mem, ptr);
