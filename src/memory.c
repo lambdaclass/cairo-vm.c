@@ -44,7 +44,7 @@ ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* val
 	// Guard overwrites
 	maybe_relocatable *prev_value = NULL;
 	if (cc_hashtable_get(mem->data, ptr, (void *)&prev_value) == CC_OK &&
-	    maybe_relocatable_equal(prev_value, value)) {
+	    !maybe_relocatable_equal(prev_value, value)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
