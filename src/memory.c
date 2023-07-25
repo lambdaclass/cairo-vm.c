@@ -64,6 +64,7 @@ relocatable memory_add_segment(memory *memory) {
 }
 
 ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
+	relocatable old_ptr = *ptr;
 	// Load each value sequentially
 	int size = cc_array_size(data);
 	for (int i = 0; i < size; i++) {
@@ -82,6 +83,8 @@ ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
 		ptr->offset += 1;
 	}
 	ResultMemory ok = {.is_error = false, .value = {.ptr = *ptr}};
+	*ptr = old_ptr;
+	printf("VALUES AFTER LOAD: ptr: %i:%i, end_ptr: %i, %i\n", ptr->segment_index, ptr->offset, ok.value.ptr.segment_index, ok.value.ptr.offset);
 	return ok;
 }
 
