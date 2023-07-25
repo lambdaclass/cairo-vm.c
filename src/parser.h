@@ -58,14 +58,15 @@ typedef struct {
 	StringArray attributes;
 	StringArray builtins;
 	char *compiler_version;
-	felt_t *data;
+	CList *data;
 	DebugInfo debug_info;
 	StringArray hints;
 	Identifiers *identifiers;
 	StringArray main_scope;
 	char *prime;
 } Program;
-void free_program(Program *program);
+
+void program_free(Program *program);
 uint64_t hex_string_to_uint64(const char *hex);
 Program *parse_json_filename(const char *filename);
 Program *parse_json_data(const char *parse_json_data);

@@ -99,7 +99,7 @@ void parse_data(simdjson::dom::array data_array, Program *program) {
 // 	}
 // }
 
-void free_program(Program *program) {
+void program_free(Program *program) {
 	if (program->attributes.length > 0) {
 		for (size_t i = 0; i < program->attributes.length; ++i) {
 			free(program->attributes.data[i]);
