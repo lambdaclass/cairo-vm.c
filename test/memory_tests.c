@@ -84,6 +84,29 @@ void memory_insert_ok(void) {
 	printf("OK!\n");
 }
 
+void memory_insert_two_ok(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	memory_add_segment(&mem);
+	relocatable ptr = {0, 0};
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
+	ResultMemory result_insert = memory_insert(&mem, &ptr, &elem);
+	assert(!result_insert.is_error);
+	relocatable ptr_b = {0, 1};
+	ResultMemory result_insert_b = memory_insert(&mem, &ptr_b, &elem);
+	assert(!result_insert_b.is_error);
+	ResultMemory result_get = memory_get(&mem, &ptr);
+	assert(!result_get.is_error);
+	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
+	ResultMemory result_get_b = memory_get(&mem, &ptr_b);
+	assert(!result_get_b.is_error);
+	assert(felt_equal(result_get_b.value.memory_value.value.felt, felt_one));
+	memory_free(&mem);
+	printf("OK!\n");
+}
+
 void memory_insert_with_gap(void) {
 	// Initialize memory
 	memory mem = memory_new();
@@ -191,6 +214,9 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_insert_ok \n");
 	memory_insert_ok();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_two_ok \n");
+	memory_insert_two_ok();
 	printf("--------------------------------- \n");
 	printf("Test: memory_insert_with_gap \n");
 	memory_insert_with_gap();
