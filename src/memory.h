@@ -1,28 +1,17 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include <collectc/cc_array.h>
 #include "relocatable.h"
+#include <collectc/cc_array.h>
+#include <collectc/cc_hashtable.h>
 #include <stdbool.h>
 
 // Contains behaviour of memory + memory segment manager
 // Memory is inmutable
 typedef struct memory {
 	unsigned int num_segments;
-	CC_Array *data;
+	CC_HashTable *data;
 } memory;
-
-// Inner value
-
-union memory_value {
-	maybe_relocatable value;
-	unsigned int none;
-};
-
-typedef struct memory_cell {
-	union memory_value memory_value;
-	bool is_some;
-} memory_cell;
 
 // Error handling
 

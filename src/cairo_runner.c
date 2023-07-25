@@ -1,8 +1,8 @@
 #include "cairo_runner.h"
-#include <collectc/cc_array.h>
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"
+#include <collectc/cc_array.h>
 
 cairo_runner runner_new(struct program program) {
 	virtual_machine vm = vm_new();

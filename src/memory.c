@@ -1,30 +1,34 @@
 #include "memory.h"
+#include "collectc/cc_array.h"
+#include "collectc/cc_hashtable.h"
 #include "relocatable.h"
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
+int key_compare(const void *key1, const void *key2) {
+	relocatable r1 = *((relocatable *)key1);
+	relocatable r2 = *((relocatable *)key2);
+	// printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
+	return !(r1.segment_index == r2.segment_index && r1.offset == r2.offset);
+}
+
 memory memory_new(void) {
-	CC_Array * data;
-	cc_array_new(&data);
+	CC_HashTableConf config;
+	cc_hashtable_conf_init(&config);
+	config.key_length = sizeof(relocatable);
+	config.hash = GENERAL_HASH;
+	config.key_compare = key_compare;
+	CC_HashTable *data;
+	cc_hashtable_new_conf(&config, &data);
 	memory mem = {0, data};
 	return mem;
 }
 
 ResultMemory memory_get(memory *mem, relocatable ptr) {
-	if (ptr.segment_index >= cc_array_size(mem->data)) {
-		ResultMemory error = {.is_error = true, .value = {.error = Get}};
-		return error;
-	}
-	CC_Array *segment = NULL;
-	cc_array_get_at(mem->data, ptr.segment_index, (void *) &segment);
-	if (ptr.offset >= cc_array_size(segment)) {
-		ResultMemory error = {.is_error = true, .value = {.error = Get}};
-		return error;
-	}
-	memory_cell *cell = NULL;
-	cc_array_get_at(segment, ptr.offset, (void *) &cell);
-	if (cell->is_some) {
-		ResultMemory ok = {.is_error = false, .value = {.memory_value = cell->memory_value.value}};
+	maybe_relocatable *value = NULL;
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
+		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
 		return ok;
 	}
 	ResultMemory error = {.is_error = true, .value = {.error = Get}};
@@ -32,62 +36,54 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 }
 
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
-	if (ptr.segment_index >= cc_array_size(mem->data)) {
+	// Guard out of bounds writes
+	if (ptr.segment_index >= mem->num_segments) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
-	CC_Array *segment = NULL;
-	cc_array_get_at(mem->data, ptr.segment_index, (void *) &segment);
-	// Handle gaps
-	while (cc_array_size(segment) < ptr.offset) {
-		memory_cell none = {.is_some = false, .memory_value = {.none = 0}};
-		cc_array_add(segment, &none);
+	// Guard overwrites
+	maybe_relocatable *prev_value = NULL;
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK &&
+	    maybe_relocatable_equal(*prev_value, value)) {
+		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+		return error;
 	}
-	ResultMemory get_result = memory_get(mem, ptr);
-	// Check for possible ovewrites
-	if (!get_result.is_error) {
-		if (maybe_relocatable_equal(get_result.value.memory_value, value)) {
-			ResultMemory ok = {.is_error = false, .value = {.none = 0}};
-			return ok;
-		} else {
-			ResultMemory error = {.is_error = true, .value = {.error = Insert}};
-			return error;
-		}
+	// Write new value
+	if (cc_hashtable_add(mem->data, &ptr, &value) == CC_OK) {
+		ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+		return ok;
 	}
-	memory_cell new_cell = {.is_some = true, .memory_value = {.value = value}};
-	cc_array_add_at(segment, &new_cell, ptr.offset);
-	ResultMemory ok = {.is_error = false, .value = {.none = 0}};
-	return ok;
+	ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+	return error;
 }
 
 relocatable memory_add_segment(memory *memory) {
 	relocatable rel = {memory->num_segments, 0};
-	CC_Array *segment = NULL;
-	cc_array_new(&segment);
-	cc_array_add(memory->data, segment);
 	memory->num_segments += 1;
 	return rel;
 }
 
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CC_Array *data) {
-	if (ptr.segment_index >= memory->num_segments) {
-		ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
-		return error;
-	}
+ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
+	// Load each value sequentially
 	int size = cc_array_size(data);
-	CC_Array *segment = NULL;
-	cc_array_get_at(memory->data, ptr.segment_index, (void *) &segment);
 	for (int i = 0; i < size; i++) {
+		// Fetch value from data array
 		maybe_relocatable *value = NULL;
-		cc_array_get_at(data, i, (void *) &value);
-		memory_cell new_cell = {.is_some = true, .memory_value = {.value = *value}};
-		cc_array_add_at(segment, &new_cell, ptr.offset + i);
+		if (cc_array_get_at(data, i, (void *)&value) != CC_OK) {
+			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
+			return error;
+		}
+		// Create pointer to store value in
+		relocatable new_ptr = {ptr.segment_index, ptr.offset + i};
+		// Insert Value
+		if (memory_insert(mem, new_ptr, *value).is_error) {
+			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
+			return error;
+		}
 	}
 	ptr.offset += size;
 	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
 	return ok;
 }
 
-void memory_free(memory *mem) {
-	cc_array_remove_all_free(mem->data);
-}
+void memory_free(memory *mem) { cc_hashtable_destroy(mem->data); }

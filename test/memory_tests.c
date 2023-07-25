@@ -152,7 +152,7 @@ void memory_load_data_err_unallocated_segment(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	// Initialize data to load
-	CC_Array* data;
+	CC_Array *data;
 	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
