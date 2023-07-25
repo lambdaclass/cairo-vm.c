@@ -84,8 +84,33 @@ ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
 	}
 	ResultMemory ok = {.is_error = false, .value = {.ptr = *ptr}};
 	*ptr = old_ptr;
-	printf("VALUES AFTER LOAD: ptr: %i:%i, end_ptr: %i, %i\n", ptr->segment_index, ptr->offset, ok.value.ptr.segment_index, ok.value.ptr.offset);
+	printf("VALUES AFTER LOAD: ptr: %i:%i, end_ptr: %i, %i\n", ptr->segment_index, ptr->offset,
+	       ok.value.ptr.segment_index, ok.value.ptr.offset);
 	return ok;
+}
+
+void print_memory(memory *mem) {
+	printf("------------------MEMORY------------------\n");
+	for (int i = 0; i < (int)mem->num_segments; i++) {
+		relocatable ptr = {i, 0};
+		while (true) {
+			ResultMemory result = memory_get(mem, &ptr);
+			if (result.is_error) {
+				break;
+			}
+			maybe_relocatable v = result.value.memory_value;
+			if (v.is_felt) {
+				limb_t *f = v.value.felt;
+				printf("%i:%i : [%llu, %llu, %llu, %llu]\n", ptr.segment_index, ptr.offset, f[0], f[1],
+				       f[2], f[3]);
+			} else {
+				relocatable r = v.value.relocatable;
+				printf("%i:%i : %i:%i\n", ptr.segment_index, ptr.offset, r.segment_index, r.offset);
+			}
+			ptr.offset += 1;
+		}
+	}
+	printf("------------------------------------------\n");
 }
 
 void memory_free(memory *mem) { cc_hashtable_destroy(mem->data); }

@@ -39,19 +39,22 @@ typedef struct ResultMemory {
 memory memory_new(void);
 
 // Fetches a value from memory indicated by ptr, returns a maybe_relocatable
-ResultMemory memory_get(memory *mem, relocatable* ptr);
+ResultMemory memory_get(memory *mem, relocatable *ptr);
 
 // Inserts value into memory at address ptr, returns none
-ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* value);
+ResultMemory memory_insert(memory *mem, relocatable *ptr, maybe_relocatable *value);
 
 // Adds a memory segment
 relocatable memory_add_segment(memory *memory);
 
 // Inserts the elements in data sequentially from address ptr and returns the next address after the data
 // returns ptr
-ResultMemory memory_load_data(memory *memory, relocatable* ptr, CC_Array *data);
+ResultMemory memory_load_data(memory *memory, relocatable *ptr, CC_Array *data);
 
 // Frees resources used by the memory struct
 void memory_free(memory *mem);
+
+// Prints the memory
+void print_memory(memory *mem);
 
 #endif
