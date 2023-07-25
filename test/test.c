@@ -1,8 +1,8 @@
 #include "decoder_test.h"
 #include "felt_test.h"
 #include "memory_tests.h"
-#include "runner_tests.h"
 #include "parser_test.h"
+#include "runner_tests.h"
 #include <assert.h>
 #include <stdio.h>
 
