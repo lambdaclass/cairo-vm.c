@@ -61,7 +61,7 @@ relocatable compute_op1_addr(run_context run_ctx, Instruction instr, maybe_reloc
 		}
 	} break;
 	default: {
-		base_addr = {.segment_index = 0, .offset = 0};
+		base_addr = (relocatable){.segment_index = 0, .offset = 0};
 	} break;
 	}
 
