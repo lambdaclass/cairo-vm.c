@@ -39,10 +39,10 @@ typedef struct ResultMemory {
 memory memory_new(void);
 
 // Fetches a value from memory indicated by ptr, returns a maybe_relocatable
-ResultMemory memory_get(memory *mem, relocatable ptr);
+ResultMemory memory_get(memory *mem, relocatable* ptr);
 
 // Inserts value into memory at address ptr, returns none
-ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value);
+ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* value);
 
 // Adds a memory segment
 relocatable memory_add_segment(memory *memory);

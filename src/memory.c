@@ -25,7 +25,7 @@ memory memory_new(void) {
 	return mem;
 }
 
-ResultMemory memory_get(memory *mem, relocatable ptr) {
+ResultMemory memory_get(memory *mem, relocatable* ptr) {
 	maybe_relocatable *value = NULL;
 	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
@@ -35,16 +35,16 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 	return error;
 }
 
-ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
+ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* value) {
 	// Guard out of bounds writes
-	if (ptr.segment_index >= mem->num_segments) {
+	if (ptr->segment_index >= mem->num_segments) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
 	// Guard overwrites
 	maybe_relocatable *prev_value = NULL;
 	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK &&
-	    maybe_relocatable_equal(*prev_value, value)) {
+	    maybe_relocatable_equal(prev_value, value)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
@@ -76,7 +76,7 @@ ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 		// Create pointer to store value in
 		relocatable new_ptr = {ptr.segment_index, ptr.offset + i};
 		// Insert Value
-		if (memory_insert(mem, new_ptr, *value).is_error) {
+		if (memory_insert(mem, &new_ptr, value).is_error) {
 			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
 			return error;
 		}
