@@ -49,7 +49,7 @@ ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* val
 		return error;
 	}
 	// Write new value
-	if (cc_hashtable_add(mem->data, ptr, &value) == CC_OK) {
+	if (cc_hashtable_add(mem->data, ptr, value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.none = 0}};
 		return ok;
 	}
