@@ -25,7 +25,7 @@ memory memory_new(void) {
 	return mem;
 }
 
-ResultMemory memory_get(memory *mem, relocatable* ptr) {
+ResultMemory memory_get(memory *mem, relocatable *ptr) {
 	maybe_relocatable *value = NULL;
 	if (cc_hashtable_get(mem->data, ptr, (void *)&value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
@@ -63,7 +63,7 @@ relocatable memory_add_segment(memory *memory) {
 	return rel;
 }
 
-ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
+ResultMemory memory_load_data(memory *mem, relocatable *ptr, CC_Array *data) {
 	relocatable old_ptr = *ptr;
 	// Load each value sequentially
 	int size = cc_array_size(data);
@@ -91,7 +91,7 @@ ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
 
 void print_memory(memory *mem) {
 	printf("------------------MEMORY------------------\n");
-	for (int i = 0; i < (int)mem->num_segments; i++) {
+	for (int i = 0; i < (int) mem->num_segments; i++) {
 		relocatable ptr = {i, 0};
 		while (true) {
 			ResultMemory result = memory_get(mem, &ptr);

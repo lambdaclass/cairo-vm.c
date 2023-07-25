@@ -1,7 +1,7 @@
 #include "relocatable.h"
 #include "utils.h"
 
-bool maybe_relocatable_equal(maybe_relocatable* a, maybe_relocatable* b) {
+bool maybe_relocatable_equal(maybe_relocatable *a, maybe_relocatable *b) {
 	if (a->is_felt && b->is_felt) {
 		return felt_equal(a->value.felt, b->value.felt);
 	} else if (!a->is_felt && !b->is_felt) {
