@@ -150,6 +150,41 @@ void memory_load_data_one_element(void) {
 	printf("OK!\n");
 }
 
+void memory_load_data_twice_one_element(void) {
+	// Initialize memory
+	memory mem = memory_new();
+	memory_add_segment(&mem);
+	memory_add_segment(&mem);
+	// Initialize data to load
+	CC_Array *data;
+	cc_array_new(&data);
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
+	cc_array_add(data, &elem);
+	relocatable ptr = {0, 0};
+	// Load data 1
+	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
+	assert(!load_result.is_error);
+	relocatable end_ptr = load_result.value.ptr;
+	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
+	relocatable ptr_2 = {1, 0};
+	// Load data 2
+	ResultMemory load_result_2 = memory_load_data(&mem, &ptr_2, data);
+	assert(!load_result_2.is_error);
+	relocatable end_ptr_2 = load_result_2.value.ptr;
+	assert(end_ptr_2.segment_index == 1 && end_ptr_2.offset == 1);
+	// Check memory
+	ResultMemory result = memory_get(&mem, &ptr);
+	assert(!result.is_error);
+	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
+	ResultMemory result_2 = memory_get(&mem, &ptr_2);
+	assert(!result_2.is_error);
+	assert(maybe_relocatable_equal(&result_2.value.memory_value, &elem));
+	memory_free(&mem);
+	printf("OK!\n");
+}
+
 void memory_load_data_empty(void) {
 	// Initialize memory
 	memory mem = memory_new();
@@ -226,6 +261,9 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_one_element \n");
 	memory_load_data_one_element();
+	printf("--------------------------------- \n");
+	printf("Test: memory_load_data_twice_one_element \n");
+	memory_load_data_twice_one_element();
 	printf("--------------------------------- \n");
 	printf("Test: memory_load_data_err_unallocated_segment \n");
 	memory_load_data_err_unallocated_segment();
