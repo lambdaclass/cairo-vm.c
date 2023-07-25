@@ -12,5 +12,7 @@ typedef struct run_context {
 } run_context;
 
 relocatable compute_dst_addr(run_context run_ctx, Instruction instr);
+relocatable compute_op0_addr(run_context run_ctx, Instruction instr);
+relocatable compute_op1_addr(run_context run_ctx, Instruction instr, maybe_relocatable op0);
 
 #endif

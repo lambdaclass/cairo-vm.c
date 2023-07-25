@@ -38,9 +38,13 @@ typedef struct {
 	uint8_t deduced_operands;
 } computed_operands;
 
-typedef struct {
-	computed_operands value;
+typedef union {
+	computed_operands ops;
 	VirtualMachineError error;
+} computed_operands_value;
+
+typedef struct {
+	computed_operands_value value;
 	bool is_error;
 } computed_operands_res;
 

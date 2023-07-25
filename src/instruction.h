@@ -88,6 +88,7 @@ enum VirtualMachineError {
 	InvalidRes,
 	InvalidOpcode,
 	InvalidApUpdate,
+	MemoryError,
 	None
 };
 
