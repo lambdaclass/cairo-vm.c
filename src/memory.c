@@ -9,7 +9,7 @@
 int key_compare(const void *key1, const void *key2) {
 	relocatable r1 = *((relocatable *)key1);
 	relocatable r2 = *((relocatable *)key2);
-	//printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
+	// printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
 	return !(r1.segment_index == r2.segment_index && r1.offset == r2.offset);
 }
 
@@ -35,7 +35,7 @@ ResultMemory memory_get(memory *mem, relocatable *ptr) {
 	return error;
 }
 
-ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* value) {
+ResultMemory memory_insert(memory *mem, relocatable *ptr, maybe_relocatable *value) {
 	// Guard out of bounds writes
 	if (ptr->segment_index >= mem->num_segments) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
@@ -84,14 +84,12 @@ ResultMemory memory_load_data(memory *mem, relocatable *ptr, CC_Array *data) {
 	}
 	ResultMemory ok = {.is_error = false, .value = {.ptr = *ptr}};
 	*ptr = old_ptr;
-	printf("VALUES AFTER LOAD: ptr: %i:%i, end_ptr: %i, %i\n", ptr->segment_index, ptr->offset,
-	       ok.value.ptr.segment_index, ok.value.ptr.offset);
 	return ok;
 }
 
 void print_memory(memory *mem) {
 	printf("------------------MEMORY------------------\n");
-	for (int i = 0; i < (int) mem->num_segments; i++) {
+	for (int i = 0; i < (int)mem->num_segments; i++) {
 		relocatable ptr = {i, 0};
 		while (true) {
 			ResultMemory result = memory_get(mem, &ptr);
