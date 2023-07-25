@@ -1,7 +1,6 @@
 #include "memory.h"
 #include "relocatable.h"
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 memory memory_new(void) {
@@ -17,13 +16,13 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 		return error;
 	}
 	CC_Array *segment = NULL;
-	cc_array_get_at(mem->data, ptr.segment_index, (void *) segment);
+	cc_array_get_at(mem->data, ptr.segment_index, (void *) &segment);
 	if (ptr.offset >= cc_array_size(segment)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Get}};
 		return error;
 	}
 	memory_cell *cell = NULL;
-	cc_array_get_at(segment, ptr.offset, (void *) cell);
+	cc_array_get_at(segment, ptr.offset, (void *) &cell);
 	if (cell->is_some) {
 		ResultMemory ok = {.is_error = false, .value = {.memory_value = cell->memory_value.value}};
 		return ok;
@@ -38,7 +37,7 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 		return error;
 	}
 	CC_Array *segment = NULL;
-	cc_array_get_at(mem->data, ptr.segment_index, (void *) segment);
+	cc_array_get_at(mem->data, ptr.segment_index, (void *) &segment);
 	// Handle gaps
 	while (cc_array_size(segment) < ptr.offset) {
 		memory_cell none = {.is_some = false, .memory_value = {.none = 0}};
@@ -77,10 +76,10 @@ ResultMemory memory_load_data(memory *memory, relocatable ptr, CC_Array *data) {
 	}
 	int size = cc_array_size(data);
 	CC_Array *segment = NULL;
-	cc_array_get_at(memory->data, ptr.segment_index, (void *) segment);
+	cc_array_get_at(memory->data, ptr.segment_index, (void *) &segment);
 	for (int i = 0; i < size; i++) {
 		maybe_relocatable *value = NULL;
-		cc_array_get_at(data, i, (void *) value);
+		cc_array_get_at(data, i, (void *) &value);
 		memory_cell new_cell = {.is_some = true, .memory_value = {.value = *value}};
 		cc_array_add_at(segment, &new_cell, ptr.offset + i);
 	}
