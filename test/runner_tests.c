@@ -36,18 +36,18 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	assert(memory.num_segments == 4);
 	// program segment
 	relocatable ptr = {0, 0};
-	ResultMemory result = memory_get(&memory, ptr);
+	ResultMemory result = memory_get(&memory, &ptr);
 	assert(!result.is_error);
 	assert(felt_equal(result.value.memory_value.value.felt, felt_one));
 	// execution segment
 	relocatable ptr_b = {1, 0};
-	ResultMemory result_b = memory_get(&memory, ptr_b);
+	ResultMemory result_b = memory_get(&memory, &ptr_b);
 	assert(!result_b.is_error);
 	relocatable value_b = result_b.value.memory_value.value.relocatable;
 	assert(value_b.segment_index == 2 && value_b.offset == 0);
 
 	relocatable ptr_c = {1, 1};
-	ResultMemory result_c = memory_get(&memory, ptr_c);
+	ResultMemory result_c = memory_get(&memory, &ptr_c);
 	assert(!result_c.is_error);
 	relocatable value_c = result_c.value.memory_value.value.relocatable;
 	assert(value_c.segment_index == 3 && value_c.offset == 0);
@@ -81,17 +81,17 @@ void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
 	memory memory = runner.vm.memory;
 	assert(memory.num_segments == 4);
 	relocatable ptr = {0, 0};
-	ResultMemory result = memory_get(&memory, ptr);
+	ResultMemory result = memory_get(&memory, &ptr);
 	assert(result.is_error);
 	// execution segment
 	relocatable ptr_b = {1, 0};
-	ResultMemory result_b = memory_get(&memory, ptr_b);
+	ResultMemory result_b = memory_get(&memory, &ptr_b);
 	assert(!result_b.is_error);
 	relocatable value_b = result_b.value.memory_value.value.relocatable;
 	assert(value_b.segment_index == 2 && value_b.offset == 0);
 
 	relocatable ptr_c = {1, 1};
-	ResultMemory result_c = memory_get(&memory, ptr_c);
+	ResultMemory result_c = memory_get(&memory, &ptr_c);
 	assert(!result_c.is_error);
 	relocatable value_c = result_c.value.memory_value.value.relocatable;
 	assert(value_c.segment_index == 3 && value_c.offset == 0);

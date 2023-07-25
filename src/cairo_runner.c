@@ -32,8 +32,8 @@ void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CC_A
 	// We ignore the error cases when loading data as these cases are unreachable when called after
 	// runner_initialize_segments We can safely ignore them as long as any public function that calls this function
 	// calls runner_initialize_segments before
-	memory_load_data(&runner->vm.memory, runner->program_base, runner->program.data);
-	memory_load_data(&runner->vm.memory, runner->execution_base, stack);
+	memory_load_data(&runner->vm.memory, &runner->program_base, runner->program.data);
+	memory_load_data(&runner->vm.memory, &runner->execution_base, stack);
 	// Mark data segment as accessed
 }
 
@@ -63,7 +63,6 @@ relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
 	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
-	cc_array_remove_all_free(stack);
 	return end;
 }
 

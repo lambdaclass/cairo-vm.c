@@ -115,7 +115,7 @@ void memory_load_data_one_element(void) {
 	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
 	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
@@ -124,7 +124,6 @@ void memory_load_data_one_element(void) {
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
 	memory_free(&mem);
-	cc_array_remove_all_free(data);
 	printf("OK!\n");
 }
 
@@ -137,7 +136,7 @@ void memory_load_data_empty(void) {
 	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
 	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
@@ -155,12 +154,15 @@ void memory_load_data_err_unallocated_segment(void) {
 	// Initialize data to load
 	CC_Array *data;
 	cc_array_new(&data);
+	felt_t felt_one;
+	one(felt_one);
+	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
+	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
 	assert(load_result.is_error);
 	assert(load_result.value.error == LoadData);
-	cc_array_remove_all_free(data);
 	memory_free(&mem);
 }
 

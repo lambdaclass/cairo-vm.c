@@ -63,7 +63,7 @@ relocatable memory_add_segment(memory *memory) {
 	return rel;
 }
 
-ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
+ResultMemory memory_load_data(memory *mem, relocatable* ptr, CC_Array *data) {
 	// Load each value sequentially
 	int size = cc_array_size(data);
 	for (int i = 0; i < size; i++) {
@@ -73,16 +73,15 @@ ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
 			return error;
 		}
-		// Create pointer to store value in
-		relocatable new_ptr = {ptr.segment_index, ptr.offset + i};
 		// Insert Value
-		if (memory_insert(mem, &new_ptr, value).is_error) {
+		if (memory_insert(mem, ptr, value).is_error) {
 			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
 			return error;
 		}
+		// Advance ptr
+		ptr->offset += 1;
 	}
-	ptr.offset += size;
-	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
+	ResultMemory ok = {.is_error = false, .value = {.ptr = *ptr}};
 	return ok;
 }
 
