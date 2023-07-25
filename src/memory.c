@@ -9,7 +9,7 @@
 int key_compare(const void *key1, const void *key2) {
 	relocatable r1 = *((relocatable *)key1);
 	relocatable r2 = *((relocatable *)key2);
-	// printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
+	//printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
 	return !(r1.segment_index == r2.segment_index && r1.offset == r2.offset);
 }
 
@@ -27,7 +27,7 @@ memory memory_new(void) {
 
 ResultMemory memory_get(memory *mem, relocatable* ptr) {
 	maybe_relocatable *value = NULL;
-	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
+	if (cc_hashtable_get(mem->data, ptr, (void *)&value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
 		return ok;
 	}
@@ -43,13 +43,13 @@ ResultMemory memory_insert(memory *mem, relocatable* ptr, maybe_relocatable* val
 	}
 	// Guard overwrites
 	maybe_relocatable *prev_value = NULL;
-	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK &&
+	if (cc_hashtable_get(mem->data, ptr, (void *)&prev_value) == CC_OK &&
 	    maybe_relocatable_equal(prev_value, value)) {
 		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
 		return error;
 	}
 	// Write new value
-	if (cc_hashtable_add(mem->data, &ptr, &value) == CC_OK) {
+	if (cc_hashtable_add(mem->data, ptr, &value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.none = 0}};
 		return ok;
 	}
