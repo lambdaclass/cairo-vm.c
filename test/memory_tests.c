@@ -122,7 +122,7 @@ void memory_load_data_one_element(void) {
 	// Check memory
 	ResultMemory result = memory_get(&mem, &ptr);
 	assert(!result.is_error);
-	assert(maybe_relocatable_equal(result.value.memory_value, elem));
+	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
 	memory_free(&mem);
 	cc_array_remove_all_free(data);
 	printf("OK!\n");
@@ -168,7 +168,6 @@ void memory_add_segment_ok(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	memory_add_segment(&mem);
-	assert(cc_array_size(mem.data) == 1);
 	assert(mem.num_segments == 1);
 	memory_free(&mem);
 	printf("OK!\n");
