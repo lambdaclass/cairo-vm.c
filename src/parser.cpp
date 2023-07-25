@@ -46,11 +46,7 @@ void parse_attributes(simdjson::dom::array attributes_array, Program *program) {
 void parse_data(simdjson::dom::array data_array, Program *program) {
 
 	size_t elements = data_array.size();
-	program->data = (felt_t *)malloc(elements * sizeof(felt_t));
-	if (program->data == NULL) {
-		printf("Data allocation failed\n");
-		return;
-	}
+	program->data = CList_init(sizeof(maybe_relocatable));
 	// Loop through the elements in the data array
 	for (size_t i = 0; i < elements; ++i) {
 		// Get the element at the current index
@@ -65,11 +61,8 @@ void parse_data(simdjson::dom::array data_array, Program *program) {
 		// Convert the unsigned integer to the felt_t array
 		felt_t felt;
 		from(felt, num);
-
-		// Copy the elements from felt to the program's data array
-		for (int j = 0; j < 4; ++j) {
-			program->data[i][j] = felt[j];
-		}
+		maybe_relocatable relocatable_elem = maybe_relocatable_from_felt_limbs(felt);
+		program->data->add(program->data, &relocatable_elem);
 	}
 }
 
@@ -109,11 +102,10 @@ void program_free(Program *program) {
 	free(program->compiler_version);
 	free(program->data);
 	// free(program->debug_info.fileContent.start);
-	free(program);
 }
 
 // Function to parse the JSON file and populate the Program struct
-Program *parse_json_filename(const char *filename) {
+Program parse_json_filename(const char *filename) {
 	// Add using namespace inside the parse_json function
 	using namespace simdjson;
 
@@ -136,7 +128,6 @@ Program *parse_json_filename(const char *filename) {
 	// Parse attributes array
 	dom::array attributes_array = root["attributes"].get_array();
 	parse_attributes(attributes_array, program);
-
 	// Parse compiler version
 	const char *compiler_version = root["compiler_version"].get_c_str().value();
 	program->compiler_version = (char *)malloc(strlen(compiler_version) * sizeof(char) + 1);
@@ -154,5 +145,5 @@ Program *parse_json_filename(const char *filename) {
 	// dom::element debug_info = root["debug_info"];
 	// parse_debug_info(debug_info, program);
 
-	return program;
+	return Program(*program);
 }

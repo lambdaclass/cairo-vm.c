@@ -3,23 +3,30 @@
 #include "../lambdaworks/lib/lambdaworks.h"
 #include <stdbool.h>
 
-	typedef struct relocatable {
-		unsigned int segment_index;
-		unsigned int offset;
-	} relocatable;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-	union maybe_relocatable_value {
-		struct relocatable relocatable;
-		felt_t felt;
-	};
+typedef struct relocatable {
+	unsigned int segment_index;
+	unsigned int offset;
+} relocatable;
 
-	typedef struct maybe_relocatable {
-		union maybe_relocatable_value value;
-		bool is_felt;
-	} maybe_relocatable;
+union maybe_relocatable_value {
+	struct relocatable relocatable;
+	felt_t felt;
+};
 
-	bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
+typedef struct maybe_relocatable {
+	union maybe_relocatable_value value;
+	bool is_felt;
+} maybe_relocatable;
 
-	maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt);
+bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
+maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

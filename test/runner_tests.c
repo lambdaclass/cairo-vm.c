@@ -1,7 +1,6 @@
 #include "runner_tests.h"
 #include "clist.h"
 #include "memory.h"
-#include "program.h"
 #include "run_context.h"
 #include "utils.h"
 #include "vm.h"
@@ -14,7 +13,7 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
 	program_data->add(program_data, &elem);
-	struct program program = {0, program_data};
+	Program program = parse_json_filename("cairo_programs/fibonacci.json");
 	cairo_runner runner = runner_new(program);
 	runner_initialize(&runner);
 
@@ -57,8 +56,8 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 }
 
 void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
-	struct CList *program_data = CList_init(sizeof(maybe_relocatable));
-	struct program program = {0, program_data};
+	//struct CList *program_data = CList_init(sizeof(maybe_relocatable));
+	Program program = parse_json_filename("cairo_programs/fibonacci.json");
 	cairo_runner runner = runner_new(program);
 	runner_initialize(&runner);
 
