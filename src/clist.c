@@ -257,6 +257,12 @@ void CList_Free_(CList *l) {
 	l = NULL;
 }
 
+void CList_Free_Bis(CList *l) {
+	CList_priv_ *p = (CList_priv_ *)l->priv;
+	free(p->items);
+	free(p);
+}
+
 void CList_print_(CList *l, size_t shift, int n, const char *type) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 
