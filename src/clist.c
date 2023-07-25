@@ -257,7 +257,7 @@ void CList_Free_(CList *l) {
 	l = NULL;
 }
 
-void CList_Free_Bis(CList *l) {
+void CList_Free_Internal(CList *l) {
 	CList_priv_ *p = (CList_priv_ *)l->priv;
 	free(p->items);
 	free(p);

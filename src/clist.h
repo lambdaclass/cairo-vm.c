@@ -37,7 +37,7 @@ typedef struct CList {
 } CList;
 
 CList *CList_init(size_t objSize); /* Set list object size in bytes */
-void CList_Free_Bis(CList *l);
+void CList_Free_Internal(CList *l);
 
 /*  void *add(struct CList *l, void *o);
         Returns pointer to added object; Returns NULL if failed.

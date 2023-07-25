@@ -91,7 +91,14 @@ void memory_free(memory *mem) {
 	int num_segments = mem->num_segments;
 	for (int i = 0; i < num_segments; i++) {
 		CList *segment = mem->data->at(mem->data, i);
-		CList_Free_Bis(segment);
+		// IMPORTANT: To free memory here we are using a function we added that is not
+		// present in the `CList` library. This is an extremely hacky thing we did because
+		// otherwise we would either leak memory or do a double free when calling this function.
+		// The reason for it is we are using lists of lists, and memory management gets messy
+		// at that point with this library.
+		// DO NOT call this function anywhere else without asking around first;
+		// this should get removed eventually anyway, once we replace CList.
+		CList_Free_Internal(segment);
 	}
 	mem->data->free(mem->data);
 }
