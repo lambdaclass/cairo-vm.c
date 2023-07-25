@@ -1,5 +1,5 @@
 #include "decoder_test.h"
-#include "decoder.h"
+#include "../src/decoder.h"
 
 void decoding_tests(void) {
 
