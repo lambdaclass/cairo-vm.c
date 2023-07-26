@@ -147,6 +147,7 @@ During execution, the memory consists of segments of varying length, and they ca
 3- All `relocatable` values are converted into a single integer by adding their `offset` value to their segment's base calculated in the previous step
 
 For example, if we have this memory represented by address, value pairs:
+
     0:0 -> 1
     0:1 -> 4
     0:2 -> 7
@@ -156,16 +157,19 @@ For example, if we have this memory represented by address, value pairs:
     2:0 -> 1
 
 Step 1: Calculate segment sizes:
+
     0 -> 3
     1 -> 5
     2 -> 0
 
 Step 2: Assign a base to each segment:
+
     0 -> 1
     1 -> 4 (1 + 3)
     2 -> 9 (4 + 5)
 
 Step 3: Convert relocatables to integers
+
     1 (base[0] + 0) -> 1
     2 (base[0] + 1) -> 4
     3 (base[0] + 2) -> 7
