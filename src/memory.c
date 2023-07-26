@@ -115,4 +115,7 @@ void print_memory(memory *mem) {
 	printf("------------------------------------------\n");
 }
 
-void memory_free(memory *mem) { cc_hashtable_destroy(mem->data); }
+void memory_free(memory *mem) {
+	cc_hashtable_remove_all(mem->data);
+	cc_hashtable_destroy(mem->data);
+}
