@@ -9,11 +9,7 @@ SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CXX_FLAGS=-std=c++14 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-<<<<<<< HEAD
 LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks -lcollectc
-=======
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks
->>>>>>> cairo-runner-and-initialization
 
 BUILD_DIR=./build
 SRC_DIR=./src

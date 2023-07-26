@@ -1,6 +1,5 @@
 #include "memory_tests.h"
 #include "relocatable.h"
-
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
@@ -76,7 +75,6 @@ void memory_insert_ok(void) {
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
-	printf("TEST GET\n");
 	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
