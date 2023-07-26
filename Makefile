@@ -98,8 +98,7 @@ compile_rust:
 
 build_collections_lib:
 	git clone https://github.com/srdja/Collections-C.git
-	ls
-	cd Collections-c && \
+	cd Collections-C && \
 	mkdir build && \
 	cd build && \
 	cmake .. && \
