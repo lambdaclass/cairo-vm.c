@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build_arm docker_run
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -9,7 +9,7 @@ SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CXX_FLAGS=-std=c++14 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks -ldl -lpthread -lm
 
 BUILD_DIR=./build
 SRC_DIR=./src
@@ -95,3 +95,9 @@ valgrind: clean compile_rust $(TEST_TARGET)
 
 compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
+
+docker_build_arm:
+	docker build . -t cairo-vm_in_c --platform linux/arm64/v8
+
+docker_run:
+	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
