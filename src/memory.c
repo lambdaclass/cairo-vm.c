@@ -120,10 +120,9 @@ void memory_free(memory *mem) {
 	cc_hashtable_iter_init(&iter, mem->data);
 
 	TableEntry *entry;
-	maybe_relocatable *value = NULL;
 	while (cc_hashtable_iter_next(&iter, &entry) != CC_ITER_END) {
-		cc_hashtable_iter_remove(&iter, (void *)&value);
-		free(value);
+		free(entry->value);
+		free(entry->key);
 	}
 	cc_hashtable_destroy(mem->data);
 }
