@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "collectc/cc_array.h"
+#include "collectc/cc_common.h"
 #include "collectc/cc_hashtable.h"
 #include "relocatable.h"
 #include <stddef.h>
@@ -91,6 +92,67 @@ ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 	}
 	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
 	return ok;
+}
+
+
+// TODO: Add a hashmap(int, felt) for relocated memory
+void memory_relocate(memory * mem) {
+	// Calculate the size of each segment
+	int * segment_sizes;
+	for (int i = 0; i < mem->num_segments; i++) {
+		// We use -1 here as we will then be adding 1 to convert maximun offsets to segment sizes
+		segment_sizes[i] = -1;
+	}
+	// Find the highest offset at each segment
+	// Obtain all the addresses in memory
+	CC_Array * mem_keys = NULL;
+	cc_array_new(&mem_keys);
+	CC_ArrayIter * mem_keys_iter = NULL;
+	cc_array_iter_init(mem_keys_iter, mem_keys);
+	relocatable * key = NULL;
+	while (cc_array_iter_next(mem_keys_iter, (void *) &key) != CC_ITER_END) {
+		if (key->offset > segment_sizes[key->segment_index]) {
+			segment_sizes[key->segment_index] = key->offset;
+		}
+	}
+	// Add 1 to each size 
+	for (int i = 0; i < mem->num_segments; i++) {
+		segment_sizes[i] += 1;
+	}
+
+	// Assign a base to each segment
+	int * segment_bases;
+	// First segment base is set to 1
+	segment_bases[0] = 1;
+	for (int i = 1; i < mem->num_segments; i++) {
+		segment_bases[i] = segment_bases[i - 1] + segment_sizes[i - 1];
+	}
+
+	// Convert all values to felt
+	CC_ArrayIter * mem_keys_iter_b = NULL;
+	cc_array_iter_init(mem_keys_iter_b, mem_keys);
+	relocatable * key_b = NULL;
+	while (cc_array_iter_next(mem_keys_iter_b, (void *) &key) != CC_ITER_END) {
+		// Relocate Key
+		int relocated_key = segment_bases[key_b->segment_index] + key_b->offset;
+		// Remove value from 
+		maybe_relocatable * value = NULL;
+		cc_hashtable_remove(mem->data, key_b, (void *) &value);
+		// Relocate value (if needed)
+		// TODO copy value so that we dont modify it
+		if (!value->is_felt) {
+			felt_t felt;
+			from(felt, segment_bases[value->value.relocatable.segment_index] + value->value.relocatable.offset);
+			*value = maybe_relocatable_from_felt_limbs(felt);
+		}
+		// Insert relocated key-value pair
+		cc_hashtable_add(mem->relocated_data, &relocated_key, &value);
+
+
+	}
+
+	cc_array_destroy(mem_keys);
+
 }
 
 void print_memory(memory *mem) {
