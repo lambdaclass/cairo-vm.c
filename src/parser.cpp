@@ -97,8 +97,8 @@ void program_free(Program *program) {
 		for (size_t i = 0; i < program->attributes.length; ++i) {
 			free(program->attributes.data[i]);
 		}
-		free(program->attributes.data);
 	}
+	free(program->attributes.data);
 	free(program->compiler_version);
 	CList_Free_Bis(program->data);
 	// free(program->debug_info.fileContent.start);
@@ -161,5 +161,5 @@ Program parse_json_filename(const char *filename) {
 	// Parse main field (hardcoded right now)
 	program->main = 0;
 
-	return Program(*program);
+	return *program;
 }
