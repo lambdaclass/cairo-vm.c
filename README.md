@@ -125,7 +125,30 @@ TODO: Short explanation of Felts and the Cairo/Stark field we use through Lambda
 
 ### Program parsing
 
-Go through the main parts of a compiled program `Json` file. `data` field with instructions, identifiers, program entrypoint, etc.
+The input of the Virtual Machine is a compiled Cairo program in Json format.
+The main fields in the file are listed below:
+- data: List of hexadecimal values that represent the instructions defined in the cairo program.
+- debug_info: Useful information about how instructions are located inside the source code. For each instruction is defined:
+    The scopes that can acces to it.
+    The memory segment they are located.
+    The offset of the memory segment.
+    The instruction variables and values used.
+    Which `hints` have been used.
+    Information about the position of the instruction within the file and also of its parent instruction.
+- hints: All the hints used in the program.
+- identifiers: Identifiers of the functions of the cairo program. Each entry represents a block of code. For example for a concrete function we have the following blocks:
+    Starting identifier
+    Ending identifier
+    Arguments identifier
+    Body identifier
+    Return identifier
+    ...
+Each identifier is represented by the type of code block ['function', 'struct', 'label', 'reference', ...], the pc register value used to access that block and other useful information. Here we can find the entrypoint of the execution to the program to create the execution trace.
+- main_scope: Self explanatory, usually something like __main__.
+- prime: A prime number in hexadecimal format.
+- reference_manager: Information about the different references among functions of the cairo program. Here you can also find the memory position (segment and offset), pc integer value and the translated operation [memory_position, felt].
+
+In this project, we use a C++ library called [simdjson](https://github.com/simdjson/simdjson), the json is stored in a custom structure from which the vm can create the trace of the compiled program.
 
 ### Code walkthrough/Write your own Cairo VM
 
