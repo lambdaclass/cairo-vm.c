@@ -8,4 +8,7 @@ RUN apt update && \
 WORKDIR /usr/cairo-vm_in_C
 COPY . .
 
+RUN rm -r Collections-C && \
+    make docker_build_collections_lib
+
 CMD bash
