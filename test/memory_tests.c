@@ -138,7 +138,7 @@ void memory_load_data_one_element(void) {
 	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
@@ -164,13 +164,13 @@ void memory_load_data_twice_one_element(void) {
 	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data 1
-	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
 	relocatable ptr_2 = {1, 0};
 	// Load data 2
-	ResultMemory load_result_2 = memory_load_data(&mem, &ptr_2, data);
+	ResultMemory load_result_2 = memory_load_data(&mem, ptr_2, data);
 	assert(!load_result_2.is_error);
 	relocatable end_ptr_2 = load_result_2.value.ptr;
 	assert(end_ptr_2.segment_index == 1 && end_ptr_2.offset == 1);
@@ -194,7 +194,7 @@ void memory_load_data_empty(void) {
 	cc_array_new(&data);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(!load_result.is_error);
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
@@ -218,7 +218,7 @@ void memory_load_data_err_unallocated_segment(void) {
 	cc_array_add(data, &elem);
 	relocatable ptr = {0, 0};
 	// Load data
-	ResultMemory load_result = memory_load_data(&mem, &ptr, data);
+	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(load_result.is_error);
 	assert(load_result.value.error == LoadData);
 	memory_free(&mem);
