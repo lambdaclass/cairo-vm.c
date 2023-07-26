@@ -102,8 +102,9 @@ void print_memory(memory *mem) {
 			maybe_relocatable v = result.value.memory_value;
 			if (v.is_felt) {
 				limb_t *f = v.value.felt;
-				printf("%i:%i : [%llu, %llu, %llu, %llu]\n", ptr.segment_index, ptr.offset, f[0], f[1],
-				       f[2], f[3]);
+				printf("%i:%i : [%llu, %llu, %llu, %llu]\n", ptr.segment_index, ptr.offset,
+				       (long long unsigned int)f[0], (long long unsigned int)f[1],
+				       (long long unsigned int)f[2], (long long unsigned int)f[3]);
 			} else {
 				relocatable r = v.value.relocatable;
 				printf("%i:%i : %i:%i\n", ptr.segment_index, ptr.offset, r.segment_index, r.offset);
