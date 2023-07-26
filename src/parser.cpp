@@ -107,6 +107,7 @@ void program_free(Program *program) {
 Program get_empty_program(void) {
 	StringArray empty_array;
 	empty_array.length = 0;
+	empty_array.data = NULL;
 	Program *program_ptr;
 	program_ptr = (Program *)malloc(sizeof(Program));
 	program_ptr->attributes = empty_array;
@@ -115,7 +116,6 @@ Program get_empty_program(void) {
 	program_ptr->main = 0;
 	return *program_ptr;
 }
-
 
 // Function to parse the JSON file and populate the Program struct
 Program parse_json_filename(const char *filename) {
