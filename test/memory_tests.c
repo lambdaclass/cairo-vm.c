@@ -21,7 +21,7 @@ void memory_insert_err_unallocated_segement(void) {
 	memory mem = memory_new();
 	relocatable ptr = {0, 0};
 	maybe_relocatable elem = {.is_felt = true, .value = {.felt = {1}}};
-	ResultMemory result = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(result.is_error);
 	assert(result.value.error == Insert);
 	memory_free(&mem);
@@ -36,12 +36,12 @@ void memory_insert_err_ovewrite_attempt(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(!result.is_error);
 	felt_t felt_two;
 	from(felt_two, 2);
 	maybe_relocatable elem_b = maybe_relocatable_from_felt_limbs(felt_two);
-	ResultMemory result_b = memory_insert(&mem, &ptr, &elem_b);
+	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(result_b.is_error);
 	assert(result_b.value.error == Insert);
 	memory_free(&mem);
@@ -56,10 +56,10 @@ void memory_insert_ok_ovewrite_same_value(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result = memory_insert(&mem, ptr, elem);
 	assert(!result.is_error);
 	maybe_relocatable elem_b = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result_b = memory_insert(&mem, &ptr, &elem_b);
+	ResultMemory result_b = memory_insert(&mem, ptr, elem_b);
 	assert(!result_b.is_error);
 	memory_free(&mem);
 	printf("OK!\n");
@@ -73,7 +73,7 @@ void memory_insert_ok(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result_insert = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	printf("TEST GET\n");
@@ -92,10 +92,10 @@ void memory_insert_two_ok(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result_insert = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	relocatable ptr_b = {0, 1};
-	ResultMemory result_insert_b = memory_insert(&mem, &ptr_b, &elem);
+	ResultMemory result_insert_b = memory_insert(&mem, ptr_b, elem);
 	assert(!result_insert_b.is_error);
 	ResultMemory result_get = memory_get(&mem, &ptr);
 	assert(!result_get.is_error);
@@ -115,7 +115,7 @@ void memory_insert_with_gap(void) {
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	ResultMemory result_insert = memory_insert(&mem, &ptr, &elem);
+	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	ResultMemory result_get = memory_get(&mem, &ptr);

@@ -1,4 +1,5 @@
 #include "cairo_runner.h"
+#include "memory.h"
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"

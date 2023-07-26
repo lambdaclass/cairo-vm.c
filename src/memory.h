@@ -42,7 +42,7 @@ memory memory_new(void);
 ResultMemory memory_get(memory *mem, relocatable *ptr);
 
 // Inserts value into memory at address ptr, returns none
-ResultMemory memory_insert(memory *mem, relocatable *ptr, maybe_relocatable *value);
+ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value);
 
 // Adds a memory segment
 relocatable memory_add_segment(memory *memory);
