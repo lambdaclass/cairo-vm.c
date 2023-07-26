@@ -43,10 +43,14 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 	}
 	// Guard overwrites
 	maybe_relocatable *prev_value = NULL;
-	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK &&
-	    !maybe_relocatable_equal(prev_value, &value)) {
-		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
-		return error;
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK) {
+		if (!maybe_relocatable_equal(prev_value, &value)) {
+			ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+			return error;
+		} else {
+			ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+			return ok;
+		}
 	}
 	// Write new value
 	// Allocate new values
