@@ -102,4 +102,5 @@ build_collections_lib:
 	mkdir build && \
 	cd build && \
 	cmake .. && \
-	make
+	make && \
+	sudo make install
