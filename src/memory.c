@@ -9,7 +9,6 @@
 int key_compare(const void *key1, const void *key2) {
 	relocatable r1 = *((relocatable *)key1);
 	relocatable r2 = *((relocatable *)key2);
-	// printf("KEY CMP: %i:%i vs %i:%i\n", r1.segment_index, r1.offset, r2.segment_index, r2.offset);
 	return !(r1.segment_index == r2.segment_index && r1.offset == r2.offset);
 }
 
