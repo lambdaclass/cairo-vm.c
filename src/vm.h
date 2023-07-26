@@ -4,6 +4,7 @@
 #include "instruction.h"
 #include "memory.h"
 #include "run_context.h"
+#include "relocatable.h"
 
 typedef struct {
 	enum VirtualMachineError error;

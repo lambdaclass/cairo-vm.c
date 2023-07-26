@@ -1,4 +1,21 @@
 #include "utils.h"
+#include "relocatable.h"
+
+
+
+maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b){
+	if(a.is_felt && b.is_felt) {
+		
+			felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
+			felt_t f2 = {b.value.felt[0], b.value.felt[1], b.value.felt[2], b.value.felt[3]};
+			felt_t result;
+			add(f1, f2, result);
+			maybe_relocatable res = {.is_felt = true, .value = {.felt = {result[0], result[1], result[2], result[3]}}};
+		return res;
+	}
+}
+
+
 
 int64_t absolute(int64_t a) {
 	if (a < 0)
