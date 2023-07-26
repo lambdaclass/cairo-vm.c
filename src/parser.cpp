@@ -114,7 +114,7 @@ Program get_empty_program(void) {
 	program_ptr->compiler_version = NULL;
 	program_ptr->data = CList_init(sizeof(maybe_relocatable));
 	program_ptr->main = 0;
-	return *program_ptr;
+	return Program(*program_ptr);
 }
 
 // Function to parse the JSON file and populate the Program struct
@@ -161,5 +161,5 @@ Program parse_json_filename(const char *filename) {
 	// Parse main field (hardcoded right now)
 	program->main = 0;
 
-	return *program;
+	return Program(*program);
 }
