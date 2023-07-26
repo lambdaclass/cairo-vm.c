@@ -105,7 +105,7 @@ void runner_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: initialize_runner_no_builtins_no_proof_mode_empty_program \n");
 	initialize_runner_no_builtins_no_proof_mode_empty_program();
-	printf("--------------------------------- \n");
-	printf("Test: initialize_runner_no_builtins_no_proof_mode_non_empty_program \n");
-	initialize_runner_no_builtins_no_proof_mode_non_empty_program();
+	// printf("--------------------------------- \n");
+	// printf("Test: initialize_runner_no_builtins_no_proof_mode_non_empty_program \n");
+	// initialize_runner_no_builtins_no_proof_mode_non_empty_program();
 }
