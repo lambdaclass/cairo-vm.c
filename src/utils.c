@@ -1,21 +1,48 @@
 #include "utils.h"
 #include "relocatable.h"
+#include <stdint.h>
 
+// TODO: check this function
+uint64_t to_u64(felt_t f) { return f[3]; }
 
+maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b) {
+	if (a.is_felt && b.is_felt) {
 
-maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b){
-	if(a.is_felt && b.is_felt) {
-		
-			felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
-			felt_t f2 = {b.value.felt[0], b.value.felt[1], b.value.felt[2], b.value.felt[3]};
-			felt_t result;
-			add(f1, f2, result);
-			maybe_relocatable res = {.is_felt = true, .value = {.felt = {result[0], result[1], result[2], result[3]}}};
+		felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
+		felt_t f2 = {b.value.felt[0], b.value.felt[1], b.value.felt[2], b.value.felt[3]};
+		felt_t result;
+		add(f1, f2, result);
+		maybe_relocatable res = {.is_felt = true,
+		                         .value = {.felt = {result[0], result[1], result[2], result[3]}}};
+		return res;
+	} else if (a.is_felt && !b.is_felt) {
+
+		felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
+		relocatable rel = b.value.relocatable;
+		uint64_t offset = (uint64_t)rel.offset;
+		uint64_t other = to_u64(f1);
+		uint64_t new_offset = offset + other;
+		maybe_relocatable res = {
+		    .is_felt = false,
+		    .value = {.relocatable = {.offset = new_offset, .segment_index = rel.segment_index}}};
+		return res;
+	} else if (!a.is_felt && b.is_felt) {
+
+		felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
+		relocatable rel = b.value.relocatable;
+		uint64_t offset = (uint64_t)rel.offset;
+		uint64_t other = to_u64(f1);
+		uint64_t new_offset = offset + other;
+		maybe_relocatable res = {
+		    .is_felt = false,
+		    .value = {.relocatable = {.offset = new_offset, .segment_index = rel.segment_index}}};
 		return res;
 	}
+
+	felt_t res;
+	zero(res);
+	return (maybe_relocatable){.is_felt = true, .value = {.felt = {res[0], res[1], res[2], res[3]}}};
 }
-
-
 
 int64_t absolute(int64_t a) {
 	if (a < 0)

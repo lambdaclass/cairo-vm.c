@@ -3,8 +3,9 @@
 
 #include "instruction.h"
 #include "memory.h"
-#include "run_context.h"
 #include "relocatable.h"
+#include "run_context.h"
+#include "utils.h"
 
 typedef struct {
 	enum VirtualMachineError error;
@@ -58,5 +59,5 @@ virtual_machine vm_new(void);
 // executes an instruction in the vm
 vm_result run_instruction(virtual_machine vm, Instruction instr);
 // Creates a new, empty virtual_machine
-
+maybe_relocatable compute_res(Instruction instr, maybe_relocatable op0, maybe_relocatable op1);
 #endif

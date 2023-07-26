@@ -1,7 +1,4 @@
 #include "vm.h"
-#include "memory.h"
-#include "relocatable.h"
-#include "run_context.h"
 
 virtual_machine vm_new(void) {
 	virtual_machine vm = {{{0, 0}, {0, 0}, {0, 0}}, memory_new()};
@@ -32,58 +29,60 @@ maybe_relocatable compute_res(Instruction instr, maybe_relocatable op0, maybe_re
 		res = (maybe_relocatable){.is_felt = false, .value = {.relocatable = {0, 0}}};
 		break;
 	}
+	return res;
+}
 
-	computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
-		relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
-		ResultMemory mem_res = memory_get(&vm.memory, dst_addr);
-		if (mem_res.type == Err) {
-			computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
-			return res;
-		}
-
-		relocatable op0_addr = compute_op0_addr(vm.run_context, instr);
-		ResultMemory op0_op = memory_get(&vm.memory, op0_addr);
-		if (op0_op.type == Err) {
-			computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
-			return res;
-		}
-
-		relocatable op1_addr = compute_op1_addr(vm.run_context, instr, op0_op.value.memory_value);
-		ResultMemory op1_op = memory_get(&vm.memory, op1_addr);
-
-		felt_t value;
-		from(value, 0);
-		// maybe_relocatable res = {.is_felt = false, .value = {.felt = {value[0], value[1], value[2],
-		// value[3]}}};
-		uint8_t deduced_operands = 0;
-
-		if (op0_op.type == Err) {
-			computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
-			return res;
-		}
-
-		// for now this is always pre computed. we should handle the case when it is not
-		maybe_relocatable op0 = op0_op.value.memory_value;
-		maybe_relocatable op1 = op1_op.value.memory_value;
-
-		// compute res
-		maybe_relocatable res = compute_res(instr);
+computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
+	relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
+	ResultMemory mem_res = memory_get(&vm.memory, dst_addr);
+	if (mem_res.type == Err) {
+		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
+		return res;
 	}
 
-	// TODO: uncomment once all functions are done
-	// vm_result run_instruction(virtual_machine vm, Instruction instr) {
+	relocatable op0_addr = compute_op0_addr(vm.run_context, instr);
+	ResultMemory op0_op = memory_get(&vm.memory, op0_addr);
+	if (op0_op.type == Err) {
+		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
+		return res;
+	}
 
-	// 	computed_operands_res com_op_res = compute_operands(vm, instr);
-	// 	if (com_op_res.is_error) {
-	// 		VirtualMachineError err = com_op_res.value.error;
-	// 		vm_result res = {.is_ok = false, .error = err};
-	// 		return res;
-	// 	}
+	relocatable op1_addr = compute_op1_addr(vm.run_context, instr, op0_op.value.memory_value);
+	ResultMemory op1_op = memory_get(&vm.memory, op1_addr);
 
-	// 	vm_result res = {
-	// 	    .is_ok = true,
-	// 	    .error = None,
-	// 	};
+	felt_t value;
+	from(value, 0);
+	// maybe_relocatable res = {.is_felt = false, .value = {.felt = {value[0], value[1], value[2],
+	// value[3]}}};
+	uint8_t deduced_operands = 0;
 
-	// 	return res;
-	// }
+	if (op0_op.type == Err) {
+		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
+		return res;
+	}
+
+	// for now this is always pre computed. we should handle the case when it is not
+	maybe_relocatable op0 = op0_op.value.memory_value;
+	maybe_relocatable op1 = op1_op.value.memory_value;
+
+	// compute res
+	maybe_relocatable res = compute_res(instr, op0, op1);
+}
+
+// TODO: uncomment once all functions are done
+// vm_result run_instruction(virtual_machine vm, Instruction instr) {
+
+// 	computed_operands_res com_op_res = compute_operands(vm, instr);
+// 	if (com_op_res.is_error) {
+// 		VirtualMachineError err = com_op_res.value.error;
+// 		vm_result res = {.is_ok = false, .error = err};
+// 		return res;
+// 	}
+
+// 	vm_result res = {
+// 	    .is_ok = true,
+// 	    .error = None,
+// 	};
+
+// 	return res;
+// }
