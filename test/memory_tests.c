@@ -232,16 +232,16 @@ void memory_add_segment_ok(void) {
 }
 
 void memory_tests(void) {
-	// printf("--------------------------------- \n");
-	// printf("Test: memory_get_err \n");
-	// memory_get_err();
-	// printf("--------------------------------- \n");
-	// printf("Test: memory_insert_err_unallocated_segement \n");
-	// memory_insert_err_unallocated_segement();
-	// printf("--------------------------------- \n");
-	// printf("Test: memory_insert_err_ovewrite_attempt \n");
-	// memory_insert_err_ovewrite_attempt();
-	// printf("--------------------------------- \n");
+	printf("--------------------------------- \n");
+	printf("Test: memory_get_err \n");
+	memory_get_err();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_err_unallocated_segement \n");
+	memory_insert_err_unallocated_segement();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_err_ovewrite_attempt \n");
+	memory_insert_err_ovewrite_attempt();
+	printf("--------------------------------- \n");
 	printf("Test: memory_insert_ok_ovewrite_same_value \n");
 	memory_insert_ok_ovewrite_same_value();
 	printf("--------------------------------- \n");
@@ -250,9 +250,9 @@ void memory_tests(void) {
 	printf("--------------------------------- \n");
 	printf("Test: memory_insert_two_ok \n");
 	memory_insert_two_ok();
-	// printf("--------------------------------- \n");
-	// printf("Test: memory_insert_with_gap \n");
-	// memory_insert_with_gap();
+	printf("--------------------------------- \n");
+	printf("Test: memory_insert_with_gap \n");
+	memory_insert_with_gap();
 	// printf("--------------------------------- \n");
 	// printf("Test: memory_load_data_empty \n");
 	// memory_load_data_empty();
