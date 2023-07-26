@@ -130,7 +130,7 @@ The memory can perform the following basic operations:
 
 - `memory_add_segment`: Creates a new, empty segment in memory and returns a pointer to its start. Values cannot be inserted into a memory segment that hasn't been previously created.
 
-- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there musn't be a value stored at that address, as the memory is inmutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be succesful.
+- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there mustn't be a value stored at that address, as the memory is inmutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be succesful.
 
 - `memory_get`: Fetches a `maybe_relocatable` value from a memory address indicated by a `relocatable` pointer.
 
@@ -140,7 +140,7 @@ Other operations:
 
 #### Memory Relocation
 
-During execution, the memory consists of segments of varying lenght, and they can be accessed by indicating their segment index, and the offset within that segment. When the run is finished, a relocation process takes place, which transforms this segmented memory into a contiguous list of values. The relocation process works as follows:
+During execution, the memory consists of segments of varying length, and they can be accessed by indicating their segment index, and the offset within that segment. When the run is finished, a relocation process takes place, which transforms this segmented memory into a contiguous list of values. The relocation process works as follows:
 
 1- The size of each segment is calculated (The size is equal to the highest offset within the segment + 1, and not the amount of `maybe_relocatable` values, as there can be gaps)
 2- A base is assigned to each segment by accumulating the size of the previous segment. The first segment's base is set to 1.
