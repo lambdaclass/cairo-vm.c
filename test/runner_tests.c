@@ -54,7 +54,7 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	relocatable value_c = result_c.value.memory_value.value.relocatable;
 	assert(value_c.segment_index == 3 && value_c.offset == 0);
 
-	// runner_free(&runner);
+	runner_free(&runner);
 	printf("OK!\n");
 }
 
@@ -97,7 +97,7 @@ void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
 	assert(!result_c.is_error);
 	relocatable value_c = result_c.value.memory_value.value.relocatable;
 	assert(value_c.segment_index == 3 && value_c.offset == 0);
-	// runner_free(&runner);
+	runner_free(&runner);
 	printf("OK!\n");
 }
 
