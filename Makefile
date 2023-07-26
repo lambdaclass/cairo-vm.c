@@ -30,6 +30,16 @@ OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 LIB_OBJECTS_CPP = $(patsubst $(LIB_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCE_CPP))
 
+COLLECTIONS_LIB_DIR= Collections-C
+$(COLLECTIONS_LIB_DIR):
+	git clone https://github.com/srdja/Collections-C.git
+	cd Collections-C && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make && \
+	sudo make install
+
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
 
@@ -82,6 +92,7 @@ test: compile_rust build_collections_lib $(TEST_TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) && \
+	rm -rf $(COLLECTIONS_LIB_DIR) && \
 	cd lambdaworks/lib/lambdaworks && cargo clean
 
 fmt:
@@ -96,11 +107,4 @@ valgrind: clean compile_rust build_collections_lib $(TEST_TARGET)
 compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
-build_collections_lib:
-	git clone https://github.com/srdja/Collections-C.git
-	cd Collections-C && \
-	mkdir build && \
-	cd build && \
-	cmake .. && \
-	make && \
-	sudo make install
+build_collections_lib: | $(COLLECTIONS_LIB_DIR)
