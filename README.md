@@ -130,7 +130,7 @@ The memory can perform the following basic operations:
 
 - `memory_add_segment`: Creates a new, empty segment in memory and returns a pointer to its start. Values cannot be inserted into a memory segment that hasn't been previously created.
 
-- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there mustn't be a value stored at that address, as the memory is inmutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be succesful.
+- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succeed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there mustn't be a value stored at that address, as the memory is immutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be successful.
 
 - `memory_get`: Fetches a `maybe_relocatable` value from a memory address indicated by a `relocatable` pointer.
 
