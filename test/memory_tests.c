@@ -75,7 +75,6 @@ void memory_insert_ok(void) {
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
-
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	ResultMemory result_get = memory_get(&mem, ptr);

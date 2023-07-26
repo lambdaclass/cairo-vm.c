@@ -56,5 +56,6 @@ typedef struct {
 virtual_machine vm_new(void);
 // executes an instruction in the vm
 vm_result run_instruction(virtual_machine vm, Instruction instr);
+// Creates a new, empty virtual_machine
 
 #endif

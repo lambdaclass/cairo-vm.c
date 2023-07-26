@@ -1,6 +1,7 @@
 #include "memory.h"
 #include "clist.h"
 #include "relocatable.h"
+#include <stdlib.h>
 
 memory memory_new(void) {
 	struct CList *mem_data = CList_init(sizeof(struct CList));
@@ -22,7 +23,7 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 	}
 	memory_cell *cell = segment->at(segment, ptr.offset);
 	if (cell->is_some) {
-		ResultMemory ok = {.type = false, .value = {.memory_value = cell->memory_value.value}};
+		ResultMemory ok = {.type = MaybeRelocatable, .value = {.memory_value = cell->memory_value.value}};
 		return ok;
 	}
 	ResultMemory error = {.type = Err, .value = {.error = Get}};
@@ -38,6 +39,7 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 	}
 	CList *segment = mem->data->at(mem->data, ptr.segment_index);
 	// Handle gaps
+	// TODO: possible bug. check if lesser and equal or just lesser
 	while (segment->count(segment) <= offset) {
 		memory_cell none = {.is_some = false, .memory_value = {.none = 0}};
 		segment->add(segment, &none);
@@ -63,6 +65,8 @@ relocatable memory_add_segment(memory *memory) {
 	relocatable rel = {memory->num_segments, 0};
 	struct CList *segment = CList_init(sizeof(memory_cell));
 	memory->data->add(memory->data, segment);
+	// Clist implementation uses memcpy, so we need to free this
+	free(segment);
 	memory->num_segments += 1;
 	return rel;
 }
@@ -88,7 +92,7 @@ void memory_free(memory *mem) {
 	int num_segments = mem->num_segments;
 	for (int i = 0; i < num_segments; i++) {
 		CList *segment = mem->data->at(mem->data, i);
-		segment->clear(segment);
+		CList_Free_Bis(segment);
 	}
 	mem->data->free(mem->data);
 }

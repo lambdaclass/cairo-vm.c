@@ -27,7 +27,7 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 
 	felt_t value;
 	from(value, 0);
-	maybe_relocatable res = {.is_felt = false, .value = {value[0], value[1], value[2], value[3]}};
+	maybe_relocatable res = {.is_felt = false, .value = {.felt = {value[0], value[1], value[2], value[3]}}};
 	uint8_t deduced_operands = 0;
 }
 
