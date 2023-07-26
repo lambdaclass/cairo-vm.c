@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -77,7 +77,7 @@ deps_macos:
 run: default
 	$(BUILD_DIR)/$(TARGET)
 
-test: compile_rust $(TEST_TARGET)
+test: compile_rust build_collections_lib $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
@@ -90,8 +90,16 @@ fmt:
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
-valgrind: clean compile_rust $(TEST_TARGET)
+valgrind: clean compile_rust build_collections_lib $(TEST_TARGET)
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
 
 compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
+
+build_collections_lib:
+	git clone https://github.com/srdja/Collections-C.git && \
+	cd Collections-c && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make
