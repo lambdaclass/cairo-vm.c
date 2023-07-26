@@ -12,8 +12,8 @@ int main(__attribute__((unused)) int argc, __attribute__((unused)) char **argv) 
 	felt_tests();
 	decoding_tests();
 	memory_tests();
-	runner_tests();
 	parsing_tests();
+	runner_tests();
 	// fib_test();
 	return 0;
 }
