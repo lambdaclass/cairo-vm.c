@@ -1,5 +1,9 @@
+#pragma once
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* A single limb (unsigned integer with 64 bits). */
 typedef uint64_t limb_t;
 
@@ -26,3 +30,7 @@ void mul(felt_t a, felt_t b, felt_t result);
 
 /* Writes the result variable with a / b. */
 void lw_div(felt_t a, felt_t b, felt_t result);
+
+#ifdef __cplusplus
+}
+#endif
