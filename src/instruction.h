@@ -3,24 +3,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-//  Structure of the 63-bit that form the first word of each instruction.
-//  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
-// ┌─────────────────────────────────────────────────────────────────────────┐
-// │                     off_dst (biased representation)                     │
-// ├─────────────────────────────────────────────────────────────────────────┤
-// │                     off_op0 (biased representation)                     │
-// ├─────────────────────────────────────────────────────────────────────────┤
-// │                     off_op1 (biased representation)                     │
-// ├─────┬─────┬───────┬───────┬───────────┬────────┬───────────────────┬────┤
-// │ dst │ op0 │  op1  │  res  │    pc     │   ap   │      opcode       │ 0  │
-// │ reg │ reg │  src  │ logic │  update   │ update │                   │    │
-// ├─────┼─────┼───┬───┼───┬───┼───┬───┬───┼───┬────┼────┬────┬────┬────┼────┤
-// │  0  │  1  │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 10 │ 11 │ 12 │ 13 │ 14 │ 15 │
-// └─────┴─────┴───┴───┴───┴───┴───┴───┴───┴───┴────┴────┴────┴────┴────┴────┘
-
-// Instruction is the representation of the first word of each Cairo instruction.
-// Some instructions spread over two words when they use an immediate value, so
-// representing the first one with this struct is enougth.
 
 // ---------------------
 //     structures

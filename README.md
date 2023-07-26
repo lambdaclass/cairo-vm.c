@@ -127,6 +127,32 @@ TODO: Short explanation of Felts and the Cairo/Stark field we use through Lambda
 
 Go through the main parts of a compiled program `Json` file. `data` field with instructions, identifiers, program entrypoint, etc.
 
+
+### Program decoding 
+
+Once the VM has been feed with a compiled cairo program it has to be decoded. The decoder takes as input the hexadecimal number in little endian format that represents the instruction an generates an Instruction structs with it.
+Instruction is the representation of the first word of each Cairo instruction. Some instructions spread over two words when they use an immediate value, so representing the first one with this struct is enougth.
+
+  Structure of the 63-bit that form the first word of each instruction.
+  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │                     off_dst (biased representation)                     │
+ ├─────────────────────────────────────────────────────────────────────────┤
+ │                     off_op0 (biased representation)                     │
+ ├─────────────────────────────────────────────────────────────────────────┤
+ │                     off_op1 (biased representation)                     │
+ ├─────┬─────┬───────┬───────┬───────────┬────────┬───────────────────┬────┤
+ │ dst │ op0 │  op1  │  res  │    pc     │   ap   │      opcode       │ 0  │
+ │ reg │ reg │  src  │ logic │  update   │ update │                   │    │
+ ├─────┼─────┼───┬───┼───┬───┼───┬───┬───┼───┬────┼────┬────┬────┬────┼────┤
+ │  0  │  1  │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 10 │ 11 │ 12 │ 13 │ 14 │ 15 │
+ └─────┴─────┴───┴───┴───┴───┴───┴───┴───┴───┴────┴────┴────┴────┴────┴────┘
+
+The decoder perform masks and bitwise operations to extract the fields from the hexadecimal values and store them in the struct representation, each value of the masks and padding can be deduced from the table above.
+for example to extract the dst_reg flag we can define a mask 'DST_REG_MASK' with value 0x0001 and and a padding 'DST_REG_OFF' with value 0 because it is the less significant bit, then we can perform the operation
+'(((encoded_instr) >> 48) & DST_REG_MASK) >> DST_REG_OFF' to obtain the dst_reg flag. We shifted 48 bits first because there is where the flags start. 
+
+
 ### Code walkthrough/Write your own Cairo VM
 
 TODO
