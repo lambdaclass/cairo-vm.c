@@ -13,8 +13,9 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 	cc_array_new(&program_data);
 	felt_t felt_one;
 	one(felt_one);
-	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	cc_array_add(program_data, &elem);
+	maybe_relocatable *elem = malloc(sizeof(maybe_relocatable));
+	*elem = maybe_relocatable_from_felt_limbs(felt_one);
+	cc_array_add(program_data, elem);
 	struct program program = {0, program_data};
 	cairo_runner runner = runner_new(program);
 	runner_initialize(&runner);
