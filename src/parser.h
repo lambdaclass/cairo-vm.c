@@ -58,14 +58,14 @@ typedef struct {
 
 typedef struct {
 	StringArray attributes;
-	StringArray builtins;
+	// StringArray builtins;
 	char *compiler_version;
 	CList *data;
-	DebugInfo debug_info;
-	StringArray hints;
-	Identifiers *identifiers;
-	StringArray main_scope;
-	char *prime;
+	// DebugInfo debug_info;
+	// StringArray hints;
+	// Identifiers *identifiers;
+	// StringArray main_scope;
+	// char *prime;
 	int main;
 } Program;
 
