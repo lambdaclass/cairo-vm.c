@@ -51,6 +51,7 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = cc_array_size(stack);
 	runner_initialize_state(runner, entrypoint, stack);
+	cc_array_destroy(stack);
 	runner->final_pc = end;
 	return end;
 }
