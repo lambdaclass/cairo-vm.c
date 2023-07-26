@@ -2,9 +2,9 @@
 #define RUNNER_H
 
 #include "clist.h"
+#include "parser.h"
 #include "relocatable.h"
 #include "vm.h"
-#include "parser.h"
 
 typedef struct cairo_runner {
 	Program program;

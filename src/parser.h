@@ -1,7 +1,7 @@
 #pragma once
 #include "../lambdaworks/lib/lambdaworks.h"
-#include "relocatable.h"
 #include "clist.h"
+#include "relocatable.h"
 #include "stddef.h"
 #include "stdint.h"
 
