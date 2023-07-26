@@ -1,4 +1,5 @@
 #include "memory_tests.h"
+#include "collectc/cc_array.h"
 #include "relocatable.h"
 #include "utils.h"
 #include <assert.h>
@@ -145,6 +146,7 @@ void memory_load_data_one_element(void) {
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
 	memory_free(&mem);
+	cc_array_destroy(data);
 	printf("OK!\n");
 }
 
@@ -179,6 +181,7 @@ void memory_load_data_twice_one_element(void) {
 	ResultMemory result_2 = memory_get(&mem, ptr_2);
 	assert(!result_2.is_error);
 	assert(maybe_relocatable_equal(&result_2.value.memory_value, &elem));
+	cc_array_destroy(data);
 	memory_free(&mem);
 	printf("OK!\n");
 }
@@ -199,8 +202,8 @@ void memory_load_data_empty(void) {
 	// Check memory
 	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
+	cc_array_destroy(data);
 	memory_free(&mem);
-	cc_array_remove_all_free(data);
 	printf("OK!\n");
 }
 
