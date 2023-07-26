@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_build_collections_lib
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -9,7 +9,7 @@ SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CXX_FLAGS=-std=c++14 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -llambdaworks -lcollectc
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks -lcollectc -ldl -lpthread -lm
 
 BUILD_DIR=./build
 SRC_DIR=./src
@@ -108,3 +108,20 @@ compile_rust:
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
 build_collections_lib: | $(COLLECTIONS_LIB_DIR)
+
+docker_build:
+	docker build . -t cairo-vm_in_c
+
+docker_run:
+	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
+
+docker_build_collections_lib:
+	git clone https://github.com/srdja/Collections-C.git
+	cd Collections-C && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make && \
+	make install && \
+	ldconfig
+
