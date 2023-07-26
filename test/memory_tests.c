@@ -222,6 +222,7 @@ void memory_load_data_err_unallocated_segment(void) {
 	ResultMemory load_result = memory_load_data(&mem, ptr, data);
 	assert(load_result.is_error);
 	assert(load_result.value.error == LoadData);
+	cc_array_destroy(data);
 	memory_free(&mem);
 }
 
