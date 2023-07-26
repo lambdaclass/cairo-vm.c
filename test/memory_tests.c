@@ -9,7 +9,7 @@ void memory_get_err(void) {
 	// Initialize memory
 	memory mem = memory_new();
 	relocatable ptr = {0, 0};
-	ResultMemory result = memory_get(&mem, &ptr);
+	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	assert(result.value.error == Get);
 	memory_free(&mem);
@@ -77,7 +77,7 @@ void memory_insert_ok(void) {
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
 	printf("TEST GET\n");
-	ResultMemory result_get = memory_get(&mem, &ptr);
+	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
 	memory_free(&mem);
@@ -97,10 +97,10 @@ void memory_insert_two_ok(void) {
 	relocatable ptr_b = {0, 1};
 	ResultMemory result_insert_b = memory_insert(&mem, ptr_b, elem);
 	assert(!result_insert_b.is_error);
-	ResultMemory result_get = memory_get(&mem, &ptr);
+	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
-	ResultMemory result_get_b = memory_get(&mem, &ptr_b);
+	ResultMemory result_get_b = memory_get(&mem, ptr_b);
 	assert(!result_get_b.is_error);
 	assert(felt_equal(result_get_b.value.memory_value.value.felt, felt_one));
 	memory_free(&mem);
@@ -118,7 +118,7 @@ void memory_insert_with_gap(void) {
 	ResultMemory result_insert = memory_insert(&mem, ptr, elem);
 	assert(!result_insert.is_error);
 	assert(result_insert.value.none == 0);
-	ResultMemory result_get = memory_get(&mem, &ptr);
+	ResultMemory result_get = memory_get(&mem, ptr);
 	assert(!result_get.is_error);
 	assert(felt_equal(result_get.value.memory_value.value.felt, felt_one));
 	memory_free(&mem);
@@ -143,7 +143,7 @@ void memory_load_data_one_element(void) {
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 1);
 	// Check memory
-	ResultMemory result = memory_get(&mem, &ptr);
+	ResultMemory result = memory_get(&mem, ptr);
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
 	memory_free(&mem);
@@ -175,10 +175,10 @@ void memory_load_data_twice_one_element(void) {
 	relocatable end_ptr_2 = load_result_2.value.ptr;
 	assert(end_ptr_2.segment_index == 1 && end_ptr_2.offset == 1);
 	// Check memory
-	ResultMemory result = memory_get(&mem, &ptr);
+	ResultMemory result = memory_get(&mem, ptr);
 	assert(!result.is_error);
 	assert(maybe_relocatable_equal(&result.value.memory_value, &elem));
-	ResultMemory result_2 = memory_get(&mem, &ptr_2);
+	ResultMemory result_2 = memory_get(&mem, ptr_2);
 	assert(!result_2.is_error);
 	assert(maybe_relocatable_equal(&result_2.value.memory_value, &elem));
 	memory_free(&mem);
@@ -199,7 +199,7 @@ void memory_load_data_empty(void) {
 	relocatable end_ptr = load_result.value.ptr;
 	assert(end_ptr.segment_index == 0 && end_ptr.offset == 0);
 	// Check memory
-	ResultMemory result = memory_get(&mem, &ptr);
+	ResultMemory result = memory_get(&mem, ptr);
 	assert(result.is_error);
 	memory_free(&mem);
 	cc_array_remove_all_free(data);

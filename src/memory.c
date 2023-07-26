@@ -25,9 +25,9 @@ memory memory_new(void) {
 	return mem;
 }
 
-ResultMemory memory_get(memory *mem, relocatable *ptr) {
+ResultMemory memory_get(memory *mem, relocatable ptr) {
 	maybe_relocatable *value = NULL;
-	if (cc_hashtable_get(mem->data, ptr, (void *)&value) == CC_OK) {
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
 		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
 		return ok;
 	}
@@ -97,7 +97,7 @@ void print_memory(memory *mem) {
 	for (int i = 0; i < (int)mem->num_segments; i++) {
 		relocatable ptr = {i, 0};
 		while (true) {
-			ResultMemory result = memory_get(mem, &ptr);
+			ResultMemory result = memory_get(mem, ptr);
 			if (result.is_error) {
 				break;
 			}
