@@ -11,7 +11,7 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 	relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
 	ResultMemory mem_res = memory_get(&vm.memory, dst_addr);
 	if (mem_res.type == Err) {
-		computed_operands_res res = {.value = { .error = MemoryError}, .is_error = true};
+		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
 		return res;
 	}
 
@@ -25,22 +25,26 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 	relocatable op1_addr = compute_op1_addr(vm.run_context, instr, op0_op.value.memory_value);
 	ResultMemory op1_op = memory_get(&vm.memory, op1_addr);
 
+	felt_t value;
+	from(value, 0);
+	maybe_relocatable res = {.is_felt = false, .value = {value[0], value[1], value[2], value[3]}};
 	uint8_t deduced_operands = 0;
 }
 
-vm_result run_instruction(virtual_machine vm, Instruction instr) {
+// TODO: uncomment once all functions are done
+// vm_result run_instruction(virtual_machine vm, Instruction instr) {
 
-	computed_operands_res com_op_res = compute_operands(vm, instr);
-	if (com_op_res.is_error) {
-		VirtualMachineError err = com_op_res.value.error;
-		vm_result res = {.is_ok = false, .error = err};
-		return res;
-	}
+// 	computed_operands_res com_op_res = compute_operands(vm, instr);
+// 	if (com_op_res.is_error) {
+// 		VirtualMachineError err = com_op_res.value.error;
+// 		vm_result res = {.is_ok = false, .error = err};
+// 		return res;
+// 	}
 
-	vm_result res = {
-	    .is_ok = true,
-	    .error = None,
-	};
+// 	vm_result res = {
+// 	    .is_ok = true,
+// 	    .error = None,
+// 	};
 
-	return res;
-}
+// 	return res;
+// }
