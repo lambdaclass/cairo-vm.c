@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib build_collections_lib_ci
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -108,13 +108,3 @@ compile_rust:
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
 build_collections_lib: | $(COLLECTIONS_LIB_DIR)
-
-build_collections_lib_ci:
-	git clone https://github.com/srdja/Collections-C.git
-	cd Collections-C && \
-	mkdir build && \
-	cd build && \
-	cmake .. && \
-	make && \
-	sudo make install
-	sudo ldconfig
