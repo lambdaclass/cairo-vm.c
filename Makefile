@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build_arm docker_run
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build docker_run
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -96,8 +96,8 @@ valgrind: clean compile_rust $(TEST_TARGET)
 compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
-docker_build_arm:
-	docker build . -t cairo-vm_in_c --platform linux/arm64/v8
+docker_build:
+	docker build . -t cairo-vm_in_c
 
 docker_run:
 	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
