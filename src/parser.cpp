@@ -97,12 +97,25 @@ void program_free(Program *program) {
 		for (size_t i = 0; i < program->attributes.length; ++i) {
 			free(program->attributes.data[i]);
 		}
+		free(program->attributes.data);
 	}
-	free(program->attributes.data);
 	free(program->compiler_version);
 	free(program->data);
 	// free(program->debug_info.fileContent.start);
 }
+
+Program get_empty_program(void) {
+	StringArray empty_array;
+	empty_array.length = 0;
+	Program *program_ptr;
+	program_ptr = (Program *)malloc(sizeof(Program));
+	program_ptr->attributes = empty_array;
+	program_ptr->compiler_version = NULL;
+	program_ptr->data = CList_init(sizeof(maybe_relocatable));
+	program_ptr->main = 0;
+	return *program_ptr;
+}
+
 
 // Function to parse the JSON file and populate the Program struct
 Program parse_json_filename(const char *filename) {
@@ -144,6 +157,9 @@ Program parse_json_filename(const char *filename) {
 	// Parse debug info
 	// dom::element debug_info = root["debug_info"];
 	// parse_debug_info(debug_info, program);
+
+	// Parse main field (hardcoded right now)
+	program->main = 0;
 
 	return Program(*program);
 }

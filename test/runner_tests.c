@@ -6,14 +6,14 @@
 #include "vm.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
-	struct CList *program_data = CList_init(sizeof(maybe_relocatable));
+	Program program = get_empty_program();
 	felt_t felt_one;
 	one(felt_one);
 	maybe_relocatable elem = maybe_relocatable_from_felt_limbs(felt_one);
-	program_data->add(program_data, &elem);
-	Program program = parse_json_filename("cairo_programs/fibonacci.json");
+	program.data->add(program.data, &elem);
 	cairo_runner runner = runner_new(program);
 	runner_initialize(&runner);
 
@@ -56,9 +56,8 @@ void initialize_runner_no_builtins_no_proof_mode_non_empty_program(void) {
 }
 
 void initialize_runner_no_builtins_no_proof_mode_empty_program(void) {
-	//struct CList *program_data = CList_init(sizeof(maybe_relocatable));
-	Program program = parse_json_filename("cairo_programs/fibonacci.json");
-	cairo_runner runner = runner_new(program);
+	Program empty_program = get_empty_program();
+	cairo_runner runner = runner_new(empty_program);
 	runner_initialize(&runner);
 
 	// Check runner data
@@ -103,5 +102,5 @@ void runner_tests(void) {
 	initialize_runner_no_builtins_no_proof_mode_empty_program();
 	printf("--------------------------------- \n");
 	printf("Test: initialize_runner_no_builtins_no_proof_mode_non_empty_program \n");
-	initialize_runner_no_builtins_no_proof_mode_empty_program();
+	initialize_runner_no_builtins_no_proof_mode_non_empty_program();
 }

@@ -59,8 +59,7 @@ relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	// Handle builtin initial stack
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
-	int entrypoint = 17;
-	relocatable end = runner_initialize_function_entrypoint(runner, entrypoint, stack, return_fp);
+	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
 	stack->free(stack);
 	return end;
 }

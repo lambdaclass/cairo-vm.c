@@ -66,10 +66,12 @@ typedef struct {
 	Identifiers *identifiers;
 	StringArray main_scope;
 	char *prime;
+	int main;
 } Program;
 
 void program_free(Program *program);
 uint64_t hex_string_to_uint64(const char *hex);
+Program get_empty_program(void);
 Program parse_json_filename(const char *filename);
 #ifdef __cplusplus
 } // extern "C"
