@@ -245,8 +245,8 @@ void memory_tests(void) {
 	// printf("Test: memory_insert_ok_ovewrite_same_value \n");
 	// memory_insert_ok_ovewrite_same_value();
 	// printf("--------------------------------- \n");
-	// printf("Test: memory_insert_ok \n");
-	// memory_insert_ok();
+	printf("Test: memory_insert_ok \n");
+	memory_insert_ok();
 	// printf("--------------------------------- \n");
 	// printf("Test: memory_insert_two_ok \n");
 	// memory_insert_two_ok();
