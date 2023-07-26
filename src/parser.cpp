@@ -100,7 +100,7 @@ void program_free(Program *program) {
 		free(program->attributes.data);
 	}
 	free(program->compiler_version);
-	program->data->free(program->data);
+	CList_Free_Bis(program->data);
 	// free(program->debug_info.fileContent.start);
 }
 
