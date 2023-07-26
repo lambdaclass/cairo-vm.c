@@ -97,7 +97,7 @@ compile_rust:
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
 build_collections_lib:
-	git clone https://github.com/srdja/Collections-C.git && \
+	git clone https://github.com/srdja/Collections-C.git
 	cd Collections-c && \
 	mkdir build && \
 	cd build && \
