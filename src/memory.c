@@ -124,5 +124,6 @@ void memory_free(memory *mem) {
 		free(entry->value);
 		free(entry->key);
 	}
+	cc_hashtable_remove_all(mem->data);
 	cc_hashtable_destroy(mem->data);
 }
