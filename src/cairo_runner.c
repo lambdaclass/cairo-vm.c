@@ -1,9 +1,8 @@
 #include "cairo_runner.h"
-#include "program.h"
 #include "relocatable.h"
 #include "vm.h"
 
-cairo_runner runner_new(struct program program) {
+cairo_runner runner_new(Program program) {
 	virtual_machine vm = vm_new();
 	cairo_runner runner = {program, vm, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	return runner;

@@ -1,5 +1,7 @@
 #pragma once
 #include "../lambdaworks/lib/lambdaworks.h"
+#include "clist.h"
+#include "relocatable.h"
 #include "stddef.h"
 #include "stdint.h"
 
@@ -56,19 +58,21 @@ typedef struct {
 
 typedef struct {
 	StringArray attributes;
-	StringArray builtins;
+	// StringArray builtins;
 	char *compiler_version;
-	felt_t *data;
-	DebugInfo debug_info;
-	StringArray hints;
-	Identifiers *identifiers;
-	StringArray main_scope;
-	char *prime;
+	CList *data;
+	// DebugInfo debug_info;
+	// StringArray hints;
+	// Identifiers *identifiers;
+	// StringArray main_scope;
+	// char *prime;
+	int main;
 } Program;
-void free_program(Program *program);
+
+void program_free(Program *program);
 uint64_t hex_string_to_uint64(const char *hex);
-Program *parse_json_filename(const char *filename);
-Program *parse_json_data(const char *parse_json_data);
+Program get_empty_program(void);
+Program parse_json_filename(const char *filename);
 #ifdef __cplusplus
 } // extern "C"
 #endif

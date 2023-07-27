@@ -9,6 +9,6 @@ struct program {
 };
 
 // Frees resources used by program struct
-void program_free(struct program *program);
+void program_free_aux(struct program *program);
 
 #endif

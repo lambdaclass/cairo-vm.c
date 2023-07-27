@@ -6,34 +6,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-void parsing_attributes_test(Program *program) {
+void parsing_attributes_test(Program program) {
 	printf("Test: parsing__empty_attributes_array\n");
 
 	char *expected[] = {"attr1", "attr2"};
 	size_t num_values = sizeof(expected) / sizeof(expected[0]);
-	assert(num_values == program->attributes.length);
+	assert(num_values == program.attributes.length);
 	for (size_t i = 0; i < num_values; ++i) {
-		assert(strcmp(expected[i], program->attributes.data[i]) == 0);
+		assert(strcmp(expected[i], program.attributes.data[i]) == 0);
 	}
 	printf("OK! \n");
 }
 
-void parsing_empty_attributes_test(Program *program) {
+void parsing_empty_attributes_test(Program program) {
 	printf("Test: parsing__empty_attributes_array\n");
 	size_t num_values = 0;
-	assert(num_values == program->attributes.length);
-	assert(program->attributes.data == NULL);
+	assert(num_values == program.attributes.length);
+	assert(program.attributes.data == NULL);
 	printf("OK! \n");
 }
 
-void parsing_compiler_version(Program *program) {
+void parsing_compiler_version(Program program) {
 	printf("Test: parsing_compiler_version\n");
 	char *expected = "0.10.3";
-	assert(strcmp(expected, program->compiler_version) == 0);
+	assert(strcmp(expected, program.compiler_version) == 0);
 	printf("OK! \n");
 }
 
-void parsing_data_test(Program *program) {
+void parsing_data_test(Program program) {
 	printf("Test: parsing_data_array\n");
 
 	char *hex_values[] = {
@@ -75,9 +75,9 @@ void parsing_data_test(Program *program) {
 		uint64_t num = hex_string_to_uint64(hex_values[i]);
 		felt_t expected;
 		from(expected, num);
-		for (size_t j = 0; j < 4; ++j) {
-			assert(expected[j] == program->data[i][j]);
-		}
+		maybe_relocatable expected_elem = maybe_relocatable_from_felt_limbs(expected);
+		maybe_relocatable *program_value = program.data->at(program.data, i);
+		assert(maybe_relocatable_equal(expected_elem, *program_value));
 	}
 	printf("OK! \n");
 }
@@ -85,7 +85,7 @@ void parsing_data_test(Program *program) {
 void parsing_tests(void) {
 
 	const char *filename = "cairo_programs/fibonacci.json";
-	Program *program = parse_json_filename(filename);
+	Program program = parse_json_filename(filename);
 	printf("---------------------------------\n");
 	parsing_empty_attributes_test(program);
 	printf("---------------------------------\n");
@@ -93,5 +93,5 @@ void parsing_tests(void) {
 	printf("---------------------------------\n");
 	parsing_data_test(program);
 	printf("---------------------------------\n");
-	free_program(program);
+	program_free(&program);
 }

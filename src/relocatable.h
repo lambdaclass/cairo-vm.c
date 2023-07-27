@@ -3,6 +3,10 @@
 #include "../lambdaworks/lib/lambdaworks.h"
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct relocatable {
 	unsigned int segment_index;
 	unsigned int offset;
@@ -19,7 +23,10 @@ typedef struct maybe_relocatable {
 } maybe_relocatable;
 
 bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b);
-
 maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif
