@@ -10,6 +10,7 @@ This is a work in progress implementation of the [Cairo VM](https://github.com/l
 - A working C compiler with `C11` support.
 - `clang-format` installed in the system.
 - [Rust](https://www.rust-lang.org/tools/install)
+- Docker (for valgrind on MacOS)
 
 ## Local development
 
