@@ -100,4 +100,4 @@ docker_build:
 	docker build . -t cairo-vm_in_c
 
 docker_run:
-	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
+	docker run --rm -it -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
