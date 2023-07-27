@@ -46,7 +46,7 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 	}
 	ResultMemory get_result = memory_get(mem, ptr);
 	// Check for possible ovewrites
-	if (!get_result.type) {
+	if (get_result.type != Err) {
 		if (maybe_relocatable_equal(get_result.value.memory_value, value)) {
 			ResultMemory ok = {.type = Int, .value = {.none = 0}};
 			return ok;
