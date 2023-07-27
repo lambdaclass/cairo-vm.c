@@ -74,8 +74,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%main.c
 deps_macos:
 	brew install clang-format
 
+
 run: default
-	$(BUILD_DIR)/$(TARGET)
+	@$(BUILD_DIR)/$(TARGET) $(program);
 
 test: compile_rust $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
