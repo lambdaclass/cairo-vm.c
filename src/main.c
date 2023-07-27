@@ -1,4 +1,5 @@
-#include "cairo_run.h"
+#include "decoder.h"
+#include "utils.h"
 #include <stdio.h>
 
 int main(int argc, char **argv) {
@@ -8,10 +9,6 @@ int main(int argc, char **argv) {
 	}
 	char * program_file_name = argv[1];
 	printf("Running program: %s\n", program_file_name);
-	ResultCairoRun result = cairo_run(program_file_name);
-	if (result.is_error) {
-		printf("Error: %s\n", result.error_message);
-	}
-	printf("Run succesful\n");
+
 	return 0;
 }
