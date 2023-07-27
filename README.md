@@ -37,6 +37,28 @@ To remove all compilation objects:
 make clean
 ```
 
+### Valgrind/Asan on MacOS
+
+To run `valgrind` on MacOS, first run:
+
+```
+make docker_build
+```
+
+This will build a Linux Docker image with all the dependencies needed to build the vm and run `valgrind`. Then run:
+
+```
+make docker_run
+```
+
+This will run a new container from the built image and will execute bash by using the repo root as the working directory.
+
+Finally, run:
+
+```
+make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind
+```
+
 ## Tests
 
 Tests are located in the `test` directory. To run them:
