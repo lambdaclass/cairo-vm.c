@@ -125,30 +125,26 @@ TODO: Short explanation of Felts and the Cairo/Stark field we use through Lambda
 
 ### Program parsing
 
-The input of the Virtual Machine is a compiled Cairo program in Json format.
-The main fields in the file are listed below:
-- data: List of hexadecimal values that represent the instructions defined in the cairo program.
-- debug_info: Useful information about how instructions are located inside the source code. For each instruction is defined:
-    The scopes that can acces to it.
-    The memory segment they are located.
-    The offset of the memory segment.
-    The instruction variables and values used.
-    Which `hints` have been used.
-    Information about the position of the instruction within the file and also of its parent instruction.
-- hints: All the hints used in the program.
-- identifiers: Identifiers of the functions of the cairo program. Each entry represents a block of code. For example for a concrete function we have the following blocks:
-    Starting identifier
-    Ending identifier
-    Arguments identifier
-    Body identifier
-    Return identifier
-    ...
-Each identifier is represented by the type of code block ['function', 'struct', 'label', 'reference', ...], the pc register value used to access that block and other useful information. Here we can find the entrypoint of the execution to the program to create the execution trace.
-- main_scope: Self explanatory, usually something like __main__.
-- prime: A prime number in hexadecimal format.
-- reference_manager: Information about the different references among functions of the cairo program. Here you can also find the memory position (segment and offset), pc integer value and the translated operation [memory_position, felt].
+The input of the Virtual Machine is a compiled Cairo program in Json format. The main part of the file are listed below:
 
-In this project, we use a C++ library called [simdjson](https://github.com/simdjson/simdjson), the json is stored in a custom structure from which the vm can create the trace of the compiled program.
+- data: List of hexadecimal values that represent the instructions and immediate values defined in the cairo program. Each hexadecimal value is stored as a maybe_relocatable element in memory, but they can only be felts because the decoder has to be able to get the instruction fields in its bit representation.
+
+- debug_info: This field provides information about the instructions defined in the data list. Each one is identified with its index inside the data list. For each one is defined which scopes can access to that instruction, the memory allocation {segment, offset_segment} of the instruction; represented by the ap register, and other information about the instruction location inside the cairo program as the number line or column line. Other information is provided as which hints have been used in that instruction if any.
+
+- hints: All the hints used in the program, ordered by the pc offset at which they should be executed.
+
+- identifiers: User-defined symbols in the Cairo code representing variables, functions, classes, etc. with unique names. For each one is provided the expected pc offset, the type of identifier and other information depending on this type.
+
+    For example for the identifier representing the main function (usually the entrypoint of the program), has the pc offset, "function" as a type and a list of decorators wrappers if any.
+    Another example is a user defined struct, it provides "struct" as a type, its size, the members it contains (with its information) and more.
+
+- main_scope: Usually something like __main__. All the identifiers associated with main function will be identified as __main__.identifier_name. Useful to identify the entrypoint of the program.
+
+- prime: The cairo prime in hexadecimal format. As explained above, all arithmetic operations are done over a base field, modulo this primer number.
+
+- reference_manager: Contains information about cairo variables. This information is useful to access to variables when executing cairo hints.
+
+In this project, we use a C++ library called [simdjson](https://github.com/simdjson/simdjson), the json is stored in a custom structure  which the vm can use to run the program and create a trace of its execution.
 
 ### Code walkthrough/Write your own Cairo VM
 
