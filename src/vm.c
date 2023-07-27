@@ -22,6 +22,8 @@ maybe_relocatable compute_res(Instruction instr, maybe_relocatable op0, maybe_re
 			mul(a, b, result);
 			res = (maybe_relocatable){.is_felt = true,
 			                          .value = {.felt = {result[0], result[1], result[2], result[3]}}};
+		} else {
+			res = (maybe_relocatable){.is_felt = false, .value = {.relocatable = {0, 0}}};
 		}
 		break;
 	default:
