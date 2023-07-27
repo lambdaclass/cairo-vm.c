@@ -40,6 +40,12 @@ To remove all compilation objects:
 make clean
 ```
 
+Note: When building outside of macos, you may have to run this command after building the collections lib to make the system's runtime aware of the location of the new library:
+
+```
+sudo ldconfig
+```
+
 ## Tests
 
 Tests are located in the `test` directory. To run them:
