@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build docker_run
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build docker_run docker_test_and_format docker_clean
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -101,3 +101,13 @@ docker_build:
 
 docker_run:
 	docker run --rm -it -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
+
+docker_test_and_format:
+	docker create --name test -t -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
+	docker start test
+	docker exec -t test bash -c "make && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind"
+	docker stop test
+	docker rm test
+
+docker_clean:
+	docker rmi cairo-vm_in_c
