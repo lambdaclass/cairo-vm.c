@@ -1,8 +1,11 @@
 #include "cairo_runner.h"
+#include "collectc/cc_common.h"
+#include "collectc/cc_hashtable.h"
 #include "memory.h"
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"
+#include <assert.h>
 #include <collectc/cc_array.h>
 
 cairo_runner runner_new(struct program program) {
@@ -87,4 +90,29 @@ relocatable runner_initialize(cairo_runner *runner) {
 	return end;
 }
 
-void runner_relocate_memory(cairo_runner *runner) { (void)runner; }
+void runner_get_segment_sizes(cairo_runner *runner, CC_Array *segment_sizes) {
+	cc_array_new(&segment_sizes);
+	CC_HashTableIter memory_iter;
+	cc_hashtable_iter_init(&memory_iter, runner->vm.memory.data);
+	TableEntry *entry;
+	while (cc_hashtable_iter_next(&memory_iter, &entry) != CC_ITER_END) {
+		relocatable *ptr = entry->key;
+		int *segment_size;
+		if (cc_array_get_at(segment_sizes, ptr->segment_index, (void **)&segment_size) == CC_OK) {
+			if (*segment_size < ptr->offset) {
+				cc_array_replace_at(segment_sizes, &ptr->offset, ptr->segment_index, NULL);
+			}
+		} else {
+			cc_array_add_at(segment_sizes, &ptr->offset, ptr->segment_index);
+		}
+	}
+}
+
+void runner_relocate_memory(cairo_runner *runner) {
+	assert(cc_array_size(runner->relocated_memory) == 0);
+	relocated_memory_cell first_cell = {.memory_value = {.none = 0}, .is_some = false};
+	cc_array_add(runner->relocated_memory, &first_cell);
+
+	CC_Array *segment_sizes;
+	runner_get_segment_sizes(runner, segment_sizes);
+}
