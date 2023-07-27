@@ -118,7 +118,7 @@ TODO: Short explanation of Felts and the Cairo/Stark field we use through Lambda
 
 ### More on memory
 
-The cairo memory is made up of contiguous segments of variable length identified by their index. The first segment (index 0) is the program segment, which stores the instructions of a cairo program. The following segment (index 1) is the execution segment, which holds the values that are created along the execution of the vm. The following group of segments are the builtin segments, one for each builtin used by the program, and which hold values used by the builtin runners. The last group of segments are the user segments, which represent data structures crated by the user, for example, when creating an array on a cairo program, that array will be represented in memory as its own segment.
+The cairo memory is made up of contiguous segments of variable length identified by their index. The first segment (index 0) is the program segment, which stores the instructions of a cairo program. The following segment (index 1) is the execution segment, which holds the values that are created along the execution of the vm. The following group of segments are the builtin segments, one for each builtin used by the program, and which hold values used by the builtin runners. The last group of segments are the user segments, which represent data structures created by the user, for example, when creating an array on a cairo program, that array will be represented in memory as its own segment.
 
 An address (or pointer) in cairo is represented as a `relocatable` value, which is made up of a `segment_index` and an `offset`, the `segment_index` tells us which segment the value is stored in and the `offset` tells us how many values exist between the start of the segment and the value.
 
@@ -130,7 +130,7 @@ The memory can perform the following basic operations:
 
 - `memory_add_segment`: Creates a new, empty segment in memory and returns a pointer to its start. Values cannot be inserted into a memory segment that hasn't been previously created.
 
-- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there mustn't be a value stored at that address, as the memory is inmutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be succesful.
+- `memory_insert`: Inserts a `maybe_relocatable` value at an address indicated by a `relocatable` pointer. For this operation to succeed, the pointer's segment_index must be an existing segment (created using `memory_add_segment`), and there mustn't be a value stored at that address, as the memory is immutable after its been written once. If there is a value already stored at that address but it is equal to the value to be inserted then the operation will be successful.
 
 - `memory_get`: Fetches a `maybe_relocatable` value from a memory address indicated by a `relocatable` pointer.
 
@@ -147,6 +147,7 @@ During execution, the memory consists of segments of varying length, and they ca
 3- All `relocatable` values are converted into a single integer by adding their `offset` value to their segment's base calculated in the previous step
 
 For example, if we have this memory represented by address, value pairs:
+
     0:0 -> 1
     0:1 -> 4
     0:2 -> 7
@@ -156,16 +157,19 @@ For example, if we have this memory represented by address, value pairs:
     2:0 -> 1
 
 Step 1: Calculate segment sizes:
+
     0 -> 3
     1 -> 5
     2 -> 1
 
 Step 2: Assign a base to each segment:
+
     0 -> 1
     1 -> 4 (1 + 3)
     2 -> 9 (4 + 5)
 
 Step 3: Convert relocatables to integers
+
     1 (base[0] + 0) -> 1
     2 (base[0] + 1) -> 4
     3 (base[0] + 2) -> 7
