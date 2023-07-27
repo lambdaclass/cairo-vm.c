@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_test_and_format docker_clean
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_test_and_format docker_clean docker_build_collections_lib
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -108,11 +108,12 @@ compile_rust:
 	cd lambdaworks/lib/lambdaworks && cargo build --release
 
 build_collections_lib: | $(COLLECTIONS_LIB_DIR)
+
 docker_build:
 	docker build . -t cairo-vm_in_c
 
 docker_run:
-	docker run --rm -it -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
+	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
 
 docker_test_and_format:
 	docker create --name test -t -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
@@ -123,3 +124,14 @@ docker_test_and_format:
 
 docker_clean:
 	docker rmi cairo-vm_in_c
+
+docker_build_collections_lib:
+	git clone https://github.com/srdja/Collections-C.git
+	cd Collections-C && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make && \
+	make install && \
+	ldconfig
+
