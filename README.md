@@ -158,7 +158,7 @@ For example, if we have this memory represented by address, value pairs:
 Step 1: Calculate segment sizes:
     0 -> 3
     1 -> 5
-    2 -> 0
+    2 -> 1
 
 Step 2: Assign a base to each segment:
     0 -> 1
