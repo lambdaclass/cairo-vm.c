@@ -51,7 +51,6 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
 	runner->initial_fp.offset = cc_array_size(stack);
 	runner_initialize_state(runner, entrypoint, stack);
-	cc_array_destroy(stack);
 	runner->final_pc = end;
 	return end;
 }
@@ -65,6 +64,7 @@ relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
 	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
+	cc_array_destroy(stack);
 	return end;
 }
 
