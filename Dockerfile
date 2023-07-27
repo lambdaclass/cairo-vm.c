@@ -7,6 +7,4 @@ RUN apt update && \
 
 WORKDIR /usr/cairo-vm_in_C
 
-#RUN make docker_build_collections_lib
-
 CMD bash

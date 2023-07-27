@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_test_and_format docker_clean docker_build_collections_lib
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_test_and_format docker_clean docker_build_collections_lib docker_valgrind
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -113,12 +113,12 @@ docker_build:
 	docker build . -t cairo-vm_in_c
 
 docker_run:
-	docker run --rm -it -v $(pwd):/usr/cairo-vm_in_C cairo-vm_in_c
+	docker run --rm -it -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
 
 docker_test_and_format:
 	docker create --name test -t -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
 	docker start test
-	docker exec -t test bash -c "make && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind"
+	docker exec -t test bash -c "make clean && make docker_build_collections_lib && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer docker_valgrind"
 	docker stop test
 	docker rm test
 
@@ -134,4 +134,7 @@ docker_build_collections_lib:
 	make && \
 	make install && \
 	ldconfig
+
+docker_valgrind: clean compile_rust docker_build_collections_lib $(TEST_TARGET)
+	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
 
