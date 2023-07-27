@@ -118,4 +118,6 @@ typedef struct ResultInstruction ResultInstruction;
 typedef enum VirtualMachineError VirtualMachineError;
 typedef union ResultInstructionValue ResultInstructionValue;
 
+uint64_t instruction_size(Instruction instruction);
+
 #endif
