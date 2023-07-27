@@ -124,6 +124,14 @@ An address (or pointer) in cairo is represented as a `relocatable` value, which 
 
 As the cairo memory can hold both felts and pointers, the basic memory unit is a `maybe_relocatable`, a variable that can be either a `relocatable` or a `felt`
 
+While memory is continous, some gaps may be present. These gaps can be created on purpose by the user, for example by running:
+
+```
+[ap + 1] = 2;
+```
+
+Where a gap is created at ap. But they may also be created indireclty by diverging branches, as for example one branch may declare a variable that the other branch doesn't, as memory needs to be allocated for both cases if the second case is ran then a gap is left where the variable should have been written.
+
 #### Memory API
 
 The memory can perform the following basic operations:
