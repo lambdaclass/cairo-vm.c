@@ -7,7 +7,9 @@
 
 cairo_runner runner_new(struct program program) {
 	virtual_machine vm = vm_new();
-	cairo_runner runner = {program, vm, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+	CC_Array *relocated_memory;
+	cc_array_new(&relocated_memory);
+	cairo_runner runner = {program, vm, relocated_memory, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	return runner;
 }
 
@@ -84,3 +86,5 @@ relocatable runner_initialize(cairo_runner *runner) {
 	runner_initialize_vm(runner);
 	return end;
 }
+
+void runner_relocate_memory(cairo_runner *runner) { (void)runner; }
