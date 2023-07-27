@@ -21,31 +21,31 @@ typedef struct {
 // execution structures
 // ---------------------
 
-typedef struct {
+typedef struct operands {
 	maybe_relocatable dst;
-	memory_cell res;
+	maybe_relocatable res;
 	maybe_relocatable op0;
 	maybe_relocatable op1;
 } operands;
 
-typedef struct {
+typedef struct operands_addresses {
 	relocatable dst_addr;
 	relocatable op0_addr;
 	relocatable op1_addr;
-} operands_address;
+} operands_addresses;
 
-typedef struct {
+typedef struct computed_operands {
 	operands oprs;
-	operands_address op_addrs;
+	operands_addresses op_addrs;
 	uint8_t deduced_operands;
 } computed_operands;
 
-typedef union {
+typedef union computed_operands_value {
 	computed_operands ops;
 	VirtualMachineError error;
 } computed_operands_value;
 
-typedef struct {
+typedef struct computed_operands_res {
 	computed_operands_value value;
 	bool is_error;
 } computed_operands_res;

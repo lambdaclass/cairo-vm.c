@@ -34,8 +34,8 @@ maybe_relocatable compute_res(Instruction instr, maybe_relocatable op0, maybe_re
 
 computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 	relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
-	ResultMemory mem_res = memory_get(&vm.memory, dst_addr);
-	if (mem_res.type == Err) {
+	ResultMemory dst_op = memory_get(&vm.memory, dst_addr);
+	if (dst_op.type == Err) {
 		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
 		return res;
 	}
@@ -67,8 +67,23 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 
 	// compute res
 	maybe_relocatable res = compute_res(instr, op0, op1);
-}
 
+	// compute dst
+	maybe_relocatable dst = dst_op.value.memory_value;
+
+	operands_addresses accessed_addresses = {
+	    .dst_addr = {.offset = dst_addr.offset, .segment_index = dst_addr.segment_index},
+	    .op0_addr = {.offset = op0_addr.offset, .segment_index = op0_addr.segment_index},
+	    .op1_addr = {.offset = op1_addr.offset, .segment_index = op1_addr.segment_index},
+	};
+
+	operands operands = {.dst = dst, .op0 = op0, .op1 = op1, .res = res};
+	computed_operands_res result = {
+	    .is_error = false,
+	    .value = {.ops = {.oprs = operands, .op_addrs = accessed_addresses, .deduced_operands = deduced_operands}}};
+
+	return result;
+}
 // TODO: uncomment once all functions are done
 // vm_result run_instruction(virtual_machine vm, Instruction instr) {
 
