@@ -24,7 +24,9 @@ void runner_free(cairo_runner *runner) {
 	memory_free(&runner->vm.memory);
 	program_free(&runner->program);
 	cc_array_remove_all_free(runner->relocated_memory);
+	cc_array_destroy(runner->relocated_memory);
 	cc_array_remove_all_free(runner->relocation_table);
+	cc_array_destroy(runner->relocation_table);
 }
 
 // Creates program, execution and builtin segments.
@@ -88,37 +90,35 @@ void runner_initialize_vm(cairo_runner *runner) {
 	// Apply validation rules to memory
 }
 
-void runner_get_segment_sizes(cairo_runner *runner, CC_Array **segment_sizes) {
+void runner_get_segment_sizes(cairo_runner *runner, CC_Array *segment_sizes) {
 	int num_segments = runner->vm.memory.num_segments;
+	unsigned int *zero;
 	for (int i = 0; i < num_segments; i++) {
-		unsigned int *zero = malloc(sizeof(unsigned int));
+		zero = malloc(sizeof(unsigned int));
 		*zero = 0;
-		cc_array_add(*segment_sizes, zero);
+		cc_array_add(segment_sizes, zero);
 	}
 
+	unsigned int *new_size;
 	CC_HashTableIter memory_iter;
 	cc_hashtable_iter_init(&memory_iter, runner->vm.memory.data);
 	TableEntry *entry;
 	while (cc_hashtable_iter_next(&memory_iter, &entry) != CC_ITER_END) {
 		relocatable *ptr = entry->key;
 		unsigned int *segment_size;
-		assert(cc_array_get_at(*segment_sizes, ptr->segment_index, (void **)&segment_size) == CC_OK);
+		assert(cc_array_get_at(segment_sizes, ptr->segment_index, (void **)&segment_size) == CC_OK);
 
 		if (*segment_size < ptr->offset + 1) {
-			unsigned int *new_size = malloc(sizeof(unsigned int));
+			new_size = malloc(sizeof(unsigned int));
 			*new_size = ptr->offset + 1;
-			cc_array_replace_at(*segment_sizes, new_size, ptr->segment_index, NULL);
+			cc_array_replace_at(segment_sizes, new_size, ptr->segment_index, NULL);
 		}
 	}
 }
 
 // Fills relocation table with the first relocated address of each memory segment
 // Warning: Can fail if runner_initialize_main_entrypoint is not called before
-void runner_fill_relocation_table(cairo_runner *runner) {
-	CC_Array *segment_sizes = NULL;
-	cc_array_new(&segment_sizes);
-	runner_get_segment_sizes(runner, &segment_sizes);
-
+void runner_fill_relocation_table(cairo_runner *runner, CC_Array *segment_sizes) {
 	int *first_addr = malloc(sizeof(int));
 	*first_addr = 1;
 	cc_array_add(runner->relocation_table, first_addr);
@@ -135,8 +135,6 @@ void runner_fill_relocation_table(cairo_runner *runner) {
 		cc_array_add(runner->relocation_table, address);
 		assert(cc_array_get_at(runner->relocation_table, i, (void **)&last_segment_size_added) == CC_OK);
 	}
-
-	cc_array_remove_all_free(segment_sizes);
 }
 
 relocatable runner_initialize(cairo_runner *runner) {
@@ -165,13 +163,15 @@ void runner_get_relocated_value(cairo_runner *runner, maybe_relocatable *value, 
 
 void runner_relocate_memory(cairo_runner *runner) {
 	assert(cc_array_size(runner->relocated_memory) == 0);
-	relocated_memory_cell first_cell = {.memory_value = {.none = 0}, .is_some = false};
-	cc_array_add(runner->relocated_memory, &first_cell);
+	relocated_memory_cell *first_cell = malloc(sizeof(relocated_memory_cell));
+	first_cell->is_some = false;
+	first_cell->memory_value.none = 0;
+	cc_array_add(runner->relocated_memory, first_cell);
 
-	CC_Array *segment_sizes = NULL;
+	CC_Array *segment_sizes;
 	cc_array_new(&segment_sizes);
-	runner_get_segment_sizes(runner, &segment_sizes);
-	runner_fill_relocation_table(runner);
+	runner_get_segment_sizes(runner, segment_sizes);
+	runner_fill_relocation_table(runner, segment_sizes);
 
 	int num_segment_sizes = cc_array_size(segment_sizes);
 
@@ -196,6 +196,4 @@ void runner_relocate_memory(cairo_runner *runner) {
 			}
 		}
 	}
-
-	cc_array_remove_all_free(segment_sizes);
 }
