@@ -20,6 +20,7 @@ typedef struct cairo_runner {
 	struct program program;
 	virtual_machine vm;
 	CC_Array *relocated_memory;
+	CC_Array *relocation_table;
 	relocatable program_base;
 	relocatable execution_base;
 	relocatable initial_pc;

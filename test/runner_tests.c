@@ -190,6 +190,9 @@ void relocate_runner_memory(void) {
 	from(expected_9, 5);
 	assert(relocated_memory_9->is_some);
 	assert(felt_equal(relocated_memory_9->memory_value.value, expected_9));
+
+	runner_free(&runner);
+	printf("OK!\n");
 }
 
 void runner_tests(void) {
