@@ -1,4 +1,4 @@
-.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos docker_build docker_run docker_test_and_format docker_clean
+.PHONY: clean fmt check_fmt valgrind compile_rust deps_macos build_collections_lib docker_build docker_run docker_test_and_format docker_clean docker_build_collections_lib docker_valgrind
 
 TARGET=cairo_vm
 TEST_TARGET=cairo_vm_test
@@ -9,7 +9,7 @@ SANITIZER_FLAGS=-fsanitize=address -fno-omit-frame-pointer
 CFLAGS=-std=c11 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CXX_FLAGS=-std=c++14 -Wall -Wextra -Wimplicit-fallthrough -Werror -pedantic -g -O0
 CFLAGS_TEST=-I./src
-LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks -ldl -lpthread -lm
+LN_FLAGS=-L./lambdaworks/lib/lambdaworks/target/release/ -Bstatic -llambdaworks -lcollectc -ldl -lpthread -lm
 
 BUILD_DIR=./build
 SRC_DIR=./src
@@ -29,6 +29,16 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCE))
 OBJECTS_CPP = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCE_CPP))
 TEST_OBJECTS = $(patsubst $(TEST_DIR)/%.c, $(BUILD_DIR)/%.o, $(TEST_SOURCE))
 LIB_OBJECTS_CPP = $(patsubst $(LIB_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SOURCE_CPP))
+
+COLLECTIONS_LIB_DIR= Collections-C
+$(COLLECTIONS_LIB_DIR):
+	git clone https://github.com/srdja/Collections-C.git
+	cd Collections-C && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make && \
+	sudo make install
 
 # Gcc/Clang will create these .d files containing dependencies.
 DEP = $(OBJECTS:%.o=%.d)
@@ -77,11 +87,12 @@ deps_macos:
 run: default
 	$(BUILD_DIR)/$(TARGET)
 
-test: compile_rust $(TEST_TARGET)
+test: compile_rust build_collections_lib $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) && \
+	rm -rf $(COLLECTIONS_LIB_DIR) && \
 	cd lambdaworks/lib/lambdaworks && cargo clean
 
 fmt:
@@ -90,11 +101,13 @@ fmt:
 check_fmt:
 	clang-format --style=file -Werror -n $(SOURCE) $(TEST_SOURCE) $(HEADERS) $(TEST_HEADERS)
 
-valgrind: clean compile_rust $(TEST_TARGET)
+valgrind: clean compile_rust build_collections_lib $(TEST_TARGET)
 	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
 
 compile_rust: 
 	cd lambdaworks/lib/lambdaworks && cargo build --release
+
+build_collections_lib: | $(COLLECTIONS_LIB_DIR)
 
 docker_build:
 	docker build . -t cairo-vm_in_c
@@ -105,9 +118,23 @@ docker_run:
 docker_test_and_format:
 	docker create --name test -t -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
 	docker start test
-	docker exec -t test bash -c "make && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind"
+	docker exec -t test bash -c "make clean && make docker_build_collections_lib && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer docker_valgrind"
 	docker stop test
 	docker rm test
 
 docker_clean:
 	docker rmi cairo-vm_in_c
+
+docker_build_collections_lib:
+	git clone https://github.com/srdja/Collections-C.git
+	cd Collections-C && \
+	mkdir build && \
+	cd build && \
+	cmake .. && \
+	make && \
+	make install && \
+	ldconfig
+
+docker_valgrind: clean compile_rust docker_build_collections_lib $(TEST_TARGET)
+	valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/cairo_vm_test
+

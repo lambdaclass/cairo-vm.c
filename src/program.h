@@ -1,11 +1,11 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include "clist.h"
+#include <collectc/cc_array.h>
 // Incomplete struct, should be expanded
 struct program {
 	unsigned int main;
-	CList *data;
+	CC_Array *data;
 };
 
 // Frees resources used by program struct
