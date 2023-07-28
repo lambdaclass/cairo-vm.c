@@ -23,6 +23,8 @@ cairo_runner runner_new(struct program program) {
 void runner_free(cairo_runner *runner) {
 	memory_free(&runner->vm.memory);
 	program_free(&runner->program);
+	cc_array_remove_all_free(runner->relocated_memory);
+	cc_array_remove_all_free(runner->relocation_table);
 }
 
 // Creates program, execution and builtin segments.
