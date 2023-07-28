@@ -106,7 +106,6 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 	// for now this is always pre computed. we should handle the case when it is not
 	maybe_relocatable op0 = op0_op.value.memory_value;
 	if (op0_op.type == Err) {
-		
 	}
 	maybe_relocatable op1 = op1_op.value.memory_value;
 
