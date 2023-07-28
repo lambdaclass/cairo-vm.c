@@ -32,6 +32,8 @@ enum MemoryError {
 	LoadData,
 };
 
+enum ResultMemoryType { Felt, Relocatable, MaybeRelocatable, Int, Err };
+
 union ResultMemoryValue {
 	enum MemoryError error;
 	maybe_relocatable memory_value;
@@ -40,7 +42,7 @@ union ResultMemoryValue {
 };
 
 typedef struct ResultMemory {
-	bool is_error;
+	enum ResultMemoryType type;
 	union ResultMemoryValue value;
 } ResultMemory;
 

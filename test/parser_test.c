@@ -92,6 +92,5 @@ void parsing_tests(void) {
 	parsing_compiler_version(program);
 	printf("---------------------------------\n");
 	parsing_data_test(program);
-	printf("---------------------------------\n");
 	free_program(program);
 }
