@@ -40,9 +40,12 @@ bool maybe_relocatable_equal(maybe_relocatable a, maybe_relocatable b) {
 	} else if (!a.is_felt || !b.is_felt)
 		return false;
 	else {
-		return a.value.relocatable.segment_index == b.value.relocatable.segment_index &&
-		       a.value.relocatable.offset == b.value.relocatable.offset;
+		return relocatable_equal(a.value.relocatable, b.value.relocatable);
 	}
+}
+
+bool relocatable_equal(relocatable a, relocatable b) {
+	return (a.segment_index == b.segment_index && a.offset == b.offset);
 }
 
 maybe_relocatable maybe_relocatable_from_felt_limbs(limb_t *felt) {

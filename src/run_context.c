@@ -34,7 +34,7 @@ relocatable compute_op0_addr(run_context run_ctx, Instruction instr) {
 	}
 
 	relocatable res_base_addr;
-	if (instr.off0 < 0) {
+	if (instr.off1 < 0) {
 		res_base_addr = sub_relocatable(base_addr, (uint64_t)absolute(instr.off1));
 	} else {
 		res_base_addr = add_relocatable(base_addr, (uint64_t)instr.off1);
