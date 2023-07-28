@@ -152,7 +152,7 @@ The input of the Virtual Machine is a compiled Cairo program in Json format. The
 
 - data: List of hexadecimal values that represent the instructions and immediate values defined in the cairo program. Each hexadecimal value is stored as a maybe_relocatable element in memory, but they can only be felts because the decoder has to be able to get the instruction fields in its bit representation.
 
-- debug_info: This field provides information about the instructions defined in the data list. Each one is identified with its index inside the data list. For each one is defined which scopes can access to that instruction, the memory allocation {segment, offset_segment} of the instruction; represented by the ap register, and other information about the instruction location inside the cairo program as the number line or column line. Other information is provided as which hints have been used in that instruction if any.
+- debug_info: This field provides information about the isnstructions defined in the data list. Each one is identified with its index inside the data list. For each one it contains information about the cairo variables in scope, the hints executed before that instruction if any, and its location inside the cairo program.
 
 - hints: All the hints used in the program, ordered by the pc offset at which they should be executed.
 
