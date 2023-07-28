@@ -66,7 +66,7 @@ This will run a new container from the built image and will execute bash by usin
 Finally, run:
 
 ```
-make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind
+make SANITIZER_FLAGS=-fno-omit-frame-pointer docker_valgrind
 ```
 
 ## Tests
