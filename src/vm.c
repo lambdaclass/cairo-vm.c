@@ -34,6 +34,50 @@ maybe_relocatable compute_res(Instruction instr, maybe_relocatable op0, maybe_re
 	return res;
 }
 
+bool was_op0_deducted(uint8_t ded_ops) { return (ded_ops & 1 << 1) != 0; }
+bool was_op1_deducted(uint8_t ded_ops) { return (ded_ops & 1 << 2) != 0; }
+bool was_dst_deducted(uint8_t ded_ops) { return (ded_ops & 1) != 0; }
+
+vm_result insert_deduced_operands(memory mem, uint8_t ded_ops, operands opers, operands_addresses oper_addr) {
+	vm_result result;
+	if (was_op0_deducted(ded_ops)) {
+		ResultMemory res = memory_insert(&mem, oper_addr.op0_addr, opers.op0);
+		if (res.type == Err) {
+			result = (vm_result){
+			    .is_ok = false,
+			    .error = MemoryError,
+			};
+		}
+	}
+	if (was_op1_deducted(ded_ops)) {
+		ResultMemory res = memory_insert(&mem, oper_addr.op1_addr, opers.op1);
+		if (res.type == Err) {
+			result = (vm_result){
+			    .is_ok = false,
+			    .error = MemoryError,
+			};
+		}
+	}
+	if (was_dst_deducted(ded_ops)) {
+		ResultMemory res = memory_insert(&mem, oper_addr.dst_addr, opers.dst);
+		if (res.type == Err) {
+			result = (vm_result){
+			    .is_ok = false,
+			    .error = MemoryError,
+			};
+		}
+	}
+
+	else {
+		result = (vm_result){
+		    .is_ok = true,
+		    .error = None,
+		};
+	}
+
+	return result;
+}
+
 computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 	relocatable dst_addr = compute_dst_addr(vm.run_context, instr);
 	ResultMemory dst_op = memory_get(&vm.memory, dst_addr);
@@ -44,10 +88,6 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 
 	relocatable op0_addr = compute_op0_addr(vm.run_context, instr);
 	ResultMemory op0_op = memory_get(&vm.memory, op0_addr);
-	if (op0_op.type == Err) {
-		computed_operands_res res = {.value = {.error = MemoryError}, .is_error = true};
-		return res;
-	}
 
 	relocatable op1_addr = compute_op1_addr(vm.run_context, instr, op0_op.value.memory_value);
 	ResultMemory op1_op = memory_get(&vm.memory, op1_addr);
@@ -65,6 +105,9 @@ computed_operands_res compute_operands(virtual_machine vm, Instruction instr) {
 
 	// for now this is always pre computed. we should handle the case when it is not
 	maybe_relocatable op0 = op0_op.value.memory_value;
+	if (op0_op.type == Err) {
+		
+	}
 	maybe_relocatable op1 = op1_op.value.memory_value;
 
 	// compute res
