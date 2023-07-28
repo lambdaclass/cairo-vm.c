@@ -223,6 +223,8 @@ Lets begin by creating the basic types and structures for our VM:
 
 As anyone who has ever written a cairo program will know, everything in cairo is a Felt. We can think of it as our unsigned integer. In this project, we use the `Lambdaworks` library to abstract ourselves from modular arithmetic.
 
+TODO: Instructions on how to use Lambdaworks felt from C
+
 ### Relocatable
 
 This is how cairo represents pointers, they are made up of `segment_index`, which segment the variable is in, and `offset`, how many values exist between the start of a segment and the variable. We represent them like this:
@@ -236,7 +238,7 @@ typedef struct relocatable {
 
 ### MaybeRelocatable
 
-As the cairo memory can hold both felts and relocatables, we need a data type that can represent both, in order to represent a basic memory unit, therefore:
+As the cairo memory can hold both felts and relocatables, we need a data type that can represent both in order to represent a basic memory unit, therefore:
 
 ```c
 union maybe_relocatable_value {
@@ -253,7 +255,7 @@ typedef struct maybe_relocatable {
 We use two structs to represent it as we need to be able to distinguish between the two union types during execution.
 
 #### Memory
-As we previously described, the memory is made up of a series of segments of undetermined length, each containing a continuous sequence of `maybe_relocatable` elements. Memory is also immutable, which means that once we have written a value into memory, it can't be changed.
+As we previously described, the memory is made up of a series of segments of variable length, each containing a continuous sequence of `maybe_relocatable` elements. Memory is also immutable, which means that once we have written a value into memory, it can't be changed.
 There are multiple valid ways to represent this memory structure, but the simples way to represent it is by using a hashmap, maping a `relocatable` address to a `maybe_relocatable` value.
 As we don't have an actual representation of segments, we have to keep track of the number of segments.
 In this project we decided to use the Collections-C library for our data structures, but you can choose any other library (or implement your own!).
@@ -281,7 +283,7 @@ relocatable memory_add_segment(memory *memory) {
 
 *Insert*
 
-Here we need to make perform some checks to make sure that the memory follows its rules:
+Here we need to make perform some checks to make sure that the memory remains consistent with its rules:
 
 - We must check that insertions are performed on previously-allocated segments, by checking that the address's segment_index is lower than our segment counter
 
@@ -333,6 +335,37 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 	}
 	ResultMemory error = {.is_error = true, .value = {.error = Get}};
 	return error;
+}
+```
+
+Then we have some convenience methods that make specific functions of the vm more readable:
+
+*Load Data*
+
+This method inserts a contiguous array of values starting from a certain addres in memory, and returns the next address after the inserted values. This is useful when inserting the program's instructions in memory.
+In order to perform this operation, we only need to iterate over the array, inserting each value at the address indicated by `ptr` while advancing the ptr with each iteration and then return the final ptr.
+
+```
+ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
+	// Load each value sequentially
+	int size = cc_array_size(data);
+	for (int i = 0; i < size; i++) {
+		// Fetch value from data array
+		maybe_relocatable *value = NULL;
+		if (cc_array_get_at(data, i, (void *)&value) != CC_OK) {
+			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
+			return error;
+		}
+		// Insert Value
+		if (memory_insert(mem, ptr, *value).is_error) {
+			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
+			return error;
+		}
+		// Advance ptr
+		ptr.offset += 1;
+	}
+	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
+	return ok;
 }
 ```
 
