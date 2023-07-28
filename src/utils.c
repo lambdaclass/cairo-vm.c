@@ -2,8 +2,21 @@
 #include "relocatable.h"
 #include <stdint.h>
 
+typedef struct felt_to_u64_result {
+	bool is_ok;
+	uint64_t val;
+} felt_to_u64_result;
+
 // TODO: check this function
-uint64_t to_u64(felt_t f) { return f[3]; }
+felt_to_u64_result to_u64(felt_t f) {
+	if (f[0] == 0 && f[1] == 0 && f[2] == 0) {
+		felt_to_u64_result res = {.is_ok = true, .val = f[3]};
+		return res;
+	} else {
+		felt_to_u64_result res = {.is_ok = false, .val = 0};
+		return res;
+	};
+}
 
 maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b) {
 	if (a.is_felt && b.is_felt) {
@@ -20,8 +33,8 @@ maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b
 		felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
 		relocatable rel = b.value.relocatable;
 		uint64_t offset = (uint64_t)rel.offset;
-		uint64_t other = to_u64(f1);
-		uint64_t new_offset = offset + other;
+		felt_to_u64_result other = to_u64(f1);
+		uint64_t new_offset = offset + other.val;
 		maybe_relocatable res = {
 		    .is_felt = false,
 		    .value = {.relocatable = {.offset = new_offset, .segment_index = rel.segment_index}}};
@@ -31,8 +44,8 @@ maybe_relocatable add_maybe_relocatable(maybe_relocatable a, maybe_relocatable b
 		felt_t f1 = {a.value.felt[0], a.value.felt[1], a.value.felt[2], a.value.felt[3]};
 		relocatable rel = b.value.relocatable;
 		uint64_t offset = (uint64_t)rel.offset;
-		uint64_t other = to_u64(f1);
-		uint64_t new_offset = offset + other;
+		felt_to_u64_result other = to_u64(f1);
+		uint64_t new_offset = offset + other.val;
 		maybe_relocatable res = {
 		    .is_felt = false,
 		    .value = {.relocatable = {.offset = new_offset, .segment_index = rel.segment_index}}};
