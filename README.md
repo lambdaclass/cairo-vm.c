@@ -348,14 +348,10 @@ In order to perform this operation, we only need to iterate over the array, inse
 ```
 ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 	// Load each value sequentially
-	int size = cc_array_size(data);
-	for (int i = 0; i < size; i++) {
-		// Fetch value from data array
-		maybe_relocatable *value = NULL;
-		if (cc_array_get_at(data, i, (void *)&value) != CC_OK) {
-			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
-			return error;
-		}
+	CC_ArrayIter data_iter;
+	cc_array_iter_init(&data_iter, data);
+	maybe_relocatable *value = NULL;
+	while (cc_array_iter_next(&data_iter, (void *)&value) != CC_ITER_END) {
 		// Insert Value
 		if (memory_insert(mem, ptr, *value).is_error) {
 			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
