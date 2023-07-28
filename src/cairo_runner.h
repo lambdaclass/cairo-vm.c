@@ -1,7 +1,6 @@
 #ifndef RUNNER_H
 #define RUNNER_H
 
-#include "clist.h"
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"

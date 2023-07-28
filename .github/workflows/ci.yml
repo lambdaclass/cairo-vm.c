@@ -12,6 +12,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.70.0
       - uses: actions/checkout@v3
       - run: make check_fmt
+      - run: sudo apt install cpputest -y
+      - run: make Collections-C
+      - run: sudo ldconfig
       - run: make test
       - run: sudo apt install valgrind -y
       - run: make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind

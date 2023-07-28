@@ -1,29 +1,34 @@
 #include "memory.h"
-#include "clist.h"
+#include "collectc/cc_array.h"
+#include "collectc/cc_common.h"
+#include "collectc/cc_hashtable.h"
 #include "relocatable.h"
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
+int key_compare(const void *key1, const void *key2) {
+	relocatable r1 = *((relocatable *)key1);
+	relocatable r2 = *((relocatable *)key2);
+	return !(r1.segment_index == r2.segment_index && r1.offset == r2.offset);
+}
+
 memory memory_new(void) {
-	struct CList *mem_data = CList_init(sizeof(struct CList));
-	memory mem = {0, mem_data};
+	CC_HashTableConf config;
+	cc_hashtable_conf_init(&config);
+	config.key_length = sizeof(relocatable);
+	config.hash = GENERAL_HASH;
+	config.key_compare = key_compare;
+	CC_HashTable *data;
+	cc_hashtable_new_conf(&config, &data);
+	memory mem = {0, data};
 	return mem;
 }
 
 ResultMemory memory_get(memory *mem, relocatable ptr) {
-	int index = ptr.segment_index;
-	int offset = ptr.offset;
-	if (index >= mem->data->count(mem->data)) {
-		ResultMemory error = {.type = Err, .value = {.error = Get}};
-		return error;
-	}
-	CList *segment = mem->data->at(mem->data, ptr.segment_index);
-	if (offset >= segment->count(segment)) {
-		ResultMemory error = {.type = Err, .value = {.error = Get}};
-		return error;
-	}
-	memory_cell *cell = segment->at(segment, ptr.offset);
-	if (cell->is_some) {
-		ResultMemory ok = {.type = MaybeRelocatable, .value = {.memory_value = cell->memory_value.value}};
+	maybe_relocatable *value = NULL;
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
+		ResultMemory ok = {.type = MaybeRelocatable, .value = {.memory_value = *value}};
 		return ok;
 	}
 	ResultMemory error = {.type = Err, .value = {.error = Get}};
@@ -31,23 +36,15 @@ ResultMemory memory_get(memory *mem, relocatable ptr) {
 }
 
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
-	int index = ptr.segment_index;
-	int offset = ptr.segment_index;
-	if (index >= mem->data->count(mem->data)) {
+	// Guard out of bounds writes
+	if (ptr.segment_index >= mem->num_segments) {
 		ResultMemory error = {.type = Err, .value = {.error = Insert}};
 		return error;
 	}
-	CList *segment = mem->data->at(mem->data, ptr.segment_index);
-	// Handle gaps
-	// TODO: possible bug. check if lesser and equal or just lesser
-	while (segment->count(segment) <= offset) {
-		memory_cell none = {.is_some = false, .memory_value = {.none = 0}};
-		segment->add(segment, &none);
-	}
-	ResultMemory get_result = memory_get(mem, ptr);
-	// Check for possible ovewrites
-	if (get_result.type != Err) {
-		if (maybe_relocatable_equal(get_result.value.memory_value, value)) {
+	// Guard overwrites
+	maybe_relocatable *prev_value = NULL;
+	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK) {
+		if (maybe_relocatable_equal(prev_value, &value)) {
 			ResultMemory ok = {.type = Int, .value = {.none = 0}};
 			return ok;
 		} else {
@@ -55,44 +52,79 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 			return error;
 		}
 	}
-	memory_cell new_cell = {.is_some = Err, .memory_value = {.value = value}};
-	segment->insert(segment, &new_cell, ptr.offset);
-	ResultMemory ok = {.type = Int, .value = {.none = 0}};
-	return ok;
+	// Write new value
+	// Allocate new values
+	relocatable *ptr_alloc = malloc(sizeof(relocatable));
+	*ptr_alloc = ptr;
+	maybe_relocatable *value_alloc = malloc(sizeof(maybe_relocatable));
+	*value_alloc = value;
+	if (cc_hashtable_add(mem->data, ptr_alloc, value_alloc) == CC_OK) {
+		ResultMemory ok = {.type = Int, .value = {.none = 0}};
+		return ok;
+	}
+	ResultMemory error = {.type = Err, .value = {.error = Insert}};
+	return error;
 }
 
 relocatable memory_add_segment(memory *memory) {
 	relocatable rel = {memory->num_segments, 0};
-	struct CList *segment = CList_init(sizeof(memory_cell));
-	memory->data->add(memory->data, segment);
-	// Clist implementation uses memcpy, so we need to free this
-	free(segment);
 	memory->num_segments += 1;
 	return rel;
 }
 
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data) {
-	if (ptr.segment_index >= memory->num_segments) {
-		ResultMemory error = {.type = Err, .value = {.error = LoadData}};
-		return error;
+
+ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
+	// Load each value sequentially
+	CC_ArrayIter data_iter;
+	cc_array_iter_init(&data_iter, data);
+	maybe_relocatable *value = NULL;
+	while (cc_array_iter_next(&data_iter, (void *)&value) != CC_ITER_END) {
+		// Insert Value
+		if (memory_insert(mem, ptr, *value).type == Err) {
+			ResultMemory error = {.type = Err, .value = {.error = LoadData}};
+			return error;
+		}
+		// Advance ptr
+		ptr.offset += 1;
 	}
-	int size = data->count(data);
-	CList *segment = memory->data->at(memory->data, ptr.segment_index);
-	for (int i = 0; i < size; i++) {
-		maybe_relocatable *value = data->at(data, i);
-		memory_cell new_cell = {.is_some = true, .memory_value = {.value = *value}};
-		segment->insert(segment, &new_cell, ptr.offset + i);
-	}
-	ptr.offset += size;
-	ResultMemory ok = {.type = Relocatable, .value = {.ptr = ptr}};
+	ResultMemory ok = {.type = Err, .value = {.ptr = ptr}};
 	return ok;
 }
 
-void memory_free(memory *mem) {
-	int num_segments = mem->num_segments;
-	for (int i = 0; i < num_segments; i++) {
-		CList *segment = mem->data->at(mem->data, i);
-		CList_Free_Bis(segment);
+void print_memory(memory *mem) {
+	printf("------------------MEMORY------------------\n");
+	for (int i = 0; i < (int)mem->num_segments; i++) {
+		relocatable ptr = {i, 0};
+		while (true) {
+			ResultMemory result = memory_get(mem, ptr);
+			if (result.type == Err) {
+				break;
+			}
+			maybe_relocatable v = result.value.memory_value;
+			if (v.is_felt) {
+				limb_t *f = v.value.felt;
+				printf("%i:%i : [%llu, %llu, %llu, %llu]\n", ptr.segment_index, ptr.offset,
+				       (long long unsigned int)f[0], (long long unsigned int)f[1],
+				       (long long unsigned int)f[2], (long long unsigned int)f[3]);
+			} else {
+				relocatable r = v.value.relocatable;
+				printf("%i:%i : %i:%i\n", ptr.segment_index, ptr.offset, r.segment_index, r.offset);
+			}
+			ptr.offset += 1;
+		}
 	}
-	mem->data->free(mem->data);
+	printf("------------------------------------------\n");
+}
+
+void memory_free(memory *mem) {
+	CC_HashTableIter iter;
+	cc_hashtable_iter_init(&iter, mem->data);
+
+	TableEntry *entry;
+	while (cc_hashtable_iter_next(&iter, &entry) != CC_ITER_END) {
+		free(entry->value);
+		free(entry->key);
+	}
+	cc_hashtable_remove_all(mem->data);
+	cc_hashtable_destroy(mem->data);
 }

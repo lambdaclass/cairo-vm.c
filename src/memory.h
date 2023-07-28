@@ -1,28 +1,17 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#include "clist.h"
 #include "relocatable.h"
+#include <collectc/cc_array.h>
+#include <collectc/cc_hashtable.h>
 #include <stdbool.h>
 
 // Contains behaviour of memory + memory segment manager
 // Memory is inmutable
 typedef struct memory {
 	unsigned int num_segments;
-	CList *data;
+	CC_HashTable *data;
 } memory;
-
-// Inner value
-
-union memory_value {
-	maybe_relocatable value;
-	unsigned int none;
-};
-
-typedef struct memory_cell {
-	union memory_value memory_value;
-	bool is_some;
-} memory_cell;
 
 // Error handling
 
@@ -62,9 +51,12 @@ relocatable memory_add_segment(memory *memory);
 
 // Inserts the elements in data sequentially from address ptr and returns the next address after the data
 // returns ptr
-ResultMemory memory_load_data(memory *memory, relocatable ptr, CList *data);
+ResultMemory memory_load_data(memory *memory, relocatable ptr, CC_Array *data);
 
 // Frees resources used by the memory struct
 void memory_free(memory *mem);
+
+// Prints the memory
+void print_memory(memory *mem);
 
 #endif
