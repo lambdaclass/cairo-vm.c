@@ -230,10 +230,10 @@ The input of the Virtual Machine is a compiled Cairo program in Json format. The
 
 - hints: All the hints used in the program, ordered by the pc offset at which they should be executed.
 
-- identifiers: User-defined symbols in the Cairo code representing variables, functions, classes, etc. with unique names. For each one is provided the expected pc offset, the type of identifier and other information depending on this type.
+- identifiers: User-defined symbols in the Cairo code representing variables, functions, classes, etc. with unique names. The expected offset, type and its corresponding information is provided for each identifier
 
-    For example for the identifier representing the main function (usually the entrypoint of the program), has the pc offset, "function" as a type and a list of decorators wrappers if any.
-    Another example is a user defined struct, it provides "struct" as a type, its size, the members it contains (with its information) and more.
+    For example, the identifier representing the main function (usually the entrypoint of the program) is of `function` type, and a list of decorators wrappers (if there are any) are provided as additional information.
+    Another example is a user defined struct, is of `struct` type, it provides its size, the members it contains (with its information) and more.
 
 - main_scope: Usually something like __main__. All the identifiers associated with main function will be identified as __main__.identifier_name. Useful to identify the entrypoint of the program.
 
