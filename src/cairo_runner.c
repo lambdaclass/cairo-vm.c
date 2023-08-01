@@ -1,7 +1,9 @@
 #include "cairo_runner.h"
+#include "memory.h"
 #include "program.h"
 #include "relocatable.h"
 #include "vm.h"
+#include <collectc/cc_array.h>
 
 cairo_runner runner_new(struct program program) {
 	virtual_machine vm = vm_new();
@@ -25,7 +27,7 @@ void runner_initialize_segments(cairo_runner *runner) {
 
 // Initializes the program segment & initial pc
 // Warning: Can fail if used outside of runner_initialize
-void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CList *stack) {
+void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CC_Array *stack) {
 	runner->initial_pc = runner->program_base;
 	runner->initial_pc.offset += entrypoint;
 	// We ignore the error cases when loading data as these cases are unreachable when called after
@@ -39,15 +41,15 @@ void runner_initialize_state(cairo_runner *runner, unsigned int entrypoint, CLis
 // Initializes memory, initial register values & returns the end pointer (final pc) to run from a given pc offset
 // (entrypoint)
 // Warning: Can fail if runner_initialize_segments is not called before
-relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CList *stack,
+relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned int entrypoint, CC_Array *stack,
                                                   relocatable return_fp) {
 	relocatable end = memory_add_segment(&runner->vm.memory);
 	maybe_relocatable return_fp_mr = {.is_felt = false, .value = {.relocatable = return_fp}};
 	maybe_relocatable end_mr = {.is_felt = false, .value = {.relocatable = end}};
-	stack->add(stack, &return_fp_mr);
-	stack->add(stack, &end_mr);
+	cc_array_add(stack, &return_fp_mr);
+	cc_array_add(stack, &end_mr);
 	runner->initial_fp.segment_index = runner->execution_base.segment_index;
-	runner->initial_fp.offset = stack->count(stack);
+	runner->initial_fp.offset = cc_array_size(stack);
 	runner_initialize_state(runner, entrypoint, stack);
 	runner->final_pc = end;
 	return end;
@@ -56,12 +58,13 @@ relocatable runner_initialize_function_entrypoint(cairo_runner *runner, unsigned
 // Initializes memory, initial register values & returns the end pointer (final pc) to run from the main entrypoint
 // Warning: Can fail if runner_initialize_segments is not called before
 relocatable runner_initialize_main_entrypoint(cairo_runner *runner) {
-	CList *stack = CList_init(sizeof(maybe_relocatable));
+	CC_Array *stack;
+	cc_array_new(&stack);
 	// Handle builtin initial stack
 	// Handle proof-mode specific behaviour
 	relocatable return_fp = memory_add_segment(&runner->vm.memory);
 	relocatable end = runner_initialize_function_entrypoint(runner, runner->program.main, stack, return_fp);
-	stack->free(stack);
+	cc_array_destroy(stack);
 	return end;
 }
 

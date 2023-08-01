@@ -10,6 +10,9 @@ This is a work in progress implementation of the [Cairo VM](https://github.com/l
 - A working C compiler with `C11` support.
 - `clang-format` installed in the system.
 - [Rust](https://www.rust-lang.org/tools/install)
+- [cmake](https://cmake.org/install/)
+- pkg-config
+- [cpputest](http://cpputest.github.io)
 - Docker (for valgrind on MacOS)
 
 ## Local development
@@ -38,6 +41,12 @@ To remove all compilation objects:
 make clean
 ```
 
+Note: When building outside of macos, you may have to run this command after building the collections lib to make the system's runtime aware of the location of the new library:
+
+```
+sudo ldconfig
+```
+
 ### Valgrind/Asan on MacOS
 
 To run `valgrind` on MacOS, first run:
@@ -57,7 +66,7 @@ This will run a new container from the built image and will execute bash by usin
 Finally, run:
 
 ```
-make SANITIZER_FLAGS=-fno-omit-frame-pointer valgrind
+make SANITIZER_FLAGS=-fno-omit-frame-pointer docker_valgrind
 ```
 
 ## Tests
