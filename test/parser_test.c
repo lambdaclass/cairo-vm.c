@@ -28,7 +28,7 @@ void parsing_empty_attributes_test(Program *program) {
 
 void parsing_compiler_version(Program *program) {
 	printf("Test: parsing_compiler_version\n");
-	char *expected = "0.10.3";
+	char *expected = "0.11.0.2";
 	assert(strcmp(expected, program->compiler_version) == 0);
 	printf("OK! \n");
 }
@@ -37,12 +37,6 @@ void parsing_data_test(Program *program) {
 	printf("Test: parsing_data_array\n");
 
 	char *hex_values[] = {
-	    "0x40780017fff7fff",
-	    "0x0",
-	    "0x1104800180018000",
-	    "0x4",
-	    "0x10780017fff7fff",
-	    "0x0",
 	    "0x480680017fff8000",
 	    "0x1",
 	    "0x480680017fff8000",
