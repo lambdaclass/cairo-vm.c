@@ -28,27 +28,27 @@ memory memory_new(void) {
 ResultMemory memory_get(memory *mem, relocatable ptr) {
 	maybe_relocatable *value = NULL;
 	if (cc_hashtable_get(mem->data, &ptr, (void *)&value) == CC_OK) {
-		ResultMemory ok = {.is_error = false, .value = {.memory_value = *value}};
+		ResultMemory ok = {.type = MaybeRelocatable, .value = {.memory_value = *value}};
 		return ok;
 	}
-	ResultMemory error = {.is_error = true, .value = {.error = Get}};
+	ResultMemory error = {.type = Err, .value = {.error = Get}};
 	return error;
 }
 
 ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value) {
 	// Guard out of bounds writes
 	if (ptr.segment_index >= mem->num_segments) {
-		ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+		ResultMemory error = {.type = Err, .value = {.error = Insert}};
 		return error;
 	}
 	// Guard overwrites
 	maybe_relocatable *prev_value = NULL;
 	if (cc_hashtable_get(mem->data, &ptr, (void *)&prev_value) == CC_OK) {
 		if (maybe_relocatable_equal(prev_value, &value)) {
-			ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+			ResultMemory ok = {.type = Int, .value = {.none = 0}};
 			return ok;
 		} else {
-			ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+			ResultMemory error = {.type = Err, .value = {.error = Insert}};
 			return error;
 		}
 	}
@@ -59,10 +59,10 @@ ResultMemory memory_insert(memory *mem, relocatable ptr, maybe_relocatable value
 	maybe_relocatable *value_alloc = malloc(sizeof(maybe_relocatable));
 	*value_alloc = value;
 	if (cc_hashtable_add(mem->data, ptr_alloc, value_alloc) == CC_OK) {
-		ResultMemory ok = {.is_error = false, .value = {.none = 0}};
+		ResultMemory ok = {.type = Int, .value = {.none = 0}};
 		return ok;
 	}
-	ResultMemory error = {.is_error = true, .value = {.error = Insert}};
+	ResultMemory error = {.type = Err, .value = {.error = Insert}};
 	return error;
 }
 
@@ -72,6 +72,7 @@ relocatable memory_add_segment(memory *memory) {
 	return rel;
 }
 
+
 ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 	// Load each value sequentially
 	CC_ArrayIter data_iter;
@@ -79,14 +80,14 @@ ResultMemory memory_load_data(memory *mem, relocatable ptr, CC_Array *data) {
 	maybe_relocatable *value = NULL;
 	while (cc_array_iter_next(&data_iter, (void *)&value) != CC_ITER_END) {
 		// Insert Value
-		if (memory_insert(mem, ptr, *value).is_error) {
-			ResultMemory error = {.is_error = true, .value = {.error = LoadData}};
+		if (memory_insert(mem, ptr, *value).type == Err) {
+			ResultMemory error = {.type = Err, .value = {.error = LoadData}};
 			return error;
 		}
 		// Advance ptr
 		ptr.offset += 1;
 	}
-	ResultMemory ok = {.is_error = false, .value = {.ptr = ptr}};
+	ResultMemory ok = {.type = Err, .value = {.ptr = ptr}};
 	return ok;
 }
 
@@ -96,7 +97,7 @@ void print_memory(memory *mem) {
 		relocatable ptr = {i, 0};
 		while (true) {
 			ResultMemory result = memory_get(mem, ptr);
-			if (result.is_error) {
+			if (result.type == Err) {
 				break;
 			}
 			maybe_relocatable v = result.value.memory_value;

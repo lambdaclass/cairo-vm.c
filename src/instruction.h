@@ -88,6 +88,8 @@ enum VirtualMachineError {
 	InvalidRes,
 	InvalidOpcode,
 	InvalidApUpdate,
+	MemoryError,
+	None
 };
 
 union ResultInstructionValue {
