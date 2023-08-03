@@ -115,7 +115,7 @@ docker_build:
 docker_run:
 	docker run --rm -it -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
 
-docker_test_and_format:
+docker_test_and_valgrind:
 	docker create --name test -t -v `pwd`:/usr/cairo-vm_in_C cairo-vm_in_c
 	docker start test
 	docker exec -t test bash -c "make clean && make docker_build_collections_lib && make test && make SANITIZER_FLAGS=-fno-omit-frame-pointer docker_valgrind"
