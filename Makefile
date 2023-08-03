@@ -85,7 +85,7 @@ deps_macos:
 	brew install clang-format
 
 run: default
-	$(BUILD_DIR)/$(TARGET)
+	@$(BUILD_DIR)/$(TARGET) $(program);
 
 test: compile_rust build_collections_lib $(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
