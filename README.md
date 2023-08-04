@@ -243,6 +243,60 @@ The input of the Virtual Machine is a compiled Cairo program in Json format. The
 
 In this project, we use a C++ library called [simdjson](https://github.com/simdjson/simdjson), the json is stored in a custom structure  which the vm can use to run the program and create a trace of its execution.
 
+
+### Program decoding 
+
+Once the VM has been fed with a compiled cairo program it has to be decoded. The decoder takes as input the hexadecimal number in little endian format that represents the instruction an generates an Instruction struct with it.
+The CPU native word is a field element that is some fixed finite field of characteristic CAIRO_PRIME > 2^63 (CAIRO_PRIME is the prime number of the field), as such Instruction is the representation of the first word of each Cairo instruction. Some instructions spread over two words when they use an immediate value, so representing the first one with this struct is enough.
+The first word of each instruction consists of: (1) three 16-bit signed integer offsets offdst, offop0, offop1 in the range [−2^15, 2^15) encoded using biased representation25; and (2) 15 bits of flags divided into seven
+
+  Structure of the 63-bit that form the first word of each instruction.
+  See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
+
+```
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │                     off_dst (biased representation)                     │
+ ├─────────────────────────────────────────────────────────────────────────┤
+ │                     off_op0 (biased representation)                     │
+ ├─────────────────────────────────────────────────────────────────────────┤
+ │                     off_op1 (biased representation)                     │
+ ├─────┬─────┬───────┬───────┬───────────┬────────┬───────────────────┬────┤
+ │ dst │ op0 │  op1  │  res  │    pc     │   ap   │      opcode       │ 0  │
+ │ reg │ reg │  src  │ logic │  update   │ update │                   │    │
+ ├─────┼─────┼───┬───┼───┬───┼───┬───┬───┼───┬────┼────┬────┬────┬────┼────┤
+ │  0  │  1  │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 10 │ 11 │ 12 │ 13 │ 14 │ 15 │
+ └─────┴─────┴───┴───┴───┴───┴───┴───┴───┴───┴────┴────┴────┴────┴────┴────┘
+```
+
+The decoder perform bitwise operations with masks to extract the fields from the hexadecimal values and store them in the struct representation, each value of the masks and padding can be deduced from the table above.
+for example the following hexadecimal encoding '0x480680017fff8000, 1,'represent the next instruction:
+```
+[ap] = 1; ap++
+```
+which stores 1 in the direction stored in the ap register and increases it in one to point to the next direction.
+We can declare an structure to store the data as follows:
+```
+struct Instruction {
+	int64_t off0;
+	int64_t off1;
+	int64_t off2;
+	enum Register dst_register;
+	enum Register op0_register;
+	enum Op1Addr op1_addr;
+	enum Res res;
+	enum PcUpdate pc_update;
+	enum ApUpdate ap_update;
+	enum FpUpdate fp_update;
+	enum Opcode opcode;
+};
+```
+to extract the dst_reg flag we can define a mask 'DST_REG_MASK' with value 0x0001 and and a padding 'DST_REG_OFF' with value 0 because it is the less significant bit, then we can perform the operation
+```(((encoded_instr) >> 48) & DST_REG_MASK) >> DST_REG_OFF``` to obtain the dst_reg flag. We shifted 48 bits first because there is where the flags start. 
+the code would be as follow, nameing the hex value as encoded_instr:
+```
+struct Instruction instrunction.dst_register = '(((encoded_instr) >> 48) & DST_REG_MASK) >> DST_REG_OFF'  
+```
+
 ### Code walkthrough/Write your own Cairo VM
 
 Lets begin by creating the basic types and structures for our VM:
