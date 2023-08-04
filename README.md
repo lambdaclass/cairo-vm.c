@@ -131,8 +131,8 @@ Go through the main parts of a compiled program `Json` file. `data` field with i
 ### Program decoding 
 
 Once the VM has been fed with a compiled cairo program it has to be decoded. The decoder takes as input the hexadecimal number in little endian format that represents the instruction an generates an Instruction struct with it.
-The CPU native word is a field element that is some fixed finite field of characteristic CAIRO_PRIME > 263 (CAIRO_PRIME is the prime number of the field), as such Instruction is the representation of the first word of each Cairo instruction. Some instructions spread over two words when they use an immediate value, so representing the first one with this struct is enough.
-The first word of each instruction consists of: (1) three 16-bit signed integer offsets offdst, offop0, offop1 in the range [−215, 215) encoded using biased representation25; and (2) 15 bits of flags divided into seven
+The CPU native word is a field element that is some fixed finite field of characteristic CAIRO_PRIME > 2^63 (CAIRO_PRIME is the prime number of the field), as such Instruction is the representation of the first word of each Cairo instruction. Some instructions spread over two words when they use an immediate value, so representing the first one with this struct is enough.
+The first word of each instruction consists of: (1) three 16-bit signed integer offsets offdst, offop0, offop1 in the range [−2^15, 2^15) encoded using biased representation25; and (2) 15 bits of flags divided into seven
 
   Structure of the 63-bit that form the first word of each instruction.
   See Cairo whitepaper, page 32 - https://eprint.iacr.org/2021/1063.pdf.
