@@ -1,4 +1,4 @@
-# cairo_vm.c
+# cairo-vm.c
 
 This is a work in progress implementation of the [Cairo VM](https://github.com/lambdaclass/cairo-vm) in `C`. The reasons for doing this include:
 
